@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アンケートご協力のお願いチラシ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f0f2f5;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        @media print {
+            body {
+                background-color: white;
+            }
+            .page-container {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                max-width: none;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+        .page-container {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 15mm;
+            box-sizing: border-box;
+            position: relative;
+        }
+        /* UDフォント風の視認性確保 */
+        .text-ud {
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 印刷ボタン（画面表示時のみ） -->
+    <div class="fixed top-4 right-4 no-print z-50">
+        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow flex items-center gap-2 transition-colors">
+            <i data-lucide="printer" class="w-5 h-5"></i>
+            印刷する
+        </button>
+    </div>
+
+    <!-- A4用紙エリア -->
+    <div class="page-container flex flex-col justify-between">
+        
+        <!-- ヘッダーエリア -->
+        <header class="mb-8">
+            <p class="text-xl font-medium text-gray-700 mb-4 border-b-2 border-gray-300 inline-block pb-1">五所川原市の皆様へ</p>
+            
+            <div class="text-center py-6 bg-blue-50 rounded-xl border-2 border-blue-100">
+                <h1 class="text-4xl font-black text-blue-900 mb-3 tracking-wide">アンケートご協力のお願い</h1>
+                <p class="text-xl font-bold text-blue-700">～ 冬場の浴室環境と、入浴習慣に関する調査について ～</p>
+            </div>
+        </header>
+
+        <!-- 導入文 -->
+        <section class="mb-8 px-2">
+            <p class="text-lg leading-loose text-gray-800 text-ud mb-6">
+                日頃より地域の活動にご尽力いただき、誠にありがとうございます。<br>
+                私たち<span class="font-bold text-blue-800">高齢者入浴アドバイザー協会</span>は、高齢者の入浴事故を減らすために、安全な入浴法の普及活動や、入浴と健康に関する調査・研究に取り組んでいます。
+            </p>
+            <p class="text-lg leading-loose text-gray-800 text-ud mb-6">
+                この度、その活動の一環として、寒冷地における<span class="font-bold text-blue-800">「浴室の環境」</span>と<span class="font-bold text-blue-800">「健康」</span>の関係を明らかにするための学術調査を行うこととなりました。
+            </p>
+            <div class="bg-orange-50 p-6 rounded-lg border-l-8 border-orange-400">
+                <p class="text-lg leading-relaxed text-gray-900 font-medium">
+                    冬の寒さが厳しい五所川原市にお住まいの皆様が、普段どのような環境で、どのように入浴されているかを知ることは、将来的な住環境の改善や、より安全な暮らしを考える上で、非常に貴重なデータとなります。<br>
+                    <span class="block mt-2 font-bold text-orange-700">本調査の趣旨をご理解いただき、ぜひ皆様のお力をお貸しください。</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- 詳細情報エリア -->
+        <div class="space-y-6 flex-grow">
+            
+            <!-- 調査の目的 -->
+            <div class="flex gap-4 items-start">
+                <div class="flex-shrink-0 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    <i data-lucide="search" class="w-6 h-6"></i>
+                </div>
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold text-blue-800 mb-2 flex items-center border-b border-blue-200 pb-1">
+                        調査の目的
+                    </h2>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        市内にお住まいの皆様のご自宅の「浴室設備（暖房の有無など）」や、「冬場の入浴習慣」について統計的に集計し、医学・建築学的な研究資料として活用します。
+                    </p>
+                </div>
+            </div>
+
+            <!-- ご回答にあたってのお願い -->
+            <div class="flex gap-4 items-start bg-green-50 p-5 rounded-xl border border-green-100">
+                <div class="flex-shrink-0 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+                </div>
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold text-green-800 mb-3 flex items-center border-b border-green-200 pb-1">
+                        ご回答にあたってのお願い
+                    </h2>
+                    <p class="text-lg text-gray-800 leading-relaxed mb-4">
+                        本アンケートは、皆様の「現在の住まいの状況」や「いつもの入浴スタイル」をお伺いするものです。<span class="font-bold">「正しい・間違い」や「良い・悪い」を問うものではありません。</span>
+                        特別な準備は必要ございませんので、ご自宅の様子を気負わずご記入いただけますと幸いです。
+                    </p>
+                    <ul class="space-y-3 bg-white p-4 rounded-lg shadow-sm border border-green-100">
+                        <li class="flex items-start gap-3">
+                            <span class="bg-green-100 text-green-800 font-bold px-2 py-1 rounded text-sm whitespace-nowrap mt-1">内　容</span>
+                            <span class="text-lg text-gray-800">浴室・脱衣所の設備や、温度の感じ方などに関する質問</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="bg-green-100 text-green-800 font-bold px-2 py-1 rounded text-sm whitespace-nowrap mt-1">方　法</span>
+                            <div class="text-lg text-gray-800">
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>アンケート用紙の当てはまる項目にチェック（レ点）を入れる形式</li>
+                                    <li><span class="font-bold text-green-700">無記名式</span>です（お名前やご住所を書く必要はありません）</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="bg-green-100 text-green-800 font-bold px-2 py-1 rounded text-sm whitespace-nowrap mt-1">時　間</span>
+                            <span class="text-lg text-gray-800"><span class="font-bold text-red-600 text-xl border-b-2 border-red-200">5分程度</span> で完了します</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 提出方法 -->
+            <div class="flex gap-4 items-start">
+                <div class="flex-shrink-0 w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    <i data-lucide="mail" class="w-6 h-6"></i>
+                </div>
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold text-orange-800 mb-2 flex items-center border-b border-orange-200 pb-1">
+                        提出方法
+                    </h2>
+                    <p class="text-lg text-gray-800 mb-3">
+                        ご記入いただいたアンケート用紙は、<span class="font-bold border-b border-orange-400">各団体の代表者様へお渡し下さい。</span>
+                    </p>
+                    <div class="bg-orange-50 border-2 border-orange-200 rounded-lg p-4 flex flex-col md:flex-row items-center justify-around gap-4 text-center">
+                        <div class="text-center">
+                            <span class="block text-sm text-orange-600 font-bold mb-1">提出期限</span>
+                            <span class="text-2xl font-black text-gray-800">2026年 3月 31日</span>
+                        </div>
+                        <div class="hidden md:block w-px h-12 bg-orange-200"></div>
+                        <div class="text-center">
+                            <span class="block text-sm text-orange-600 font-bold mb-1">提出先</span>
+                            <div class="text-gray-800 font-bold leading-tight">
+                                <span class="text-xl">各団体の代表者様</span><br>
+                                <span class="text-sm font-normal text-gray-600">（個人でご協力頂ける方は、白戸さんへお渡し下さい）</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- フッター -->
+        <footer class="mt-8 pt-4 border-t-2 border-gray-200 text-center">
+            <p class="text-lg font-bold text-gray-800">
+                調査実施・企画： 高齢者入浴アドバイザー協会
+                <span class="ml-4 font-normal text-base">責任者：野城 聡志</span>
+            </p>
+            <p class="text-sm text-gray-500 mt-1">（本調査は学術研究の一環として実施しており、販売や勧誘等を目的としたものではありません）</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // アイコンの初期化
+        lucide.createIcons();
+    </script>
+</body>
+</html>
