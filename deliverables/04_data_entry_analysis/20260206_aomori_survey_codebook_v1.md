@@ -4,7 +4,7 @@
 
 - 版: v1
 - 作成日: 2026-02-06
-- 対応調査票: `aomori_survey/deliverables/20260206_aomori_survey_questionnaire_v1.md`
+- 対応調査票: `aomori_survey/deliverables/03_fieldwork_materials/20260206_aomori_survey_questionnaire_v1.md`
 - 目的: データ入力・品質管理・クロス集計の仕様を固定する
 
 ## 基本ルール

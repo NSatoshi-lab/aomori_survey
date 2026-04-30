@@ -7,6 +7,7 @@ __pycache__/
 outputs/checks/
 outputs/readiness/
 outputs/runs/
+outputs/tmp/
 
 # 取得データ/キャッシュ（追跡しない運用）
 data/raw/db/
@@ -29,4 +30,3 @@ outputs/*.xpi
 
 # Archived files
 archive/
-

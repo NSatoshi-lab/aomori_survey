@@ -11,8 +11,8 @@
 - 形式: 紙調査票を記入後、口頭確認（半構造化）
 - 所要時間目安: 1名あたり20-30分
 - 使用資料:
-  - `aomori_survey/deliverables/20260206_aomori_survey_questionnaire_v1.md`
-  - `aomori_survey/deliverables/20260206_aomori_survey_codebook_v1.md`
+  - `aomori_survey/deliverables/03_fieldwork_materials/20260206_aomori_survey_questionnaire_v1.md`
+  - `aomori_survey/deliverables/04_data_entry_analysis/20260206_aomori_survey_codebook_v1.md`
 
 ## 実施手順
 

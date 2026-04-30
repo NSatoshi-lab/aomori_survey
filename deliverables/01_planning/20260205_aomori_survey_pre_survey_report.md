@@ -249,29 +249,29 @@
 - Step 1（設計確定）:
   - 実施状況: 完了
   - 確定事項: 五所川原市、紙調査、完全匿名、2026-03-01から2026-03-31、有効回答80票（厳密81票）・回収100票・配布135票
-  - 記録: `deliverables/20260206_aomori_survey_next_actions_log.md`
+  - 記録: `deliverables/01_planning/20260206_aomori_survey_next_actions_log.md`
 - Step 2（調査票v1・コードブックv1作成）:
   - 実施状況: 完了
   - 成果物:
-    - `deliverables/20260206_aomori_survey_questionnaire_v1.md`
-    - `deliverables/20260206_aomori_survey_codebook_v1.md`
-    - `deliverables/20260206_aomori_survey_data_entry_template.csv`
-    - `deliverables/20260206_aomori_survey_step5_tabulation_spec_v1.md`
+    - `deliverables/03_fieldwork_materials/20260206_aomori_survey_questionnaire_v1.md`
+    - `deliverables/04_data_entry_analysis/20260206_aomori_survey_codebook_v1.md`
+    - `deliverables/04_data_entry_analysis/20260206_aomori_survey_data_entry_template.csv`
+    - `deliverables/04_data_entry_analysis/20260206_aomori_survey_step5_tabulation_spec_v1.md`
 - Step 3（認知テスト; 3名）:
   - 実施状況: 未着手（運用資料作成済み）
   - 実施資料:
-    - `deliverables/20260206_aomori_survey_cognitive_test_protocol_v1.md`
-    - `deliverables/20260206_aomori_survey_cognitive_test_issue_log_template.md`
+    - `deliverables/04_data_entry_analysis/20260206_aomori_survey_cognitive_test_protocol_v1.md`
+    - `deliverables/04_data_entry_analysis/20260206_aomori_survey_cognitive_test_issue_log_template.md`
   - 判定基準: 1名でも詰まった設問は修正し、重大理解障害0件でv2確定
 - Step 4（本調査実施）:
   - 実施状況: 未着手（運用手順作成済み）
-  - 実施資料: `deliverables/20260206_aomori_survey_fieldwork_manual_v1.md`
+  - 実施資料: `deliverables/03_fieldwork_materials/20260206_aomori_survey_fieldwork_manual_v1.md`
   - 締切条件: 回収100票到達または2026-03-31到来（早い方）
 - Step 5（集計・解釈）:
   - 実施状況: 未着手（集計スクリプト作成済み）
   - 実施資料:
     - `src/scripts/tabulate_aomori_paper_survey.py`
-    - `deliverables/20260206_aomori_survey_step5_tabulation_spec_v1.md`
+    - `deliverables/04_data_entry_analysis/20260206_aomori_survey_step5_tabulation_spec_v1.md`
   - 必須3表: 設置×寒さ、設置×セントラル暖房使用、未導入理由×住宅条件
   - 判定基準: 不要群-障壁群の差が10pp以上で優勢判定
 - Step 6（レポート更新）:

@@ -3,7 +3,7 @@ param(
   [string]$Tag = "",
 
   [Parameter(Mandatory = $false)]
-  [string]$InputMarkdown = "deliverables/20260206_aomori_survey_questionnaire_v1.md",
+  [string]$InputMarkdown = "deliverables/03_fieldwork_materials/20260206_aomori_survey_questionnaire_v1.md",
 
   [Parameter(Mandatory = $false)]
   [string]$OutputName = "aomori_survey_questionnaire_distribute.docx",
@@ -115,7 +115,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 if ($CopyToDeliverables) {
-  $deliverablesDir = Join-Path $repoRoot "deliverables"
+  $deliverablesDir = Join-Path $repoRoot "deliverables\\03_fieldwork_materials"
   New-Item -ItemType Directory -Path $deliverablesDir -Force | Out-Null
   $finalPath = Join-Path $deliverablesDir $DeliverablesName
   Copy-Item -Path $outputDocx -Destination $finalPath -Force

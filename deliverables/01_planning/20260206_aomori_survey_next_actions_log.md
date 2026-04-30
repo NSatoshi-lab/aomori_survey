@@ -4,7 +4,7 @@
 
 - 作成日: 2026-02-06
 - 最終更新日: 2026-02-15
-- 元レポート: `aomori_survey/deliverables/20260205_aomori_survey_pre_survey_report.md`
+- 元レポート: `aomori_survey/deliverables/01_planning/20260205_aomori_survey_pre_survey_report.md`
 - 目的: 次アクション（Step 1-6）を順次実行し、意思決定・成果物・判定を一元管理する。
 
 ## 進行ステータス
@@ -65,10 +65,10 @@
 
 ### 2-1 作成成果物
 
-- 調査票v1: `aomori_survey/deliverables/20260206_aomori_survey_questionnaire_v1.md`
-- コードブックv1: `aomori_survey/deliverables/20260206_aomori_survey_codebook_v1.md`
-- 入力テンプレート: `aomori_survey/deliverables/20260206_aomori_survey_data_entry_template.csv`
-- 集計仕様: `aomori_survey/deliverables/20260206_aomori_survey_step5_tabulation_spec_v1.md`
+- 調査票v1: `aomori_survey/deliverables/03_fieldwork_materials/20260206_aomori_survey_questionnaire_v1.md`
+- コードブックv1: `aomori_survey/deliverables/04_data_entry_analysis/20260206_aomori_survey_codebook_v1.md`
+- 入力テンプレート: `aomori_survey/deliverables/04_data_entry_analysis/20260206_aomori_survey_data_entry_template.csv`
+- 集計仕様: `aomori_survey/deliverables/04_data_entry_analysis/20260206_aomori_survey_step5_tabulation_spec_v1.md`
 
 ### 2-2 受け入れ確認
 
@@ -88,9 +88,9 @@
 
 ### 3-2 用意済み資料
 
-- 実施手順: `aomori_survey/deliverables/20260206_aomori_survey_cognitive_test_protocol_v1.md`
-- 課題ログテンプレート: `aomori_survey/deliverables/20260206_aomori_survey_cognitive_test_issue_log_template.md`
-- 結果記録テンプレート: `aomori_survey/deliverables/20260206_aomori_survey_cognitive_test_results.md`
+- 実施手順: `aomori_survey/deliverables/04_data_entry_analysis/20260206_aomori_survey_cognitive_test_protocol_v1.md`
+- 課題ログテンプレート: `aomori_survey/deliverables/04_data_entry_analysis/20260206_aomori_survey_cognitive_test_issue_log_template.md`
+- 結果記録テンプレート: `aomori_survey/deliverables/04_data_entry_analysis/20260206_aomori_survey_cognitive_test_results.md`
 
 ### 3-3 完了条件
 
@@ -109,8 +109,8 @@
 
 ### 4-2 用意済み資料
 
-- 本調査運用手順: `aomori_survey/deliverables/20260206_aomori_survey_fieldwork_manual_v1.md`
-- 回収進捗テンプレート: `aomori_survey/deliverables/202603_aomori_survey_collection_tracker_template.csv`
+- 本調査運用手順: `aomori_survey/deliverables/03_fieldwork_materials/20260206_aomori_survey_fieldwork_manual_v1.md`
+- 回収進捗テンプレート: `aomori_survey/deliverables/03_fieldwork_materials/202603_aomori_survey_collection_tracker_template.csv`
 
 ## Step 5 集計・解釈（未着手）
 
@@ -131,7 +131,7 @@
 ## Step 6 レポート更新（未着手）
 
 - 対象文書:
-  - `aomori_survey/deliverables/20260205_aomori_survey_pre_survey_report.md`
+  - `aomori_survey/deliverables/01_planning/20260205_aomori_survey_pre_survey_report.md`
   - 本ログファイル
 - 実施内容:
   - 有効票数、主要欠損率、必須3表の結果、優勢判定、次段階判定を追記する。

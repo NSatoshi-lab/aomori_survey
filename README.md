@@ -5,8 +5,9 @@
 ## Start Here (Most Important Paths)
 
 - Manuscript Markdown (authoritative): `paper.md` / `paper_en.md`
-- Final docx deliverables: `deliverables/`
+- Final and fieldwork deliverables: `deliverables/`
 - Evidence runs: `outputs/runs/`
+- Anonymized analysis data: `data/processed/`
 - Literature log: `refs.md`, `refs/search/`
 - Code entry points: `src/scripts/`
 - Writing rules: `docs/rules/markdown_generation_rules.md`, `docs/rules/statistical_reporting_policy.md`
@@ -28,10 +29,28 @@ Base repo: `..\入浴統計`（参照専用）
 | Write here | Purpose |
 | --- | --- |
 | `paper.md` / `paper_en.md` | 原稿（mdが正） |
-| `deliverables/` | 投稿用docxなど最終成果物 |
+| `deliverables/` | フェーズ別の設計資料・倫理書類・配布物・集計仕様 |
+| `data/processed/` | Git管理可能な匿名化済み解析データ |
 | `outputs/runs/` | 解析・感度分析のrun成果物 |
 | `refs.md` / `refs/search/` | 文献探索ログ |
 | `src/` | 青森調査の解析コード |
+
+## Deliverables Layout
+
+| Path | Purpose |
+| --- | --- |
+| `deliverables/01_planning/` | 事前調査レポート、進行管理ログ |
+| `deliverables/02_ethics/` | 倫理審査申請書、COI最新版 |
+| `deliverables/03_fieldwork_materials/` | 調査票、配布用docx/pdf/html、広告、表紙、現地運用手順、回収台帳テンプレート |
+| `deliverables/04_data_entry_analysis/` | コードブック、入力テンプレート、集計仕様、認知テスト関連テンプレート |
+| `deliverables/archive/` | 置換済みバックアップなど、通常参照しない過去版 |
+
+## Survey Data Flow
+
+- 紙原票、スキャン、個人が推測できるメモ、詳細回収台帳は `data/raw/` または外部保管先で管理し、Git管理しない。
+- 匿名ID単位の入力済み解析CSVは `data/processed/aomori_survey_responses_anonymized.csv` とする。
+- 実配布・回収状況の公開可能な要約だけ必要な場合は `data/processed/aomori_survey_collection_summary.csv` とする。
+- 集計は `src/scripts/tabulate_aomori_paper_survey.py` を使い、結果は `outputs/runs/<tag>/` に出す。
 
 ## Workflow (md → docx)
 
@@ -40,7 +59,7 @@ Base repo: `..\入浴統計`（参照専用）
 - docx生成は `src/scripts/build_paper_docx.ps1` を使い、生成物は `outputs/runs/<tag>/` に出す。
 - 調査票の配布用docx生成は `src/scripts/build_questionnaire_docx.ps1` を使う。
 - 生成物は `outputs/runs/<tag>/` に出す。
-- 投稿用の最終成果物は `deliverables/` に置く。
+- 投稿用の最終成果物は適切な `deliverables/` サブディレクトリに置く。
 
 ### Questionnaire (md → docx)
 

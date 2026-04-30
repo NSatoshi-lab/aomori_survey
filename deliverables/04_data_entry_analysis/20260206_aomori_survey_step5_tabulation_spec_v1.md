@@ -22,7 +22,7 @@
 ## 入力データ
 
 - 入力CSV:
-  - `aomori_survey/deliverables/20260206_aomori_survey_data_entry_template.csv` 形式
+  - `aomori_survey/deliverables/04_data_entry_analysis/20260206_aomori_survey_data_entry_template.csv` 形式
 - 必須カラム:
   - `response_id`
   - `q8_bath_heater_installed`
@@ -86,7 +86,7 @@
 
 ```powershell
 python aomori_survey/src/scripts/tabulate_aomori_paper_survey.py `
-  --input-csv aomori_survey/deliverables/20260206_aomori_survey_data_entry_template.csv `
+  --input-csv aomori_survey/data/processed/aomori_survey_responses_anonymized.csv `
   --output-dir aomori_survey/outputs/runs/20260331_aomori_paper_survey_tabulation
 ```
 

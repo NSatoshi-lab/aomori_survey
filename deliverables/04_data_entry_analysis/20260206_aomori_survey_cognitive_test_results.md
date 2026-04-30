@@ -4,7 +4,7 @@
 
 - 実施日:
 - 実施者:
-- 使用調査票: `aomori_survey/deliverables/20260206_aomori_survey_questionnaire_v1.md`
+- 使用調査票: `aomori_survey/deliverables/03_fieldwork_materials/20260206_aomori_survey_questionnaire_v1.md`
 - 対象人数: 3名
 
 ## 被験者別サマリ
@@ -17,7 +17,7 @@
 
 ## 課題一覧
 
-- 詳細は `aomori_survey/deliverables/20260206_aomori_survey_cognitive_test_issue_log_template.md` に記録。
+- 詳細は `aomori_survey/deliverables/04_data_entry_analysis/20260206_aomori_survey_cognitive_test_issue_log_template.md` に記録。
 
 ## 改訂判定
 
