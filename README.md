@@ -50,6 +50,7 @@ Base repo: `..\入浴統計`（参照専用）
 - 紙原票、スキャン、個人が推測できるメモ、詳細回収台帳は `data/raw/` または外部保管先で管理し、Git管理しない。
 - 匿名ID単位の入力済み解析CSVは `data/processed/aomori_survey_responses_anonymized.csv` とする。
 - 実配布・回収状況の公開可能な要約だけ必要な場合は `data/processed/aomori_survey_collection_summary.csv` とする。
+- OCR取り込みは `src/scripts/ocr_ingest_aomori_survey.py` を使い、レビュー用成果物は `outputs/runs/<tag>/` に出す。
 - 集計は `src/scripts/tabulate_aomori_paper_survey.py` を使い、結果は `outputs/runs/<tag>/` に出す。
 
 ## Workflow (md → docx)

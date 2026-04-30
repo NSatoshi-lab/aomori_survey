@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tabulate Goshogawara paper survey results for Step 5."""
+"""Tabulate Goshogawara Q1-Q11 paper survey results for Step 5."""
 
 from __future__ import annotations
 
@@ -20,42 +20,44 @@ except Exception:  # pragma: no cover - optional dependency
 EXPECTED_COLUMNS = [
     "response_id",
     "q1_age_group",
-    "q2_residence_area",
-    "q3_housing_type",
-    "q4_building_age_band",
-    "q5_tenure",
-    "q6_window_insulation_proxy",
-    "q7_winter_home_bath_freq",
-    "q8_bath_heater_installed",
+    "q2_housing_type",
+    "q3_building_age_band",
+    "q4_tenure",
+    "q5_winter_home_bath_freq",
+    "q6_window_insulation",
+    "q7_bath_heater_status",
+    "q8_reason_codes",
+    "q8_other_text",
     "q9_central_heating_use",
     "q10_alt_heating_types",
-    "q10_alt_heating_other_text",
-    "q11_bath_heater_heating_winter_use",
-    "q12_preheat_before_bath",
-    "q13a_bathroom_cold_7pt",
-    "q13b_dressingroom_cold_7pt",
-    "q14_reason_codes",
-    "q14_reason_other_text",
+    "q10_other_text",
+    "q11_dressingroom_cold_7pt",
+    "q11_bathroom_cold_7pt",
 ]
 
 NUMERIC_COLUMNS = [
     "q1_age_group",
-    "q2_residence_area",
-    "q3_housing_type",
-    "q4_building_age_band",
-    "q5_tenure",
-    "q6_window_insulation_proxy",
-    "q7_winter_home_bath_freq",
-    "q8_bath_heater_installed",
+    "q2_housing_type",
+    "q3_building_age_band",
+    "q4_tenure",
+    "q5_winter_home_bath_freq",
+    "q6_window_insulation",
+    "q7_bath_heater_status",
     "q9_central_heating_use",
-    "q11_bath_heater_heating_winter_use",
-    "q12_preheat_before_bath",
-    "q13a_bathroom_cold_7pt",
-    "q13b_dressingroom_cold_7pt",
+    "q11_dressingroom_cold_7pt",
+    "q11_bathroom_cold_7pt",
 ]
 
-NO_NEED_REASON_CODES = {1, 6}
-BARRIER_REASON_CODES = {2, 3, 4, 5, 7, 8}
+TEXT_COLUMNS = [
+    "response_id",
+    "q8_reason_codes",
+    "q8_other_text",
+    "q10_alt_heating_types",
+    "q10_other_text",
+]
+
+NO_NEED_REASON_CODES = {1}
+BARRIER_REASON_CODES = {2, 3, 4, 5, 6, 7}
 CONFIDENCE_Z_95 = 1.96
 MAIN_ANALYSIS_VALID_THRESHOLD = 80
 EXPLORATORY_ANALYSIS_VALID_THRESHOLD = 60
@@ -71,7 +73,7 @@ SAMPLE_SIZE_DESIGN_TARGET_ROUND = 10
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Generate required tabulations for Aomori paper survey."
+        description="Generate required tabulations for Aomori Q1-Q11 paper survey."
     )
     parser.add_argument("--input-csv", required=True, help="Path to input CSV")
     parser.add_argument("--output-dir", required=True, help="Path to output directory")
@@ -101,17 +103,8 @@ def normalize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     d = d[EXPECTED_COLUMNS].copy()
     for col in NUMERIC_COLUMNS:
         d[col] = pd.to_numeric(d[col], errors="coerce").astype("Int64")
-    d["q10_alt_heating_types"] = (
-        d["q10_alt_heating_types"].fillna("").astype(str).str.strip()
-    )
-    d["q10_alt_heating_other_text"] = (
-        d["q10_alt_heating_other_text"].fillna("").astype(str).str.strip()
-    )
-    d["q14_reason_codes"] = d["q14_reason_codes"].fillna("").astype(str).str.strip()
-    d["q14_reason_other_text"] = (
-        d["q14_reason_other_text"].fillna("").astype(str).str.strip()
-    )
-    d["response_id"] = d["response_id"].fillna("").astype(str).str.strip()
+    for col in TEXT_COLUMNS:
+        d[col] = d[col].fillna("").astype(str).str.strip()
     return d
 
 
@@ -121,35 +114,37 @@ def is_missing_numeric(series: pd.Series) -> pd.Series:
 
 def derive_validity_flags(d: pd.DataFrame) -> pd.DataFrame:
     out = d.copy()
-    q8 = out["q8_bath_heater_installed"]
-    q11 = out["q11_bath_heater_heating_winter_use"]
-    q14 = out["q14_reason_codes"]
+    q7 = out["q7_bath_heater_status"]
+    q8 = out["q8_reason_codes"]
+    q11_bath = out["q11_bathroom_cold_7pt"]
 
-    miss_q8 = is_missing_numeric(q8)
-    need_q11 = q8.eq(1)
-    miss_q11 = need_q11 & is_missing_numeric(q11)
+    need_q8 = q7.isin([2, 3])
+    miss_q7 = is_missing_numeric(q7)
+    miss_q8 = need_q8 & q8.eq("")
+    miss_q11_bath = is_missing_numeric(q11_bath)
 
-    need_q14 = q8.isin([2, 3]) | q11.isin([4, 5])
-    miss_q14 = need_q14 & q14.eq("")
-
-    out["need_q11"] = need_q11
-    out["need_q14"] = need_q14
-    out["missing_q8"] = miss_q8
-    out["missing_q11"] = miss_q11
-    out["missing_q14"] = miss_q14
-    out["invalid_main3"] = miss_q8 | miss_q11 | miss_q14
+    out["need_q8"] = need_q8
+    out["missing_q7_bath_heater_status"] = miss_q7
+    out["missing_q8_reason_codes"] = miss_q8
+    out["missing_q11_bathroom_cold_7pt"] = miss_q11_bath
+    out["invalid_main3"] = miss_q7 | miss_q8 | miss_q11_bath
     return out
 
 
 def add_label_columns(d: pd.DataFrame) -> pd.DataFrame:
     out = d.copy()
-    out["q8_label"] = out["q8_bath_heater_installed"].map(
-        {1: "設置あり", 2: "設置なし", 3: "不明", 99: "無回答"}
-    ).fillna("無回答")
+    out["q7_status_label"] = out["q7_bath_heater_status"].map(
+        {
+            1: "1_設置して使用",
+            2: "2_設置しているが未使用",
+            3: "3_未設置",
+            99: "99_無回答",
+        }
+    ).fillna("99_無回答")
     out["q9_label"] = out["q9_central_heating_use"].map(
-        {1: "使用あり", 2: "使用なし", 3: "不明", 99: "無回答"}
-    ).fillna("無回答")
-    out["q13a_label"] = out["q13a_bathroom_cold_7pt"].map(
+        {1: "1_24時間使用", 2: "2_時間限定使用", 3: "3_不使用", 99: "99_無回答"}
+    ).fillna("99_無回答")
+    out["q11_bathroom_label"] = out["q11_bathroom_cold_7pt"].map(
         {
             1: "1_非常に暖かい",
             2: "2_暖かい",
@@ -161,10 +156,10 @@ def add_label_columns(d: pd.DataFrame) -> pd.DataFrame:
             99: "99_無回答",
         }
     ).fillna("99_無回答")
-    out["q3_label"] = out["q3_housing_type"].map(
-        {1: "一戸建て", 2: "集合住宅", 3: "その他", 99: "無回答"}
-    ).fillna("無回答")
-    out["bathroom_cold_binary"] = out["q13a_bathroom_cold_7pt"].apply(label_cold_binary)
+    out["q2_housing_label"] = out["q2_housing_type"].map(
+        {1: "1_一戸建て", 2: "2_集合住宅", 99: "99_無回答"}
+    ).fillna("99_無回答")
+    out["bathroom_cold_binary"] = out["q11_bathroom_cold_7pt"].apply(label_cold_binary)
     return out
 
 
@@ -195,7 +190,7 @@ def parse_reason_codes(value: str) -> List[int]:
 
 
 def reason_dominance(valid: pd.DataFrame) -> dict:
-    target = valid[valid["need_q14"]].copy()
+    target = valid[valid["need_q8"]].copy()
     if target.empty:
         return {
             "reason_target_n": 0,
@@ -205,7 +200,7 @@ def reason_dominance(valid: pd.DataFrame) -> dict:
             "dominant_group": "判定不可",
         }
 
-    code_lists = target["q14_reason_codes"].apply(parse_reason_codes)
+    code_lists = target["q8_reason_codes"].apply(parse_reason_codes)
     has_no_need = code_lists.apply(
         lambda xs: any(code in NO_NEED_REASON_CODES for code in xs)
     )
@@ -249,9 +244,9 @@ def wilson_ci(success: int, total: int, z: float = CONFIDENCE_Z_95) -> tuple[flo
     return (lo, hi)
 
 
-def summarize_q7_q9_main(valid: pd.DataFrame) -> dict:
+def summarize_q7_q9(valid: pd.DataFrame) -> dict:
     target = valid[
-        valid["q8_bath_heater_installed"].isin([1, 2])
+        valid["q7_bath_heater_status"].isin([1, 2, 3])
         & valid["q9_central_heating_use"].isin([1, 2, 3])
     ].copy()
     if target.empty:
@@ -263,14 +258,11 @@ def summarize_q7_q9_main(valid: pd.DataFrame) -> dict:
             "small_expected_cell": None,
         }
 
-    q8_map = {1: "設置あり", 2: "設置なし"}
-    q9_map = {1: "24時間使用", 2: "時間限定使用", 3: "不使用"}
-    target["q7_main_group"] = target["q8_bath_heater_installed"].map(q8_map)
-    target["q9_use_label"] = target["q9_central_heating_use"].map(q9_map)
-
+    q7_order = ["1_設置して使用", "2_設置しているが未使用", "3_未設置"]
+    q9_order = ["1_24時間使用", "2_時間限定使用", "3_不使用"]
     table = pd.crosstab(
-        target["q7_main_group"], target["q9_use_label"], dropna=False
-    ).reindex(index=["設置あり", "設置なし"], columns=["24時間使用", "時間限定使用", "不使用"], fill_value=0)
+        target["q7_status_label"], target["q9_label"], dropna=False
+    ).reindex(index=q7_order, columns=q9_order, fill_value=0)
 
     rows = []
     for group in table.index:
@@ -291,9 +283,6 @@ def summarize_q7_q9_main(valid: pd.DataFrame) -> dict:
                 }
             )
 
-    # Test choice follows Step 5 v2 intent:
-    # - expected>=5: chi-square
-    # - expected<5: exact method where available; otherwise descriptive only.
     test_method = "記述統計のみ"
     test_p = None
     small_expected_cell = None
@@ -304,21 +293,16 @@ def summarize_q7_q9_main(valid: pd.DataFrame) -> dict:
             if not small_expected_cell:
                 test_method = "χ2検定"
                 test_p = float(p_chi)
+            elif fisher_exact is not None and table.shape == (2, 2):
+                fisher_res = fisher_exact(table.to_numpy())
+                test_p = (
+                    float(fisher_res.pvalue)
+                    if hasattr(fisher_res, "pvalue")
+                    else float(fisher_res[1])
+                )
+                test_method = "Fisher exact"
             else:
-                if fisher_exact is not None:
-                    try:
-                        fisher_res = fisher_exact(table.to_numpy())
-                        # SciPy versions may return tuple or result object.
-                        test_p = (
-                            float(fisher_res.pvalue)
-                            if hasattr(fisher_res, "pvalue")
-                            else float(fisher_res[1])
-                        )
-                        test_method = "Fisher-Freeman-Halton exact"
-                    except Exception:
-                        test_method = "expected<5: exact法未実装のため記述統計のみ"
-                else:
-                    test_method = "expected<5: exact法未実装のため記述統計のみ"
+                test_method = "expected<5: exact法未実装のため記述統計のみ"
         except Exception:
             test_method = "記述統計のみ（検定計算不可）"
 
@@ -367,36 +351,50 @@ def sample_size_requirements(
 
 
 def save_crosstabs(valid: pd.DataFrame, output_dir: Path) -> None:
-    table1 = pd.crosstab(valid["q8_label"], valid["q13a_label"], dropna=False)
-    table1.to_csv(output_dir / "table1_install_x_bathroom_cold_7pt.csv", encoding="utf-8-sig")
+    table1 = pd.crosstab(
+        valid["q7_status_label"], valid["q11_bathroom_label"], dropna=False
+    )
+    table1.to_csv(
+        output_dir / "table1_q7_status_x_bathroom_cold_7pt.csv",
+        encoding="utf-8-sig",
+    )
 
-    table2 = pd.crosstab(valid["q8_label"], valid["q9_label"], dropna=False)
-    table2.to_csv(output_dir / "table2_install_x_central_heating.csv", encoding="utf-8-sig")
+    table2 = pd.crosstab(valid["q7_status_label"], valid["q9_label"], dropna=False)
+    table2.to_csv(
+        output_dir / "table2_q7_status_x_central_heating.csv",
+        encoding="utf-8-sig",
+    )
 
-    reasons = valid[valid["q14_reason_codes"].ne("")][["q14_reason_codes", "q3_label"]].copy()
+    reasons = valid[valid["q8_reason_codes"].ne("")][
+        ["q8_reason_codes", "q2_housing_label"]
+    ].copy()
     if reasons.empty:
         table3 = pd.DataFrame(columns=["reason_code", "housing_type", "count"])
     else:
-        reasons["reason_code_list"] = reasons["q14_reason_codes"].apply(parse_reason_codes)
+        reasons["reason_code_list"] = reasons["q8_reason_codes"].apply(parse_reason_codes)
         exploded = reasons.explode("reason_code_list")
         exploded = exploded[exploded["reason_code_list"].notna()].copy()
         exploded["reason_code"] = exploded["reason_code_list"].astype(int)
-        table3 = pd.crosstab(exploded["reason_code"], exploded["q3_label"], dropna=False)
-    table3.to_csv(output_dir / "table3_reason_x_housing_type.csv", encoding="utf-8-sig")
+        table3 = pd.crosstab(exploded["reason_code"], exploded["q2_housing_label"], dropna=False)
+    table3.to_csv(
+        output_dir / "table3_q8_reason_x_housing_type.csv",
+        encoding="utf-8-sig",
+    )
 
 
 def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
     total = int(len(flagged))
     invalid = int(flagged["invalid_main3"].sum())
-    valid = total - invalid
+    valid_count = total - invalid
     missing_rate = round((invalid / total * 100.0), 2) if total else 0.0
 
-    gate = analysis_gate(valid, missing_rate)
+    gate = analysis_gate(valid_count, missing_rate)
     is_main_analysis = int(gate == "主解析（有効80以上）")
     is_exploratory = int(gate == "探索的解析（有効60-79）")
     is_descriptive_only = int(gate.startswith("記述中心"))
-    dominance = reason_dominance(flagged[~flagged["invalid_main3"]])
-    q7q9 = summarize_q7_q9_main(flagged[~flagged["invalid_main3"]])
+    valid = flagged[~flagged["invalid_main3"]].copy()
+    dominance = reason_dominance(valid)
+    q7q9 = summarize_q7_q9(valid)
 
     design_primary = sample_size_requirements(e=SAMPLE_SIZE_DESIGN_E)
     design_sens_tight = sample_size_requirements(e=0.10)
@@ -405,13 +403,25 @@ def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
     qc = pd.DataFrame(
         [
             {"metric": "total_responses", "value": total},
-            {"metric": "valid_responses", "value": valid},
+            {"metric": "valid_responses", "value": valid_count},
             {"metric": "invalid_responses", "value": invalid},
             {"metric": "main_missing_rate_pct", "value": missing_rate},
             {"metric": "analysis_gate_label", "value": gate},
             {"metric": "analysis_gate_main", "value": is_main_analysis},
             {"metric": "analysis_gate_exploratory", "value": is_exploratory},
             {"metric": "analysis_gate_descriptive_only", "value": is_descriptive_only},
+            {
+                "metric": "missing_q7_bath_heater_status_n",
+                "value": int(flagged["missing_q7_bath_heater_status"].sum()),
+            },
+            {
+                "metric": "missing_q8_reason_codes_n",
+                "value": int(flagged["missing_q8_reason_codes"].sum()),
+            },
+            {
+                "metric": "missing_q11_bathroom_cold_7pt_n",
+                "value": int(flagged["missing_q11_bathroom_cold_7pt"].sum()),
+            },
             {"metric": "reason_target_n", "value": dominance["reason_target_n"]},
             {"metric": "no_need_pct", "value": dominance["no_need_pct"]},
             {"metric": "barrier_pct", "value": dominance["barrier_pct"]},
@@ -425,7 +435,9 @@ def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
             },
             {
                 "metric": "q7q9_small_expected_cell",
-                "value": "" if q7q9["small_expected_cell"] is None else int(q7q9["small_expected_cell"]),
+                "value": ""
+                if q7q9["small_expected_cell"] is None
+                else int(q7q9["small_expected_cell"]),
             },
             {"metric": "design_n0_e12", "value": round(design_primary["n0"], 2)},
             {"metric": "design_n0_ceil_e12", "value": design_primary["n0_ceil"]},
@@ -450,16 +462,17 @@ def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
     report_lines = [
         "# 五所川原市 紙アンケート集計レポート",
         "",
-        "- 目的: Step 5必須3表の出力と品質ゲート確認",
+        "- 目的: 配布版Q1-Q11の必須3表出力と品質ゲート確認",
+        "- 記述ポリシー: `docs/rules/statistical_reporting_policy.md`",
         f"- 総票数: {total}",
-        f"- 有効票数: {valid}",
+        f"- 有効票数: {valid_count}",
         f"- 無効票数: {invalid}",
         f"- 主要欠損率: {missing_rate}%",
         f"- 解析ゲート: {gate}",
         "",
         "## 目標回答数の計算再現（固定前提）",
         "",
-        f"- 入力: E=0.12, p=0.5, deff=1.2, invalid=0.15",
+        "- 入力: E=0.12, p=0.5, deff=1.2, invalid=0.15",
         f"- n0={design_primary['n0']:.2f} -> {design_primary['n0_ceil']}",
         f"- n_valid={design_primary['n_valid']}",
         f"- n_collected={design_primary['n_collected']}",
@@ -470,9 +483,9 @@ def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
         f"- E=0.10: n_collected={design_sens_tight['n_collected']}",
         f"- E=0.15: n_collected={design_sens_loose['n_collected']}",
         "",
-        "## Q7-Q9 主解析（設置あり/なし × セントラル暖房使用）",
+        "## Q7-Q9 記述統計",
         "",
-        f"- 主解析対象票数: {q7q9['target_n']}",
+        f"- 対象票数: {q7q9['target_n']}",
         f"- 検定法: {q7q9['test_method']}",
         (
             "- p値: 記述統計のみ"
@@ -498,20 +511,20 @@ def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
     report_lines.extend(
         [
             "",
-        "## 優勢判定（不要群 vs 障壁群）",
-        "",
-        f"- 判定対象票数: {dominance['reason_target_n']}",
-        f"- 不要群割合: {dominance['no_need_pct']}%",
-        f"- 障壁群割合: {dominance['barrier_pct']}%",
-        f"- 差: {dominance['gap_pp']}pp",
-        f"- 判定: {dominance['dominant_group']}",
-        "",
-        "## 出力ファイル",
-        "",
-        "- `qc_summary.csv`",
-        "- `table1_install_x_bathroom_cold_7pt.csv`",
-        "- `table2_install_x_central_heating.csv`",
-        "- `table3_reason_x_housing_type.csv`",
+            "## 優勢判定（不要群 vs 障壁群）",
+            "",
+            f"- 判定対象票数: {dominance['reason_target_n']}",
+            f"- 不要群割合: {dominance['no_need_pct']}%",
+            f"- 障壁群割合: {dominance['barrier_pct']}%",
+            f"- 差: {dominance['gap_pp']}pp",
+            f"- 判定: {dominance['dominant_group']}",
+            "",
+            "## 出力ファイル",
+            "",
+            "- `qc_summary.csv`",
+            "- `table1_q7_status_x_bathroom_cold_7pt.csv`",
+            "- `table2_q7_status_x_central_heating.csv`",
+            "- `table3_q8_reason_x_housing_type.csv`",
         ]
     )
     (output_dir / "tabulation_report.md").write_text(

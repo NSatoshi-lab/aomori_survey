@@ -12,5 +12,5 @@
 ## 期待する解析CSV
 
 - 1行は1回答票を表す。
-- 列定義は `deliverables/04_data_entry_analysis/20260206_aomori_survey_codebook_v1.md` に従う。
-- 初期入力時のヘッダは `deliverables/04_data_entry_analysis/20260206_aomori_survey_data_entry_template.csv` を使う。
+- 列定義は `deliverables/04_data_entry_analysis/20260430_aomori_survey_codebook_v2.md` に従う。
+- 初期入力時のヘッダは `deliverables/04_data_entry_analysis/20260430_aomori_survey_data_entry_template_v2.csv` を使う。
