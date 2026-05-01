@@ -65,7 +65,7 @@ NUMERIC_COLUMNS = [
     "q11_bathroom_cold_7pt",
 ]
 
-PAGE_TYPES = ["cover", "page_q1_q5", "page_q6_q9", "page_q10_q11"]
+PAGE_TYPES = ["page_q1_q5", "page_q6_q9", "page_q10_q11"]
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 TEXT_CONFIDENCE_THRESHOLD = 70.0
 CHECK_SELECTED_THRESHOLD = 0.10
@@ -282,7 +282,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--allow-sequence-page-fallback",
         action="store_true",
-        help="Use image order modulo 4 when OCR page classification is unknown",
+        help="Use image order modulo 3 for scanned questionnaire pages 2-4 when OCR page classification is unknown",
     )
     parser.add_argument(
         "--finalize-reviewed",
@@ -568,7 +568,7 @@ def classify_page_type(
     if "Q10" in compact and "Q11" in compact:
         return "page_q10_q11", text, conf
     if allow_sequence_fallback:
-        return PAGE_TYPES[index % 4], text, conf
+        return PAGE_TYPES[index % len(PAGE_TYPES)], text, conf
     return "unknown", text, conf
 
 
@@ -881,6 +881,8 @@ def page_needs_review(page: dict[str, Any]) -> tuple[bool, str]:
         reasons.append("red_id_unreadable")
     if page["page_type"] == "unknown":
         reasons.append("page_type_unknown")
+    if page["page_type"] == "cover":
+        reasons.append("unexpected_cover_page_scanned")
     if page.get("red_id_issue"):
         reasons.append(str(page["red_id_issue"]))
     return bool(reasons), ";".join(sorted(set(reasons)))
@@ -925,7 +927,7 @@ def run_ingest(args: argparse.Namespace) -> Path:
         page["needs_review"] = int(needs_review)
         page["review_reason"] = reason
         pages.append(page)
-        if page_type in PAGE_TYPES and page_type != "cover":
+        if page_type in PAGE_TYPES:
             candidates.extend(
                 process_fields_for_page(
                     image=image,
