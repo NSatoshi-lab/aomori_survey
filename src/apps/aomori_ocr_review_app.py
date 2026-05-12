@@ -56,6 +56,8 @@ REVIEW_FIELDS = SINGLE_CHOICE_FIELDS + MULTI_CHOICE_FIELDS + TEXT_FIELDS
 REVIEW_PHASES = {
     "fallback Q7/Q9": "fallback",
     "99単一選択": "single_99",
+    "Q7=1かつQ8理由あり": "q7_q8",
+    "未目視 Q7/Q9": "unreviewed_q7_q9",
     "複数選択 Q8/Q10": "multi",
     "自由記述": "text",
     "すべて": "all",
@@ -341,6 +343,86 @@ def build_review_items(run_dir: Path, layout_json: Path, phase: str) -> pd.DataF
     reviewed_by_id = {
         str(row["response_id"]): row for _, row in reviewed.iterrows()
     }
+    decisions_path = run_dir / "manual_review_decisions.csv"
+    decisions = load_decisions(decisions_path)
+    decided_item_ids = set()
+    if not decisions.empty:
+        decided_item_ids = set(
+            decisions.drop_duplicates(subset=["review_item_id"], keep="last")[
+                "review_item_id"
+            ].astype(str)
+        )
+    if phase == "unreviewed_q7_q9":
+        for response_id, response in reviewed_by_id.items():
+            for field in ("q7_bath_heater_status", "q9_central_heating_use"):
+                item_id = review_item_id(response_id, field)
+                if item_id in decided_item_ids:
+                    continue
+                candidate = candidate_lookup.get((response_id, field))
+                if candidate is None:
+                    continue
+                source_file = str(candidate["source_file"])
+                question_crop_path = generate_question_crop(
+                    source_file=source_file,
+                    response_id=response_id,
+                    field=field,
+                    layout=layout,
+                    crop_dir=crop_dir,
+                )
+                rows.append(
+                    {
+                        "review_item_id": item_id,
+                        "response_id": response_id,
+                        "field": field,
+                        "field_kind": field_kind(field),
+                        "field_label": FIELD_LABELS[field],
+                        "current_value": str(response.get(field, "")),
+                        "candidate_value": str(candidate.get("value", "")),
+                        "review_reason": "unreviewed_normal_q7_q9",
+                        "source_file": source_file,
+                        "question_crop_path": question_crop_path,
+                    }
+                )
+        return pd.DataFrame(rows)
+
+    if phase == "q7_q8":
+        for response_id, response in reviewed_by_id.items():
+            q7_value = str(response.get("q7_bath_heater_status", "")).strip()
+            q8_value = str(response.get("q8_reason_codes", "")).strip()
+            if q7_value != "1" or not q8_value:
+                continue
+            field = "q7_bath_heater_status"
+            candidate = candidate_lookup.get((response_id, field))
+            if candidate is None:
+                continue
+            source_file = str(candidate["source_file"])
+            question_crop_path = generate_question_crop(
+                source_file=source_file,
+                response_id=response_id,
+                field=field,
+                layout=layout,
+                crop_dir=crop_dir,
+            )
+            q8_text = str(response.get("q8_other_text", "")).strip()
+            reason = f"q7=1_with_q8_reason_codes:{q8_value}"
+            if q8_text:
+                reason = f"{reason}; q8_other_text:{q8_text}"
+            rows.append(
+                {
+                    "review_item_id": review_item_id(response_id, field),
+                    "response_id": response_id,
+                    "field": field,
+                    "field_kind": field_kind(field),
+                    "field_label": FIELD_LABELS[field],
+                    "current_value": q7_value,
+                    "candidate_value": q7_value,
+                    "review_reason": reason,
+                    "source_file": source_file,
+                    "question_crop_path": question_crop_path,
+                }
+            )
+        return pd.DataFrame(rows)
+
     for _, queue_row in queue.iterrows():
         if not include_queue_row(queue_row, phase, reviewed):
             continue

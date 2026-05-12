@@ -39,9 +39,9 @@
 | `q10_other_text` | Q10自由記述 | string | Q10で4選択時の自由記述、非該当/無回答は空文字 |
 | `q11_dressingroom_cold_7pt` | Q11脱衣所 | int | 1=非常に暖かい ... 7=非常に寒い, 99=無回答/判定不能 |
 | `q11_bathroom_cold_7pt` | Q11浴室 | int | 1=非常に暖かい ... 7=非常に寒い, 99=無回答/判定不能 |
-| `q7_bath_heater_status_analysis` | Q7派生 | int | 解析用Q7。Q7=1かつQ8理由入力ありは2へ再分類、それ以外は原票値 |
+| `q7_bath_heater_status_analysis` | Q7派生 | int | 解析用Q7。Q7目視確認後の原票値と同じ値 |
 | `q7_q8_inconsistency_flag` | Q7/Q8派生 | int | 1=Q7=1かつQ8理由入力あり, 0=それ以外 |
-| `q7_analysis_note` | Q7/Q8派生 | string | 解析用再分類の理由。該当時は `q7=1_with_q8_reason_recoded_to_2_for_analysis` |
+| `q7_analysis_note` | Q7/Q8派生 | string | Q7/Q8不整合の注記。該当時は `q7=1_with_q8_reason_after_manual_q7_review` |
 | `manual_review_notes` | 目視確認メモ | string | 欄外書き込み等の解析時に残す補足。チェック状況のみの説明は除外 |
 
 ## Q8 理由コード詳細

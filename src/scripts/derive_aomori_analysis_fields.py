@@ -17,7 +17,7 @@ DERIVED_COLUMNS = [
     "q7_q8_inconsistency_flag",
     "q7_analysis_note",
 ]
-NOTE_RECODED = "q7=1_with_q8_reason_recoded_to_2_for_analysis"
+NOTE_Q7_Q8_REVIEWED = "q7=1_with_q8_reason_after_manual_q7_review"
 
 
 def parse_args() -> argparse.Namespace:
@@ -56,13 +56,12 @@ def derive_fields(df: pd.DataFrame) -> pd.DataFrame:
     output = df.copy()
     q7 = output["q7_bath_heater_status"].astype(str).str.strip()
     q8 = output["q8_reason_codes"].astype(str).str.strip()
-    recode_mask = q7.eq("1") & q8.ne("")
+    inconsistency_mask = q7.eq("1") & q8.ne("")
 
     output["q7_bath_heater_status_analysis"] = q7
-    output.loc[recode_mask, "q7_bath_heater_status_analysis"] = "2"
-    output["q7_q8_inconsistency_flag"] = recode_mask.astype(int).astype(str)
+    output["q7_q8_inconsistency_flag"] = inconsistency_mask.astype(int).astype(str)
     output["q7_analysis_note"] = ""
-    output.loc[recode_mask, "q7_analysis_note"] = NOTE_RECODED
+    output.loc[inconsistency_mask, "q7_analysis_note"] = NOTE_Q7_Q8_REVIEWED
     return output
 
 
@@ -85,9 +84,9 @@ def main() -> None:
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     output.to_csv(output_csv, index=False, encoding="utf-8-sig", quoting=csv.QUOTE_MINIMAL)
 
-    recoded = int(output["q7_q8_inconsistency_flag"].eq("1").sum())
+    flagged = int(output["q7_q8_inconsistency_flag"].eq("1").sum())
     print(f"Rows: {len(output)}")
-    print(f"Q7=1 with Q8 reason recoded for analysis: {recoded}")
+    print(f"Q7=1 with Q8 reason flagged after manual Q7 review: {flagged}")
     print(output_csv)
 
 
