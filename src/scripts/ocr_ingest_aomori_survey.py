@@ -52,6 +52,13 @@ EXPECTED_COLUMNS = [
     "q11_bathroom_cold_7pt",
 ]
 
+ANALYSIS_DERIVED_COLUMNS = [
+    "q7_bath_heater_status_analysis",
+    "q7_q8_inconsistency_flag",
+    "q7_analysis_note",
+    "manual_review_notes",
+]
+
 NUMERIC_COLUMNS = [
     "q1_age_group",
     "q2_housing_type",
@@ -68,8 +75,17 @@ NUMERIC_COLUMNS = [
 PAGE_TYPES = ["page_q1_q5", "page_q6_q9", "page_q10_q11"]
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 TEXT_CONFIDENCE_THRESHOLD = 70.0
-CHECK_SELECTED_THRESHOLD = 0.10
-CHECK_AMBIGUOUS_THRESHOLD = 0.04
+CHECK_SELECTED_THRESHOLD = 0.08
+CHECK_AMBIGUOUS_THRESHOLD = 0.03
+WIDE_CHECKBOX_FRAME_FIELDS = {
+    "q1_age_group",
+    "q2_housing_type",
+    "q4_tenure",
+    "q5_winter_home_bath_freq",
+    "q6_window_insulation",
+    "q11_dressingroom_cold_7pt",
+    "q11_bathroom_cold_7pt",
+}
 TESSERACT_STANDARD_PATHS = [
     Path(r"C:\Program Files\Tesseract-OCR\tesseract.exe"),
     Path(r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"),
@@ -266,6 +282,25 @@ DEFAULT_FIELDS: tuple[FieldSpec, ...] = (
     ),
 )
 
+REAL_SCAN_SINGLE_FALLBACK_OPTIONS: dict[str, tuple[OptionSpec, ...]] = {
+    "q6_window_insulation": (
+        opt(1, (0.084, 0.086, 0.104, 0.102)),
+        opt(2, (0.081, 0.115, 0.101, 0.131)),
+        opt(3, (0.081, 0.145, 0.101, 0.161)),
+        opt(4, (0.081, 0.177, 0.101, 0.193)),
+    ),
+    "q7_bath_heater_status": (
+        opt(1, (0.081, 0.427, 0.101, 0.443)),
+        opt(2, (0.081, 0.457, 0.101, 0.473)),
+        opt(3, (0.081, 0.487, 0.101, 0.503)),
+    ),
+    "q9_central_heating_use": (
+        opt(1, (0.081, 0.821, 0.101, 0.837)),
+        opt(2, (0.081, 0.852, 0.101, 0.868)),
+        opt(3, (0.081, 0.882, 0.101, 0.898)),
+    ),
+}
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -278,6 +313,32 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--write-layout-json",
         help="Write the default fixed-layout coordinates to JSON and exit",
+    )
+    parser.add_argument(
+        "--layout-json",
+        help="Read fixed-layout coordinates from JSON instead of using built-in defaults",
+    )
+    parser.add_argument(
+        "--sequence-response-ids",
+        action="store_true",
+        help="Assign response_id from natural image order in 3-page sets",
+    )
+    parser.add_argument(
+        "--sequence-page-types",
+        action="store_true",
+        help="Assign page_type from natural image order in 3-page sets without page OCR",
+    )
+    parser.add_argument(
+        "--sequence-start",
+        type=int,
+        default=1,
+        help="First numeric ID for --sequence-response-ids",
+    )
+    parser.add_argument(
+        "--expected-responses",
+        type=int,
+        default=154,
+        help="Expected reviewed response rows for finalization",
     )
     parser.add_argument(
         "--allow-sequence-page-fallback",
@@ -294,11 +355,6 @@ def parse_args() -> argparse.Namespace:
         "--final-output",
         default="data/processed/aomori_survey_responses_anonymized.csv",
         help="Final anonymized CSV path for --finalize-reviewed",
-    )
-    parser.add_argument(
-        "--allow-review-pending",
-        action="store_true",
-        help="Allow finalization even if needs_review remains true",
     )
     return parser.parse_args()
 
@@ -431,6 +487,39 @@ def field_specs_to_json() -> list[dict[str, Any]]:
     return payload
 
 
+def field_specs_from_json(path: Path) -> tuple[FieldSpec, ...]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    fields: list[FieldSpec] = []
+    for item in payload:
+        options = tuple(
+            opt(int(option["code"]), tuple(float(value) for value in option["bbox"]))
+            for option in item.get("options", [])
+        )
+        bbox = item.get("bbox")
+        fields.append(
+            FieldSpec(
+                name=str(item["name"]),
+                page_type=str(item["page_type"]),
+                kind=str(item["kind"]),
+                options=options,
+                bbox=tuple(float(value) for value in bbox) if bbox else None,
+                relevant_if_field=item.get("relevant_if_field"),
+                relevant_if_code=(
+                    int(item["relevant_if_code"])
+                    if item.get("relevant_if_code") is not None
+                    else None
+                ),
+            )
+        )
+    return tuple(fields)
+
+
+def field_specs_from_args(args: argparse.Namespace) -> tuple[FieldSpec, ...]:
+    if args.layout_json:
+        return field_specs_from_json(Path(args.layout_json))
+    return DEFAULT_FIELDS
+
+
 def list_images(input_dir: Path) -> list[Path]:
     images = [
         path
@@ -451,6 +540,67 @@ def crop_relative(image: Image.Image, bbox: tuple[float, float, float, float]) -
             min(height, int(round(y2 * height))),
         )
     )
+
+
+def find_checkbox_crop(
+    image: Image.Image,
+    bbox: tuple[float, float, float, float],
+    max_frame_size: int = 70,
+    min_frame_aspect: float = 0.70,
+    max_frame_aspect: float = 1.30,
+) -> tuple[Image.Image, str]:
+    """Refine an expected checkbox bbox to the nearest detected square frame."""
+    fallback = crop_relative(image, bbox)
+    if cv2 is None or np is None:
+        return fallback, "opencv_missing"
+
+    width, height = image.size
+    x1, y1, x2, y2 = bbox
+    expected_cx = ((x1 + x2) / 2) * width
+    expected_cy = ((y1 + y2) / 2) * height
+    pad_x = max(18, int(round((x2 - x1) * width * 1.5)))
+    pad_y = max(18, int(round((y2 - y1) * height * 1.5)))
+    sx1 = max(0, int(round(expected_cx - pad_x)))
+    sy1 = max(0, int(round(expected_cy - pad_y)))
+    sx2 = min(width, int(round(expected_cx + pad_x)))
+    sy2 = min(height, int(round(expected_cy + pad_y)))
+    search = image.crop((sx1, sy1, sx2, sy2))
+    gray = np.array(search.convert("L"))
+    binary = cv2.threshold(gray, 190, 255, cv2.THRESH_BINARY_INV)[1]
+    contours, _ = cv2.findContours(binary, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+    candidates: list[tuple[float, tuple[int, int, int, int]]] = []
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        if not (18 <= w <= max_frame_size and 18 <= h <= max_frame_size):
+            continue
+        aspect = w / h if h else 0
+        if not min_frame_aspect <= aspect <= max_frame_aspect:
+            continue
+        rect_area = float(w * h)
+        extent = cv2.contourArea(contour) / rect_area if rect_area else 0.0
+        if extent < 0.25:
+            continue
+        cx = sx1 + x + (w / 2)
+        cy = sy1 + y + (h / 2)
+        distance = ((cx - expected_cx) ** 2 + (cy - expected_cy) ** 2) ** 0.5
+        shape_penalty = abs(1.0 - aspect) * 10
+        candidates.append((distance + shape_penalty, (sx1 + x, sy1 + y, w, h)))
+
+    if not candidates:
+        return fallback, "checkbox_frame_not_detected"
+
+    _, (x, y, w, h) = min(candidates, key=lambda item: item[0])
+    crop_pad = 4
+    refined = image.crop(
+        (
+            max(0, x - crop_pad),
+            max(0, y - crop_pad),
+            min(width, x + w + crop_pad),
+            min(height, y + h + crop_pad),
+        )
+    )
+    return refined, ""
 
 
 def save_crop(image: Image.Image, path: Path) -> str:
@@ -552,6 +702,14 @@ def normalize_response_id(value: str) -> str:
     return f"GS-{int(digits):04d}"
 
 
+def sequence_response_id(index: int, sequence_start: int) -> str:
+    return normalize_response_id(str(sequence_start + (index // len(PAGE_TYPES))))
+
+
+def sequence_page_position(index: int) -> int:
+    return (index % len(PAGE_TYPES)) + 1
+
+
 def classify_page_type(
     image: Image.Image,
     index: int,
@@ -577,10 +735,10 @@ def check_mark_score(crop: Image.Image) -> float:
         return 0.0
     gray = np.array(crop.convert("L"))
     height, width = gray.shape[:2]
-    x1 = int(width * 0.20)
-    x2 = int(width * 0.80)
-    y1 = int(height * 0.20)
-    y2 = int(height * 0.80)
+    x1 = int(width * 0.25)
+    x2 = int(width * 0.75)
+    y1 = int(height * 0.25)
+    y2 = int(height * 0.75)
     center = gray[y1:y2, x1:x2]
     if center.size == 0:
         center = gray
@@ -640,23 +798,67 @@ def process_choice_field(
     page_type: str,
     field: FieldSpec,
 ) -> dict[str, Any]:
-    selected: list[int] = []
-    ambiguous: list[int] = []
-    scores: dict[int, float] = {}
-    crop_paths: list[str] = []
-    for option in field.options:
-        crop = crop_relative(image, option.bbox)
-        crop_path = save_crop(
-            crop,
-            crop_dir / f"{response_id or 'unknown'}_{image_path.stem}_{field.name}_{option.code}.jpg",
-        )
-        crop_paths.append(crop_path)
-        score = check_mark_score(crop)
-        scores[option.code] = score
-        if score >= CHECK_SELECTED_THRESHOLD:
-            selected.append(option.code)
-        elif score >= CHECK_AMBIGUOUS_THRESHOLD:
-            ambiguous.append(option.code)
+    max_frame_size = 95 if field.name in WIDE_CHECKBOX_FRAME_FIELDS else 70
+    min_frame_aspect = 0.45 if field.name in WIDE_CHECKBOX_FRAME_FIELDS else 0.70
+    max_frame_aspect = 1.45 if field.name in WIDE_CHECKBOX_FRAME_FIELDS else 1.30
+
+    def evaluate_options(
+        options: tuple[OptionSpec, ...],
+        crop_suffix: str = "",
+    ) -> tuple[list[int], list[int], list[str], dict[int, float], list[str]]:
+        selected: list[int] = []
+        ambiguous: list[int] = []
+        detection_issues: list[str] = []
+        scores: dict[int, float] = {}
+        crop_paths: list[str] = []
+        for option in options:
+            crop, detection_issue = find_checkbox_crop(
+                image,
+                option.bbox,
+                max_frame_size=max_frame_size,
+                min_frame_aspect=min_frame_aspect,
+                max_frame_aspect=max_frame_aspect,
+            )
+            crop_path = save_crop(
+                crop,
+                crop_dir
+                / f"{response_id or 'unknown'}_{image_path.stem}_{field.name}{crop_suffix}_{option.code}.jpg",
+            )
+            crop_paths.append(crop_path)
+            score = 0.0 if detection_issue else check_mark_score(crop)
+            scores[option.code] = score
+            if score >= CHECK_SELECTED_THRESHOLD:
+                selected.append(option.code)
+            elif score >= CHECK_AMBIGUOUS_THRESHOLD:
+                ambiguous.append(option.code)
+            if detection_issue:
+                ambiguous.append(option.code)
+                detection_issues.append(f"{detection_issue}:{option.code}")
+        return selected, ambiguous, detection_issues, scores, crop_paths
+
+    selected, ambiguous, detection_issues, scores, crop_paths = evaluate_options(
+        field.options
+    )
+    fallback_used = False
+    if (
+        field.kind == "single"
+        and len(selected) != 1
+        and field.name in REAL_SCAN_SINGLE_FALLBACK_OPTIONS
+    ):
+        (
+            fallback_selected,
+            fallback_ambiguous,
+            fallback_detection_issues,
+            fallback_scores,
+            fallback_crop_paths,
+        ) = evaluate_options(REAL_SCAN_SINGLE_FALLBACK_OPTIONS[field.name], "_fallback")
+        if len(fallback_selected) == 1:
+            selected = fallback_selected
+            ambiguous = fallback_ambiguous
+            detection_issues = fallback_detection_issues
+            scores = fallback_scores
+            crop_paths.extend(fallback_crop_paths)
+            fallback_used = True
 
     review_reasons: list[str] = []
     if cv2 is None or np is None:
@@ -670,7 +872,12 @@ def process_choice_field(
     else:
         value = ";".join(str(code) for code in sorted(selected))
     if ambiguous:
-        review_reasons.append("ambiguous_mark_score:" + ";".join(map(str, ambiguous)))
+        review_reasons.append(
+            "ambiguous_mark_score:" + ";".join(map(str, sorted(set(ambiguous))))
+        )
+    review_reasons.extend(sorted(set(detection_issues)))
+    if fallback_used:
+        review_reasons.append("fallback_layout_used")
 
     return candidate_row(
         response_id=response_id,
@@ -736,10 +943,11 @@ def process_fields_for_page(
     crop_dir: Path,
     response_id: str,
     page_type: str,
+    field_specs: tuple[FieldSpec, ...],
 ) -> list[dict[str, Any]]:
     candidates: list[dict[str, Any]] = []
     current_values: dict[str, str] = {}
-    fields = [field for field in DEFAULT_FIELDS if field.page_type == page_type]
+    fields = [field for field in field_specs if field.page_type == page_type]
     for field in fields:
         if field.kind in {"single", "multi"}:
             row = process_choice_field(
@@ -793,6 +1001,9 @@ def build_review_row(
 def default_response_row(response_id: str) -> dict[str, Any]:
     row = {column: "" for column in EXPECTED_COLUMNS}
     row["response_id"] = response_id
+    row["confirmed"] = ""
+    row["source_files"] = ""
+    row["review_crop_paths"] = ""
     for column in NUMERIC_COLUMNS:
         row[column] = "99"
     return row
@@ -821,6 +1032,13 @@ def aggregate_responses(
         response_id = str(page["response_id"]) or f"UNREADABLE_{Path(str(page['source_file'])).stem}"
         pages_by_id.setdefault(response_id, []).append(page)
     for response_id, group in pages_by_id.items():
+        response_rows.setdefault(response_id, default_response_row(response_id))
+        response_rows[response_id]["source_files"] = ";".join(
+            str(page["source_file"]) for page in sorted(group, key=lambda page: int(page["file_order"]))
+        )
+        response_rows[response_id]["review_crop_paths"] = ";".join(
+            str(page.get("red_id_crop", "")) for page in group if str(page.get("red_id_crop", ""))
+        )
         page_types = [str(page["page_type"]) for page in group]
         missing = [page_type for page_type in PAGE_TYPES if page_type not in page_types]
         duplicates = sorted({page_type for page_type in page_types if page_types.count(page_type) > 1})
@@ -853,6 +1071,12 @@ def aggregate_responses(
         field = str(candidate["field"])
         if field in EXPECTED_COLUMNS:
             response_rows[response_id][field] = str(candidate["value"])
+        crop_path = str(candidate["crop_path"])
+        if crop_path:
+            current_crops = str(response_rows[response_id].get("review_crop_paths", ""))
+            response_rows[response_id]["review_crop_paths"] = (
+                f"{current_crops};{crop_path}" if current_crops else crop_path
+            )
         if int(candidate["needs_review"]):
             issue = str(candidate["review_reason"])
             review_by_id.setdefault(response_id, []).append(f"{field}:{issue}")
@@ -893,6 +1117,7 @@ def run_ingest(args: argparse.Namespace) -> Path:
     input_dir = Path(args.input_dir) if args.input_dir else None
     if input_dir is None or not input_dir.exists():
         raise FileNotFoundError("--input-dir is required and must exist")
+    field_specs = field_specs_from_args(args)
     output_dir = output_dir_from_args(args)
     output_dir.mkdir(parents=True, exist_ok=True)
     crop_dir = output_dir / "review_crops"
@@ -903,25 +1128,55 @@ def run_ingest(args: argparse.Namespace) -> Path:
     images = list_images(input_dir)
     if not images:
         raise RuntimeError(f"No JPEG/PNG images found in {input_dir}")
+    if args.sequence_response_ids and len(images) % len(PAGE_TYPES) != 0:
+        raise RuntimeError(
+            f"--sequence-response-ids requires image count to be a multiple of {len(PAGE_TYPES)}; "
+            f"found {len(images)}"
+        )
 
     for index, image_path in enumerate(images):
         with Image.open(image_path) as opened:
             image = ImageOps.exif_transpose(opened).convert("RGB")
         red_id = extract_red_id(image, crop_dir, image_path.stem)
-        page_type, page_text, page_conf = classify_page_type(
-            image, index, args.allow_sequence_page_fallback
-        )
+        if args.sequence_page_types:
+            page_type, page_text, page_conf = PAGE_TYPES[index % len(PAGE_TYPES)], "", None
+        else:
+            page_type, page_text, page_conf = classify_page_type(
+                image, index, args.allow_sequence_page_fallback
+            )
+        red_response_id = str(red_id["response_id"])
+        if args.sequence_response_ids:
+            response_id = sequence_response_id(index, args.sequence_start)
+            response_id_source = "sequence"
+            red_id_issue = ""
+            red_id_ocr_issue = str(red_id["red_id_issue"])
+            red_id_mismatch = (
+                f"red_id_mismatch:{red_response_id}"
+                if red_response_id and red_response_id != response_id
+                else ""
+            )
+        else:
+            response_id = red_response_id
+            response_id_source = "red_ocr"
+            red_id_issue = str(red_id["red_id_issue"])
+            red_id_ocr_issue = str(red_id["red_id_issue"])
+            red_id_mismatch = ""
         page = {
             "source_file": str(image_path),
             "file_order": index + 1,
+            "set_page_position": sequence_page_position(index),
             "red_id_raw": red_id["red_id_raw"],
-            "response_id": red_id["response_id"],
+            "red_response_id": red_response_id,
+            "response_id": response_id,
+            "response_id_source": response_id_source,
             "red_id_confidence": red_id["red_id_confidence"],
             "red_id_crop": red_id["red_id_crop"],
             "page_type": page_type,
             "page_ocr_confidence": page_conf if page_conf is not None else "",
             "page_ocr_preview": page_text[:240],
-            "red_id_issue": red_id["red_id_issue"],
+            "red_id_issue": red_id_issue,
+            "red_id_ocr_issue": red_id_ocr_issue,
+            "red_id_mismatch": red_id_mismatch,
         }
         needs_review, reason = page_needs_review(page)
         page["needs_review"] = int(needs_review)
@@ -933,8 +1188,9 @@ def run_ingest(args: argparse.Namespace) -> Path:
                     image=image,
                     image_path=image_path,
                     crop_dir=crop_dir,
-                    response_id=str(red_id["response_id"]),
+                    response_id=str(response_id),
                     page_type=page_type,
+                    field_specs=field_specs,
                 )
             )
 
@@ -947,7 +1203,13 @@ def run_ingest(args: argparse.Namespace) -> Path:
     pd.DataFrame(review_rows).to_csv(
         output_dir / "ocr_review_queue.csv", index=False, encoding="utf-8-sig"
     )
-    reviewed_columns = EXPECTED_COLUMNS + ["needs_review", "review_reasons"]
+    reviewed_columns = EXPECTED_COLUMNS + [
+        "confirmed",
+        "needs_review",
+        "review_reasons",
+        "source_files",
+        "review_crop_paths",
+    ]
     pd.DataFrame(response_rows).reindex(columns=reviewed_columns).to_csv(
         output_dir / "aomori_survey_responses_reviewed.csv",
         index=False,
@@ -979,14 +1241,22 @@ def finalize_reviewed(args: argparse.Namespace) -> Path:
     missing = [column for column in EXPECTED_COLUMNS if column not in df.columns]
     if missing:
         raise KeyError(f"Reviewed CSV is missing expected columns: {missing}")
-    if "needs_review" in df.columns and not args.allow_review_pending:
-        pending = df["needs_review"].apply(truthy)
-        if bool(pending.any()):
-            raise RuntimeError(
-                f"Reviewed CSV still has {int(pending.sum())} rows with needs_review=true. "
-                "Resolve them or pass --allow-review-pending."
-            )
-    out = df[EXPECTED_COLUMNS].copy()
+    if len(df) != int(args.expected_responses):
+        raise RuntimeError(
+            f"Reviewed CSV has {len(df)} response rows; expected {args.expected_responses}."
+        )
+    if "confirmed" not in df.columns:
+        raise KeyError("Reviewed CSV is missing required confirmation column: confirmed")
+    confirmed = df["confirmed"].apply(truthy)
+    if not bool(confirmed.all()):
+        raise RuntimeError(
+            f"Reviewed CSV has {int((~confirmed).sum())} rows without confirmed=1. "
+            "Confirm every response before finalization."
+        )
+    output_columns = EXPECTED_COLUMNS + [
+        column for column in ANALYSIS_DERIVED_COLUMNS if column in df.columns
+    ]
+    out = df[output_columns].copy()
     for column in NUMERIC_COLUMNS:
         out[column] = out[column].replace("", "99")
     final_output = Path(args.final_output)
