@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import math
+from datetime import datetime
 from pathlib import Path
 from typing import Iterable, List
 
@@ -69,6 +70,39 @@ SAMPLE_SIZE_DESIGN_E = 0.12
 SAMPLE_SIZE_DESIGN_DEFF = 1.2
 SAMPLE_SIZE_DESIGN_INVALID_RATE = 0.15
 SAMPLE_SIZE_DESIGN_TARGET_ROUND = 10
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+SINGLE_CHOICE_LABEL_COLUMNS = [
+    ("q1_age_group", "q1_age_group_label", "Q1 年代"),
+    ("q2_housing_type", "q2_housing_label", "Q2 住宅種別"),
+    ("q3_building_age_band", "q3_building_age_band_label", "Q3 築年帯"),
+    ("q4_tenure", "q4_tenure_label", "Q4 所有形態"),
+    ("q5_winter_home_bath_freq", "q5_winter_home_bath_freq_label", "Q5 冬季自宅入浴頻度"),
+    ("q6_window_insulation", "q6_window_insulation_label", "Q6 浴室窓断熱"),
+    ("q7_bath_heater_status", "q7_status_label", "Q7 浴室暖房乾燥機"),
+    ("q9_central_heating_use", "q9_label", "Q9 セントラル暖房"),
+    ("q11_dressingroom_cold_7pt", "q11_dressingroom_label", "Q11 脱衣所寒さ"),
+    ("q11_bathroom_cold_7pt", "q11_bathroom_label", "Q11 浴室寒さ"),
+]
+
+Q8_REASON_LABELS = {
+    1: "1_既に十分暖かいので必要がない",
+    2: "2_電気代が気になる",
+    3: "3_設置費用が高い",
+    4: "4_住宅の構造上、設置が難しい",
+    5: "5_賃貸で工事できない",
+    6: "6_使い方がわからない",
+    7: "7_故障中で使えない",
+    8: "8_その他",
+}
+
+Q10_ALT_HEATING_LABELS = {
+    1: "1_ストーブ",
+    2: "2_エアコン",
+    3: "3_床暖房",
+    4: "4_その他",
+    5: "5_使用していない",
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -76,8 +110,19 @@ def parse_args() -> argparse.Namespace:
         description="Generate required tabulations for Aomori Q1-Q11 paper survey."
     )
     parser.add_argument("--input-csv", required=True, help="Path to input CSV")
-    parser.add_argument("--output-dir", required=True, help="Path to output directory")
+    parser.add_argument(
+        "--output-dir",
+        help=(
+            "Path to output directory. Defaults to "
+            "outputs/runs/YYYYMMDD_HHMMSS_initial_analysis."
+        ),
+    )
     return parser.parse_args()
+
+
+def default_output_dir() -> Path:
+    tag = datetime.now().strftime("%Y%m%d_%H%M%S_initial_analysis")
+    return REPO_ROOT / "outputs" / "runs" / tag
 
 
 def read_csv_with_fallback(path: Path) -> pd.DataFrame:
@@ -124,6 +169,7 @@ def derive_validity_flags(d: pd.DataFrame) -> pd.DataFrame:
     miss_q11_bath = is_missing_numeric(q11_bath)
 
     out["need_q8"] = need_q8
+    out["q7_q8_inconsistency_flag"] = q7.eq(1) & q8.ne("")
     out["missing_q7_bath_heater_status"] = miss_q7
     out["missing_q8_reason_codes"] = miss_q8
     out["missing_q11_bathroom_cold_7pt"] = miss_q11_bath
@@ -143,6 +189,63 @@ def add_label_columns(d: pd.DataFrame) -> pd.DataFrame:
     ).fillna("99_無回答")
     out["q9_label"] = out["q9_central_heating_use"].map(
         {1: "1_24時間使用", 2: "2_時間限定使用", 3: "3_不使用", 99: "99_無回答"}
+    ).fillna("99_無回答")
+    out["q1_age_group_label"] = out["q1_age_group"].map(
+        {
+            1: "1_18-29",
+            2: "2_30-39",
+            3: "3_40-49",
+            4: "4_50-59",
+            5: "5_60-69",
+            6: "6_70-79",
+            7: "7_80-89",
+            8: "8_90歳以上",
+            99: "99_無回答",
+        }
+    ).fillna("99_無回答")
+    out["q3_building_age_band_label"] = out["q3_building_age_band"].map(
+        {
+            1: "1_10年未満",
+            2: "2_10-19年",
+            3: "3_20-29年",
+            4: "4_30年以上",
+            5: "5_わからない",
+            99: "99_無回答",
+        }
+    ).fillna("99_無回答")
+    out["q4_tenure_label"] = out["q4_tenure"].map(
+        {1: "1_持家", 2: "2_賃貸", 99: "99_無回答"}
+    ).fillna("99_無回答")
+    out["q5_winter_home_bath_freq_label"] = out["q5_winter_home_bath_freq"].map(
+        {
+            1: "1_毎日",
+            2: "2_週4-6回",
+            3: "3_週1-3回",
+            4: "4_月1-3回",
+            5: "5_ほとんど入浴しない",
+            99: "99_無回答",
+        }
+    ).fillna("99_無回答")
+    out["q6_window_insulation_label"] = out["q6_window_insulation"].map(
+        {
+            1: "1_二重サッシ/複層ガラスあり",
+            2: "2_単板ガラスあり",
+            3: "3_窓なし",
+            4: "4_わからない",
+            99: "99_無回答",
+        }
+    ).fillna("99_無回答")
+    out["q11_dressingroom_label"] = out["q11_dressingroom_cold_7pt"].map(
+        {
+            1: "1_非常に暖かい",
+            2: "2_暖かい",
+            3: "3_やや暖かい",
+            4: "4_どちらでもない",
+            5: "5_やや寒い",
+            6: "6_寒い",
+            7: "7_非常に寒い",
+            99: "99_無回答",
+        }
     ).fillna("99_無回答")
     out["q11_bathroom_label"] = out["q11_bathroom_cold_7pt"].map(
         {
@@ -190,7 +293,7 @@ def parse_reason_codes(value: str) -> List[int]:
 
 
 def reason_dominance(valid: pd.DataFrame) -> dict:
-    target = valid[valid["need_q8"]].copy()
+    target = valid[valid["need_q8"] & ~valid["q7_q8_inconsistency_flag"]].copy()
     if target.empty:
         return {
             "reason_target_n": 0,
@@ -365,7 +468,11 @@ def save_crosstabs(valid: pd.DataFrame, output_dir: Path) -> None:
         encoding="utf-8-sig",
     )
 
-    reasons = valid[valid["q8_reason_codes"].ne("")][
+    reasons = valid[
+        valid["need_q8"]
+        & ~valid["q7_q8_inconsistency_flag"]
+        & valid["q8_reason_codes"].ne("")
+    ][
         ["q8_reason_codes", "q2_housing_label"]
     ].copy()
     if reasons.empty:
@@ -382,7 +489,198 @@ def save_crosstabs(valid: pd.DataFrame, output_dir: Path) -> None:
     )
 
 
-def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
+def summarize_single_choice(valid: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+    for variable, label_col, variable_label in SINGLE_CHOICE_LABEL_COLUMNS:
+        total = int(len(valid))
+        counts = valid[label_col].value_counts(dropna=False).sort_index()
+        for category, count_value in counts.items():
+            count = int(count_value)
+            pct = (count / total * 100.0) if total else 0.0
+            ci_lo, ci_hi = wilson_ci(count, total)
+            rows.append(
+                {
+                    "summary_type": "single_choice",
+                    "variable": variable,
+                    "variable_label": variable_label,
+                    "category": category,
+                    "count": count,
+                    "denominator": total,
+                    "pct": round(pct, 2),
+                    "ci95_lo_pct": round(ci_lo * 100.0, 2),
+                    "ci95_hi_pct": round(ci_hi * 100.0, 2),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def summarize_multiple_choice(
+    denominator_df: pd.DataFrame,
+    variable: str,
+    variable_label: str,
+    code_labels: dict[int, str],
+) -> pd.DataFrame:
+    total = int(len(denominator_df))
+    code_lists = denominator_df[variable].fillna("").astype(str).apply(parse_reason_codes)
+    rows = []
+    for code, label in code_labels.items():
+        count = int(code_lists.apply(lambda xs: code in xs).sum())
+        pct = (count / total * 100.0) if total else 0.0
+        ci_lo, ci_hi = wilson_ci(count, total)
+        rows.append(
+            {
+                "summary_type": "multiple_choice",
+                "variable": variable,
+                "variable_label": variable_label,
+                "category": label,
+                "count": count,
+                "denominator": total,
+                "pct": round(pct, 2),
+                "ci95_lo_pct": round(ci_lo * 100.0, 2),
+                "ci95_hi_pct": round(ci_hi * 100.0, 2),
+            }
+        )
+
+    empty_count = int(
+        denominator_df[variable].fillna("").astype(str).str.strip().eq("").sum()
+    )
+    if empty_count:
+        pct = (empty_count / total * 100.0) if total else 0.0
+        ci_lo, ci_hi = wilson_ci(empty_count, total)
+        rows.append(
+            {
+                "summary_type": "multiple_choice",
+                "variable": variable,
+                "variable_label": variable_label,
+                "category": "empty_無回答/非該当",
+                "count": empty_count,
+                "denominator": total,
+                "pct": round(pct, 2),
+                "ci95_lo_pct": round(ci_lo * 100.0, 2),
+                "ci95_hi_pct": round(ci_hi * 100.0, 2),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def save_descriptive_summary(valid: pd.DataFrame, output_dir: Path) -> pd.DataFrame:
+    q8_target = valid[valid["need_q8"] & ~valid["q7_q8_inconsistency_flag"]].copy()
+    summary = pd.concat(
+        [
+            summarize_single_choice(valid),
+            summarize_multiple_choice(
+                q8_target,
+                "q8_reason_codes",
+                "Q8 未使用/未設置理由（Q7=2/3）",
+                Q8_REASON_LABELS,
+            ),
+            summarize_multiple_choice(
+                valid,
+                "q10_alt_heating_types",
+                "Q10 代替暖房設備",
+                Q10_ALT_HEATING_LABELS,
+            ),
+        ],
+        ignore_index=True,
+    )
+    summary.to_csv(output_dir / "descriptive_summary.csv", index=False, encoding="utf-8-sig")
+    return summary
+
+
+def save_q7_q8_inconsistency_supplement(
+    flagged: pd.DataFrame, output_dir: Path
+) -> pd.DataFrame:
+    supplement = flagged[flagged["q7_q8_inconsistency_flag"]].copy()
+    columns = [
+        "response_id",
+        "q7_bath_heater_status",
+        "q7_status_label",
+        "q8_reason_codes",
+        "q8_other_text",
+        "q9_central_heating_use",
+        "q9_label",
+        "q11_bathroom_cold_7pt",
+        "q11_bathroom_label",
+        "invalid_main3",
+    ]
+    supplement = supplement[columns]
+    supplement.to_csv(
+        output_dir / "q7_q8_inconsistency_supplement.csv",
+        index=False,
+        encoding="utf-8-sig",
+    )
+    return supplement
+
+
+def save_free_text_summary(valid: pd.DataFrame, output_dir: Path) -> pd.DataFrame:
+    rows = []
+    for _, row in valid.iterrows():
+        q8_codes = parse_reason_codes(str(row["q8_reason_codes"]))
+        if 8 in q8_codes:
+            text = str(row["q8_other_text"]).strip()
+            rows.append(
+                {
+                    "question": "Q8",
+                    "response_id": row["response_id"],
+                    "selected_other_code": 1,
+                    "text": text,
+                    "text_status": "記述あり" if text else "その他チェックあり・記述なし",
+                    "included_in_main_reason_summary": int(
+                        bool(row["need_q8"])
+                        and not bool(row["q7_q8_inconsistency_flag"])
+                    ),
+                }
+            )
+
+        q10_codes = parse_reason_codes(str(row["q10_alt_heating_types"]))
+        if 4 in q10_codes:
+            text = str(row["q10_other_text"]).strip()
+            rows.append(
+                {
+                    "question": "Q10",
+                    "response_id": row["response_id"],
+                    "selected_other_code": 1,
+                    "text": text,
+                    "text_status": "記述あり" if text else "その他チェックあり・記述なし",
+                    "included_in_main_reason_summary": "",
+                }
+            )
+
+    summary = pd.DataFrame(
+        rows,
+        columns=[
+            "question",
+            "response_id",
+            "selected_other_code",
+            "text",
+            "text_status",
+            "included_in_main_reason_summary",
+        ],
+    )
+    summary.to_csv(output_dir / "free_text_summary.csv", index=False, encoding="utf-8-sig")
+    return summary
+
+
+def save_supplemental_outputs(flagged: pd.DataFrame, output_dir: Path) -> dict:
+    valid = flagged[~flagged["invalid_main3"]].copy()
+    descriptive = save_descriptive_summary(valid, output_dir)
+    inconsistency = save_q7_q8_inconsistency_supplement(flagged, output_dir)
+    free_text = save_free_text_summary(valid, output_dir)
+    q8_other = free_text[free_text["question"].eq("Q8")]
+    q10_other = free_text[free_text["question"].eq("Q10")]
+    return {
+        "descriptive_rows": int(len(descriptive)),
+        "q7_q8_inconsistency_n": int(len(inconsistency)),
+        "q8_other_n": int(len(q8_other)),
+        "q8_other_nonempty_n": int(q8_other["text"].astype(str).str.strip().ne("").sum()),
+        "q10_other_n": int(len(q10_other)),
+        "q10_other_nonempty_n": int(q10_other["text"].astype(str).str.strip().ne("").sum()),
+    }
+
+
+def save_qc_and_report(
+    flagged: pd.DataFrame, output_dir: Path, supplemental: dict
+) -> None:
     total = int(len(flagged))
     invalid = int(flagged["invalid_main3"].sum())
     valid_count = total - invalid
@@ -421,6 +719,10 @@ def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
             {
                 "metric": "missing_q11_bathroom_cold_7pt_n",
                 "value": int(flagged["missing_q11_bathroom_cold_7pt"].sum()),
+            },
+            {
+                "metric": "q7_q8_inconsistency_n",
+                "value": supplemental["q7_q8_inconsistency_n"],
             },
             {"metric": "reason_target_n", "value": dominance["reason_target_n"]},
             {"metric": "no_need_pct", "value": dominance["no_need_pct"]},
@@ -462,13 +764,16 @@ def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
     report_lines = [
         "# 五所川原市 紙アンケート集計レポート",
         "",
-        "- 目的: 配布版Q1-Q11の必須3表出力と品質ゲート確認",
+        "- 目的: 配布版Q1-Q11の初期解析、必須3表出力、品質ゲート確認",
+        "- 解析位置づけ: 五所川原市の便宜抽出サンプル内での内訳把握",
+        "- 注意: 県全体推定や因果推定は行わない",
         "- 記述ポリシー: `docs/rules/statistical_reporting_policy.md`",
         f"- 総票数: {total}",
         f"- 有効票数: {valid_count}",
         f"- 無効票数: {invalid}",
         f"- 主要欠損率: {missing_rate}%",
         f"- 解析ゲート: {gate}",
+        f"- Q7/Q8不整合票: {supplemental['q7_q8_inconsistency_n']}",
         "",
         "## 目標回答数の計算再現（固定前提）",
         "",
@@ -519,12 +824,28 @@ def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
             f"- 差: {dominance['gap_pp']}pp",
             f"- 判定: {dominance['dominant_group']}",
             "",
+            "## 自由記述（その他）",
+            "",
+            f"- Q8その他チェックあり: {supplemental['q8_other_n']}",
+            f"- Q8その他の記述あり: {supplemental['q8_other_nonempty_n']}",
+            f"- Q10その他チェックあり: {supplemental['q10_other_n']}",
+            f"- Q10その他の記述あり: {supplemental['q10_other_nonempty_n']}",
+            "- 初期解析では再カテゴリ化せず、`free_text_summary.csv` に原文一覧を出力",
+            "",
+            "## Q7/Q8不整合票",
+            "",
+            "- 方針: Q7原票値を主解析に残し、Q8理由の主要集計からは除外",
+            "- 補足表: `q7_q8_inconsistency_supplement.csv`",
+            "",
             "## 出力ファイル",
             "",
             "- `qc_summary.csv`",
+            "- `descriptive_summary.csv`",
             "- `table1_q7_status_x_bathroom_cold_7pt.csv`",
             "- `table2_q7_status_x_central_heating.csv`",
             "- `table3_q8_reason_x_housing_type.csv`",
+            "- `q7_q8_inconsistency_supplement.csv`",
+            "- `free_text_summary.csv`",
         ]
     )
     (output_dir / "tabulation_report.md").write_text(
@@ -535,7 +856,7 @@ def save_qc_and_report(flagged: pd.DataFrame, output_dir: Path) -> None:
 def main() -> None:
     args = parse_args()
     input_csv = Path(args.input_csv)
-    output_dir = Path(args.output_dir)
+    output_dir = Path(args.output_dir) if args.output_dir else default_output_dir()
     output_dir.mkdir(parents=True, exist_ok=True)
 
     raw = read_csv_with_fallback(input_csv)
@@ -545,7 +866,9 @@ def main() -> None:
     valid = labeled[~labeled["invalid_main3"]].copy()
 
     save_crosstabs(valid, output_dir)
-    save_qc_and_report(labeled, output_dir)
+    supplemental = save_supplemental_outputs(labeled, output_dir)
+    save_qc_and_report(labeled, output_dir, supplemental)
+    print(output_dir)
 
 
 if __name__ == "__main__":
