@@ -23,7 +23,7 @@ DEFAULT_LAYOUT_JSON = (
     / "04_data_entry_analysis"
     / "20260512_aomori_survey_real_scan_layout_v1.json"
 )
-CROP_VERSION = "v3"
+CROP_VERSION = "v5"
 QUESTION_PREVIEW_BOXES = {
     "q1_age_group": (0.045, 0.082, 0.955, 0.312),
     "q2_housing_type": (0.045, 0.257, 0.955, 0.424),
@@ -32,9 +32,11 @@ QUESTION_PREVIEW_BOXES = {
     "q5_winter_home_bath_freq": (0.045, 0.623, 0.955, 0.882),
     "q6_window_insulation": (0.045, 0.026, 0.955, 0.220),
     "q7_bath_heater_status": (0.045, 0.215, 0.955, 0.355),
-    "q8_reason_codes": (0.045, 0.365, 0.955, 0.700),
+    "q8_reason_codes": (0.045, 0.455, 0.955, 0.775),
+    "q8_other_text": (0.045, 0.455, 0.955, 0.775),
     "q9_central_heating_use": (0.045, 0.700, 0.955, 0.960),
     "q10_alt_heating_types": (0.045, 0.043, 0.955, 0.302),
+    "q10_other_text": (0.045, 0.043, 0.955, 0.302),
     "q11_dressingroom_cold_7pt": (0.045, 0.297, 0.955, 0.618),
     "q11_bathroom_cold_7pt": (0.045, 0.549, 0.955, 0.870),
 }
@@ -54,6 +56,7 @@ MULTI_CHOICE_FIELDS = ["q8_reason_codes", "q10_alt_heating_types"]
 TEXT_FIELDS = ["q8_other_text", "q10_other_text"]
 REVIEW_FIELDS = SINGLE_CHOICE_FIELDS + MULTI_CHOICE_FIELDS + TEXT_FIELDS
 REVIEW_PHASES = {
+    "全件ID一括レビュー": "id_batch_all",
     "fallback Q7/Q9": "fallback",
     "99単一選択": "single_99",
     "Q7=1かつQ8理由あり": "q7_q8",
@@ -269,6 +272,16 @@ def crop_relative(
     )
 
 
+def question_crop_output_path(
+    source_file: str,
+    response_id: str,
+    field: str,
+    crop_dir: Path,
+) -> Path:
+    source_path = Path(source_file)
+    return crop_dir / f"{response_id}_{source_path.stem}_{field}_question_{CROP_VERSION}.jpg"
+
+
 def generate_question_crop(
     source_file: str,
     response_id: str,
@@ -280,7 +293,7 @@ def generate_question_crop(
     if not source_path.exists():
         raise FileNotFoundError(f"Source image does not exist: {source_path}")
     crop_dir.mkdir(parents=True, exist_ok=True)
-    output_path = crop_dir / f"{response_id}_{source_path.stem}_{field}_question_{CROP_VERSION}.jpg"
+    output_path = question_crop_output_path(source_file, response_id, field, crop_dir)
     if output_path.exists():
         return str(output_path)
     with Image.open(source_path) as opened:
@@ -299,6 +312,15 @@ def reviewed_source_path(run_dir: Path) -> Path:
     if manual_path.exists():
         return manual_path
     return run_dir / "aomori_survey_responses_reviewed.csv"
+
+
+def lazy_question_crop_path(
+    source_file: str,
+    response_id: str,
+    field: str,
+    crop_dir: Path,
+) -> str:
+    return str(question_crop_output_path(source_file, response_id, field, crop_dir))
 
 
 def include_queue_row(row: pd.Series, phase: str, reviewed: pd.DataFrame) -> bool:
@@ -325,7 +347,12 @@ def include_queue_row(row: pd.Series, phase: str, reviewed: pd.DataFrame) -> boo
     return False
 
 
-def build_review_items(run_dir: Path, layout_json: Path, phase: str) -> pd.DataFrame:
+def build_review_items(
+    run_dir: Path,
+    layout_json: Path,
+    phase: str,
+    decisions_csv: Path | None = None,
+) -> pd.DataFrame:
     reviewed_path = reviewed_source_path(run_dir)
     candidates_path = run_dir / "ocr_candidates.csv"
     queue_path = run_dir / "ocr_review_queue.csv"
@@ -343,7 +370,7 @@ def build_review_items(run_dir: Path, layout_json: Path, phase: str) -> pd.DataF
     reviewed_by_id = {
         str(row["response_id"]): row for _, row in reviewed.iterrows()
     }
-    decisions_path = run_dir / "manual_review_decisions.csv"
+    decisions_path = decisions_csv if decisions_csv is not None else run_dir / "manual_review_decisions.csv"
     decisions = load_decisions(decisions_path)
     decided_item_ids = set()
     if not decisions.empty:
@@ -352,6 +379,42 @@ def build_review_items(run_dir: Path, layout_json: Path, phase: str) -> pd.DataF
                 "review_item_id"
             ].astype(str)
         )
+    if phase == "id_batch_all":
+        for response_id in sorted(reviewed_by_id):
+            response = reviewed_by_id[response_id]
+            for field in REVIEW_FIELDS:
+                candidate = candidate_lookup.get((response_id, field))
+                if candidate is None:
+                    continue
+                source_file = str(candidate["source_file"])
+                question_crop_path = lazy_question_crop_path(
+                    source_file=source_file,
+                    response_id=response_id,
+                    field=field,
+                    crop_dir=crop_dir,
+                )
+                item_id = review_item_id(response_id, field)
+                review_reason = (
+                    "saved_manual_review"
+                    if item_id in decided_item_ids
+                    else "unreviewed_all_fields"
+                )
+                rows.append(
+                    {
+                        "review_item_id": item_id,
+                        "response_id": response_id,
+                        "field": field,
+                        "field_kind": field_kind(field),
+                        "field_label": FIELD_LABELS[field],
+                        "current_value": str(response.get(field, "")),
+                        "candidate_value": str(candidate.get("value", "")),
+                        "review_reason": review_reason,
+                        "source_file": source_file,
+                        "question_crop_path": question_crop_path,
+                    }
+                )
+        return pd.DataFrame(rows)
+
     if phase == "unreviewed_q7_q9":
         for response_id, response in reviewed_by_id.items():
             for field in ("q7_bath_heater_status", "q9_central_heating_use"):
@@ -433,7 +496,15 @@ def build_review_items(run_dir: Path, layout_json: Path, phase: str) -> pd.DataF
         if response is None or candidate is None:
             continue
         source_file = str(candidate["source_file"])
-        if field in TEXT_FIELDS:
+        if field in TEXT_FIELDS and field in QUESTION_PREVIEW_BOXES:
+            question_crop_path = generate_question_crop(
+                source_file=source_file,
+                response_id=response_id,
+                field=field,
+                layout=layout,
+                crop_dir=crop_dir,
+            )
+        elif field in TEXT_FIELDS:
             question_crop_path = generate_crop_from_bbox_path(str(candidate.get("crop_path", "")))
         else:
             question_crop_path = generate_question_crop(
@@ -470,12 +541,14 @@ def load_decisions(path: Path) -> pd.DataFrame:
     return df.reindex(columns=DECISION_COLUMNS)
 
 
-def save_decision(path: Path, item: pd.Series, resolved_value: str, reviewer_note: str) -> None:
-    decisions = load_decisions(path)
-    item_id = str(item["review_item_id"])
-    decisions = decisions[decisions["review_item_id"] != item_id]
-    new_row = {
-        "review_item_id": item_id,
+def make_decision_row(
+    item: pd.Series,
+    resolved_value: str,
+    reviewer_note: str,
+    reviewed_at: str | None = None,
+) -> dict[str, str]:
+    return {
+        "review_item_id": str(item["review_item_id"]),
         "response_id": str(item["response_id"]),
         "field": str(item["field"]),
         "current_value": str(item["current_value"]),
@@ -483,11 +556,43 @@ def save_decision(path: Path, item: pd.Series, resolved_value: str, reviewer_not
         "reviewer_note": reviewer_note,
         "source_file": str(item["source_file"]),
         "question_crop_path": str(item["question_crop_path"]),
-        "reviewed_at": datetime.now().isoformat(timespec="seconds"),
+        "reviewed_at": reviewed_at or datetime.now().isoformat(timespec="seconds"),
     }
+
+
+def save_decision(path: Path, item: pd.Series, resolved_value: str, reviewer_note: str) -> None:
+    decisions = load_decisions(path)
+    item_id = str(item["review_item_id"])
+    decisions = decisions[decisions["review_item_id"] != item_id]
+    new_row = make_decision_row(item, resolved_value, reviewer_note)
     decisions = pd.concat([decisions, pd.DataFrame([new_row])], ignore_index=True)
     path.parent.mkdir(parents=True, exist_ok=True)
     decisions.to_csv(path, index=False, encoding="utf-8-sig", quoting=csv.QUOTE_MINIMAL)
+
+
+def save_decisions_batch(
+    path: Path,
+    items: pd.DataFrame,
+    resolved_values: dict[str, str],
+    reviewer_notes: dict[str, str],
+) -> int:
+    decisions = load_decisions(path)
+    item_ids = set(items["review_item_id"].astype(str))
+    decisions = decisions[~decisions["review_item_id"].astype(str).isin(item_ids)]
+    reviewed_at = datetime.now().isoformat(timespec="seconds")
+    new_rows = [
+        make_decision_row(
+            item,
+            resolved_values[str(item["review_item_id"])],
+            reviewer_notes.get(str(item["review_item_id"]), ""),
+            reviewed_at,
+        )
+        for _, item in items.iterrows()
+    ]
+    decisions = pd.concat([decisions, pd.DataFrame(new_rows)], ignore_index=True)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    decisions.to_csv(path, index=False, encoding="utf-8-sig", quoting=csv.QUOTE_MINIMAL)
+    return len(new_rows)
 
 
 def decision_map(decisions: pd.DataFrame) -> dict[str, pd.Series]:
@@ -511,8 +616,218 @@ def display_name(row: pd.Series, done: bool) -> str:
     return f"{status} {row['response_id']} {row['field_label']}"
 
 
+def response_display_name(response_id: str, response_items: pd.DataFrame, decisions: dict[str, pd.Series]) -> str:
+    item_ids = response_items["review_item_id"].astype(str)
+    done_count = sum(item_id in decisions for item_id in item_ids)
+    remaining_count = len(response_items) - done_count
+    return f"{response_id} 未{remaining_count} / 済{done_count}"
+
+
 def parse_code_list(value: str) -> set[str]:
     return {token.strip() for token in str(value or "").split(";") if token.strip()}
+
+
+def single_choice_default(field: str, value: str) -> str:
+    normalized = str(value).strip()
+    if normalized in OPTION_LABELS[field] or normalized == "99":
+        return normalized
+    return "99"
+
+
+def render_single_choice_input(st: Any, item: pd.Series, existing: pd.Series | None) -> str:
+    field = str(item["field"])
+    default_value = (
+        str(existing.get("resolved_value", ""))
+        if existing is not None
+        else str(item.get("current_value", ""))
+    )
+    options = list(OPTION_LABELS[field]) + ["99"]
+    labels = {**OPTION_LABELS[field], "99": "判定不能/無回答"}
+    default_code = single_choice_default(field, default_value)
+    selected = st.radio(
+        "目視値",
+        options,
+        index=options.index(default_code),
+        format_func=lambda code: f"{code}: {labels[code]}",
+        horizontal=False,
+        key=f"batch_single_{item['review_item_id']}",
+    )
+    return str(selected)
+
+
+def render_multi_choice_input(st: Any, item: pd.Series, existing: pd.Series | None) -> str:
+    field = str(item["field"])
+    default_value = (
+        str(existing.get("resolved_value", ""))
+        if existing is not None
+        else str(item.get("current_value", ""))
+    )
+    selected_defaults = parse_code_list(default_value)
+    selected: list[str] = []
+    option_columns = st.columns(2)
+    for index, (code, label) in enumerate(OPTION_LABELS[field].items()):
+        with option_columns[index % 2]:
+            checked = code in selected_defaults
+            if st.checkbox(
+                f"{code}: {label}",
+                value=checked,
+                key=f"batch_check_{item['review_item_id']}_{code}",
+            ):
+                selected.append(code)
+    return ";".join(sorted(selected, key=int))
+
+
+def render_text_input(st: Any, item: pd.Series, existing: pd.Series | None) -> str:
+    default_value = (
+        str(existing.get("resolved_value", ""))
+        if existing is not None
+        else str(item.get("current_value", ""))
+    )
+    return str(
+        st.text_area(
+            "目視入力",
+            value=default_value,
+            key=f"batch_text_{item['review_item_id']}",
+            height=88,
+        )
+    )
+
+
+def scroll_to_top_once(st: Any, components: Any) -> None:
+    if not st.session_state.pop("scroll_to_top_once", False):
+        return
+    components.html(
+        """
+        <script>
+        window.parent.scrollTo({top: 0, left: 0, behavior: "instant"});
+        </script>
+        """,
+        height=0,
+    )
+
+
+def render_batch_item_input(
+    st: Any,
+    item: pd.Series,
+    existing: pd.Series | None,
+    layout: dict[str, list[tuple[float, float, float, float]]],
+    crop_dir: Path,
+) -> tuple[str, str]:
+    st.markdown(f"#### {item['field_label']}")
+    left, right = st.columns([1.25, 1.0])
+    with left:
+        crop_path = Path(str(item["question_crop_path"]))
+        if (
+            not crop_path.exists()
+            and (str(item["field"]) not in TEXT_FIELDS or str(item["field"]) in QUESTION_PREVIEW_BOXES)
+        ):
+            try:
+                crop_path = Path(
+                    generate_question_crop(
+                        source_file=str(item["source_file"]),
+                        response_id=str(item["response_id"]),
+                        field=str(item["field"]),
+                        layout=layout,
+                        crop_dir=crop_dir,
+                    )
+                )
+            except Exception as exc:
+                st.warning(f"Question crop generation failed: {exc}")
+        if crop_path.exists():
+            st.image(str(crop_path), width="stretch")
+        else:
+            st.warning(f"Question crop is missing: {crop_path}")
+        st.caption(str(crop_path))
+    with right:
+        st.write(f"現在値: `{item['current_value']}`")
+        st.write(f"OCR候補値: `{item['candidate_value']}`")
+        st.write(f"理由: `{item['review_reason']}`")
+        if existing is not None:
+            st.success(f"保存済み: `{existing['resolved_value']}`")
+        kind = str(item["field_kind"])
+        if kind == "multi":
+            resolved_value = render_multi_choice_input(st, item, existing)
+        elif kind == "text":
+            resolved_value = render_text_input(st, item, existing)
+        else:
+            resolved_value = render_single_choice_input(st, item, existing)
+        note_default = "" if existing is None else str(existing.get("reviewer_note", ""))
+        reviewer_note = st.text_input(
+            "メモ",
+            value=note_default,
+            key=f"batch_note_{item['review_item_id']}",
+        )
+        st.write(f"保存値: `{resolved_value}`")
+    return resolved_value, reviewer_note
+
+
+def render_id_batch_review(
+    st: Any,
+    items: pd.DataFrame,
+    decisions: dict[str, pd.Series],
+    decisions_csv: Path,
+    layout: dict[str, list[tuple[float, float, float, float]]],
+    crop_dir: Path,
+) -> None:
+    unresolved_items = items[~items["review_item_id"].astype(str).isin(decisions)]
+    response_ids = list(dict.fromkeys(items["response_id"].astype(str)))
+    if not response_ids:
+        st.info("表示対象のレビューIDはありません。")
+        return
+
+    first_unresolved = None
+    if not unresolved_items.empty:
+        first_unresolved = str(unresolved_items.iloc[0]["response_id"])
+    initial_response_id = first_unresolved or response_ids[0]
+    if (
+        "batch_response_id" in st.session_state
+        and st.session_state["batch_response_id"] not in response_ids
+    ):
+        del st.session_state["batch_response_id"]
+    response_items_by_id = {
+        response_id: items[items["response_id"].astype(str).eq(response_id)]
+        for response_id in response_ids
+    }
+    selected_response_id = st.selectbox(
+        "レビューID",
+        response_ids,
+        index=response_ids.index(initial_response_id),
+        format_func=lambda response_id: response_display_name(
+            response_id, response_items_by_id[response_id], decisions
+        ),
+        key="batch_response_id",
+    )
+    selected_items = response_items_by_id[selected_response_id]
+    selected_unresolved = selected_items[
+        ~selected_items["review_item_id"].astype(str).isin(decisions)
+    ]
+    st.subheader(f"{selected_response_id} 一括レビュー")
+    st.write(
+        f"このIDの表示項目: {len(selected_items)} 件 / 未保存: {len(selected_unresolved)} 件"
+    )
+
+    resolved_values: dict[str, str] = {}
+    reviewer_notes: dict[str, str] = {}
+    for _, item in selected_items.iterrows():
+        item_id = str(item["review_item_id"])
+        existing = decisions.get(item_id)
+        with st.container():
+            resolved_value, reviewer_note = render_batch_item_input(
+                st, item, existing, layout, crop_dir
+            )
+        resolved_values[item_id] = resolved_value
+        reviewer_notes[item_id] = reviewer_note
+
+    if st.button("このIDを一括保存して次へ", type="primary", key=f"save_batch_{selected_response_id}"):
+        saved = save_decisions_batch(
+            decisions_csv,
+            selected_items,
+            resolved_values,
+            reviewer_notes,
+        )
+        st.session_state["scroll_to_top_once"] = True
+        st.success(f"{selected_response_id}: {saved} 件を保存しました。")
+        st.rerun()
 
 
 def render_single_choice(st: Any, decisions_csv: Path, item: pd.Series, reviewer_note: str) -> None:
@@ -578,6 +893,7 @@ def render_text_choice(
 def run_app() -> None:
     try:
         import streamlit as st
+        import streamlit.components.v1 as components
     except ImportError:
         print("Streamlit is not installed. Install it with: pip install streamlit", file=sys.stderr)
         raise SystemExit(1)
@@ -593,6 +909,7 @@ def run_app() -> None:
 
     st.set_page_config(page_title="Aomori OCR Review", layout="wide")
     st.title("青森アンケート OCR 目視レビュー")
+    scroll_to_top_once(st, components)
 
     if not run_dir.exists():
         st.error(f"Run directory does not exist: {run_dir}")
@@ -614,18 +931,22 @@ def run_app() -> None:
         )
     phase = REVIEW_PHASES[selected_phase_label]
 
-    items = build_review_items(run_dir, layout_json, phase)
     decisions_df = load_decisions(decisions_csv)
     decisions = decision_map(decisions_df)
+    items = build_review_items(run_dir, layout_json, phase, decisions_csv)
+    saved_item_count = 0
+    if not items.empty:
+        saved_item_count = len(set(items["review_item_id"].astype(str)).intersection(decisions))
 
     with st.sidebar:
         st.caption(str(run_dir))
         st.metric("レビュー対象", len(items))
-        st.metric("保存済み", len(set(items["review_item_id"]).intersection(decisions)))
+        st.metric("保存済み", saved_item_count)
+        st.metric("未保存", len(items) - saved_item_count)
         field_choices = ["すべて"] + [FIELD_LABELS[field] for field in REVIEW_FIELDS]
         selected_field_label = st.selectbox("設問フィルタ", field_choices)
         response_query = st.text_input("response_id検索", "")
-        show_done = st.checkbox("保存済みも表示", value=True)
+        show_done = st.checkbox("保存済みも表示", value=phase != "id_batch_all")
         st.caption(f"保存先: {decisions_csv}")
 
     filtered = items.copy()
@@ -643,6 +964,17 @@ def run_app() -> None:
 
     if filtered.empty:
         st.info("表示対象のレビュー項目はありません。")
+        return
+
+    if phase == "id_batch_all":
+        render_id_batch_review(
+            st,
+            filtered,
+            decisions,
+            decisions_csv,
+            load_layout(layout_json),
+            run_dir / "review_question_crops",
+        )
         return
 
     initial = select_current_item(filtered, decisions)
@@ -668,7 +1000,7 @@ def run_app() -> None:
         st.subheader(f"{item['response_id']} / {item['field_label']}")
         crop_path = Path(str(item["question_crop_path"]))
         if crop_path.exists():
-            st.image(str(crop_path), use_container_width=True)
+            st.image(str(crop_path), width="stretch")
             st.caption(str(crop_path))
         else:
             st.warning(f"Question crop is missing: {crop_path}")
