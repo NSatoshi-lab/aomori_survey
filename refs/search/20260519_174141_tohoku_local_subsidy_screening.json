@@ -1,0 +1,146 @@
+{
+  "timestamp": "2026-05-19T17:41:41+09:00",
+  "slug": "tohoku_local_subsidy_screening",
+  "purpose": "東北6県と県庁所在地市について、浴室暖房乾燥機・住宅省エネ改修に近い県・市独自補助の有無を公式情報中心に確認する。",
+  "scope": {
+    "prefectures": ["青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"],
+    "capital_cities": ["青森市", "盛岡市", "仙台市", "秋田市", "山形市", "福島市"],
+    "retrieved_at": "2026-05-19"
+  },
+  "operational_definition": {
+    "local_subsidy": "県または市が制度名・窓口・実施主体として示す住宅向け補助・助成・優遇を含める。財源に国費を含む制度も、自治体制度として住民に案内される場合は対象に含める。",
+    "excluded": "国制度の単なるリンク集・案内のみの場合は、県・市独自補助としては扱わない。",
+    "near_to_bathroom_heater": "浴室暖房乾燥機の直接補助、暖房設備補助、既存住宅の断熱・省エネ改修、浴室・脱衣所を含み得る一般リフォーム補助の順に近いと判断する。"
+  },
+  "queries": [
+    "site:pref.aomori.lg.jp 令和8年度 青森県 住宅 省エネ 改修 補助",
+    "site:city.aomori.aomori.jp 令和8年度 住宅 省エネ 改修 補助 青森市",
+    "site:pref.iwate.jp 令和8年度 住まいの省エネルギー改修推進事業費補助金",
+    "site:city.morioka.iwate.jp 住宅 省エネルギー 改修 補助金 盛岡市 令和8年度",
+    "site:pref.miyagi.jp 令和8年度 スマートエネルギー住宅 普及促進事業 既存住宅 省エネルギー改修",
+    "site:city.sendai.jp 令和8年度 せんだい健幸省エネ住宅補助金 全体改修",
+    "site:pref.akita.lg.jp 令和8年度 秋田県 住宅リフォーム 推進事業 断熱 省エネ",
+    "site:city.akita.lg.jp 令和8年度 住宅リフォーム 支援事業 秋田市",
+    "site:pref.yamagata.jp 令和8年度 住宅リフォーム 補助 山形県 省エネ 健康住宅",
+    "site:city.yamagata-yamagata.lg.jp 令和8年度 住宅リフォーム 総合支援事業 山形市",
+    "site:pref.fukushima.lg.jp 令和8年度 住宅 省エネ 改修 補助 福島県",
+    "site:city.fukushima.fukushima.jp 令和8年度 住宅 省エネ 改修 補助 福島市"
+  ],
+  "sources": [
+    {
+      "area": "青森県",
+      "title": "あおもり発の積雪寒冷地型住宅最適化プロジェクト",
+      "url": "https://www.pref.aomori.lg.jp/soshiki/kendo/kenju/aomorigxsasutena.html",
+      "finding": "省エネ住宅・GX住宅に関する県情報は確認できたが、一般世帯向け既存住宅省エネ改修補助として明示されたページは今回検索範囲では未確認。"
+    },
+    {
+      "area": "青森市",
+      "title": "令和8年度青森市地球温暖化対策実行計画推進事業補助金",
+      "url": "https://www.city.aomori.aomori.jp/kurashi_kankyo/kankyo/1002031/1008434.html",
+      "finding": "省エネ家電等はエアコン、冷蔵庫、給湯器、宅配ボックスが対象。浴室暖房乾燥機や断熱改修は対象として確認できなかった。"
+    },
+    {
+      "area": "岩手県",
+      "title": "住まいの省エネルギー改修推進事業費補助金",
+      "url": "https://www.pref.iwate.jp/kurashikankyou/kenchiku/kojin/hojo/1058930.html",
+      "finding": "県内戸建住宅の省エネ改修を支援。補助率4割・上限300千円、ZEH水準は補助率8割・上限700千円。"
+    },
+    {
+      "area": "盛岡市",
+      "title": "住宅の省エネルギー改修等に関する補助金",
+      "url": "https://www.city.morioka.iwate.jp/kurashi/sumai/kenchikubutsu/1048026.html",
+      "finding": "令和7年度募集は終了しているが、既存住宅の省エネルギー性能向上を支援する市制度の実績を確認。"
+    },
+    {
+      "area": "宮城県",
+      "title": "令和8年度スマートエネルギー住宅普及促進事業補助金",
+      "url": "https://www.pref.miyagi.jp/soshiki/kankyo-s/smart-energy.html",
+      "finding": "既存住宅省エネルギー改修を補助メニューに含み、改修部位・範囲により2千円から9万円/箇所。"
+    },
+    {
+      "area": "仙台市",
+      "title": "せんだい健幸省エネ住宅補助金（全体改修向け）",
+      "url": "https://www.city.sendai.jp/ondanka/kodannetsu/zentaikaishuhojo.html",
+      "finding": "既存戸建住宅の断熱改修を支援。全体改修は上限120万円。"
+    },
+    {
+      "area": "秋田県",
+      "title": "令和8年度住宅リフォーム推進事業",
+      "url": "https://www.pref.akita.lg.jp/pages/archive/94314",
+      "finding": "断熱・省エネ改修、防災減災改修向けの住宅リフォーム支援を確認。補助対象工事費50万円以上などの条件あり。"
+    },
+    {
+      "area": "秋田市",
+      "title": "住宅リフォーム支援事業",
+      "url": "https://www.city.akita.lg.jp/kurashi/sumai/1007487/1007790.html",
+      "finding": "住宅の増改築・リフォーム工事に5万円、中心市街地区域内は10万円の市補助。高効率給湯器等は令和8年度から対象外。"
+    },
+    {
+      "area": "山形県",
+      "title": "令和8年度 山形県住宅支援制度 説明資料・説明動画",
+      "url": "https://www.pref.yamagata.jp/tatekkana/support/shien/shien-documents.html",
+      "finding": "やまがた省エネ健康・再エネ設備パッケージ補助、住宅リフォーム支援等の県制度資料を確認。住宅リフォーム支援ではやまぽっかリノベ等が示される。"
+    },
+    {
+      "area": "山形市",
+      "title": "令和8年度 山形市住宅リフォーム総合支援事業",
+      "url": "https://www.city.yamagata-yamagata.lg.jp/kurashi/tochi/1007258/1003551.html",
+      "finding": "市補助タイプと県市補助タイプを確認。県市補助タイプは一般世帯20%・上限24万円など。"
+    },
+    {
+      "area": "山形市",
+      "title": "建築物遮熱・断熱対策事業費補助金",
+      "url": "https://www.city.yamagata-yamagata.lg.jp/kurashi/kankyohozen/1006528/1013545/1013549.html",
+      "finding": "屋根や窓など外皮への遮熱・断熱対策導入を支援。生活コスト削減とCO2削減を目的とする。"
+    },
+    {
+      "area": "福島県",
+      "title": "福島県省エネルギー住宅改修補助事業",
+      "url": "https://www.pref.fukushima.lg.jp/sec/41065b/syouenezyuutaku.html",
+      "finding": "既存戸建住宅の省エネ診断・省エネ改修を支援する県制度を確認。ただしページ上では令和7年度で終了と記載。"
+    },
+    {
+      "area": "福島市",
+      "title": "住まいに関する補助制度",
+      "url": "https://www.city.fukushima.fukushima.jp/soshiki/12/1064/1/4736.html",
+      "finding": "省エネ改修は国制度案内が中心。市独自では太陽光・蓄電池の脱炭素住宅整備助成事業、空き家リフォーム支援等を確認。"
+    }
+  ],
+  "classification_summary": [
+    {
+      "area": "青森県・青森市",
+      "classification": "限定的・間接的",
+      "reason": "県・市の省エネ関連情報はあるが、既存住宅断熱改修または浴室暖房乾燥機に近い直接補助は今回検索範囲で確認しにくい。"
+    },
+    {
+      "area": "岩手県・盛岡市",
+      "classification": "明示的にあり",
+      "reason": "県が住まいの省エネルギー改修推進事業を掲げ、市にも同種制度の実績がある。"
+    },
+    {
+      "area": "宮城県・仙台市",
+      "classification": "明示的にあり",
+      "reason": "県のスマートエネルギー住宅補助、市の健幸省エネ住宅補助があり、既存住宅省エネ改修・断熱改修と近い。"
+    },
+    {
+      "area": "秋田県・秋田市",
+      "classification": "あり",
+      "reason": "県・市とも住宅リフォーム支援があり、県は断熱・省エネ改修向けを示す。ただし市制度は高効率給湯器等を対象外にしている。"
+    },
+    {
+      "area": "山形県・山形市",
+      "classification": "明示的にあり",
+      "reason": "県の住宅リフォーム支援・やまぽっか関連支援、市の住宅リフォーム総合支援と遮熱・断熱対策補助を確認。"
+    },
+    {
+      "area": "福島県・福島市",
+      "classification": "あり。ただし2026年度時点の継続性と市独自性は限定的",
+      "reason": "県の省エネルギー住宅改修補助事業は確認できるが令和7年度で終了。福島市の省エネ改修は国制度案内中心で、市独自は太陽光・蓄電池や空き家リフォーム等が中心。"
+    }
+  ],
+  "limitations": [
+    "自治体制度は年度途中で募集終了・受付再開・予算到達が起こり得るため、2026-05-19時点の公開情報として扱う。",
+    "浴室暖房乾燥機を名指しする制度は少なく、断熱改修・暖房設備・一般リフォーム補助を近接制度として整理した。",
+    "市町村制度は県庁所在地市のみ確認しており、各県内の全市町村制度の網羅ではない。"
+  ]
+}

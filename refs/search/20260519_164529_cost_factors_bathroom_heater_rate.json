@@ -1,0 +1,121 @@
+{
+  "created_at": "2026-05-19T16:45:29+09:00",
+  "task": "青森県・秋田県・宮城県・岩手県の浴室暖房乾燥機設置率差について、料金・コスト面から説明可能かを検討するための公開情報確認",
+  "scope": {
+    "prefectures": ["青森県", "秋田県", "宮城県", "岩手県"],
+    "cities": ["青森市", "秋田市", "仙台市", "盛岡市"],
+    "perspectives": ["金銭的な豊かさ", "補助金・優遇措置", "冬期電気料金"]
+  },
+  "searches": [
+    {
+      "db": "Web",
+      "query": "県民経済計算 1人当たり県民所得 青森 秋田 岩手 宮城 令和3年度 内閣府",
+      "used_sources": [
+        {
+          "title": "県民経済計算 : 経済社会総合研究所 - 内閣府",
+          "url": "https://www.esri.cao.go.jp/jp/sna/sonota/kenmin/kenmin_top.html",
+          "note": "2026-03-27に2022年度値統計表が掲載されたこと、統計表へのリンクを確認。"
+        },
+        {
+          "title": "1人当たり県民所得（Excel）",
+          "url": "https://www.esri.cao.go.jp/jp/sna/data/data_list/kenmin/files/contents/tables/2022/soukatu7.xlsx",
+          "note": "Excelを取得し、2022年度の4県値を抽出。"
+        }
+      ]
+    },
+    {
+      "db": "Web/e-Stat",
+      "query": "2019年全国家計構造調査 都道府県 所得 貯蓄 負債 青森 秋田 岩手 宮城",
+      "used_sources": [
+        {
+          "title": "2019年全国家計構造調査関連情報 - 総務省統計局",
+          "url": "https://www.stat.go.jp/data/zenkokukakei/2019/kekka.html",
+          "note": "調査目的、所得・家計資産・負債の結果概要とe-Stat掲載表の存在を確認。"
+        },
+        {
+          "title": "1世帯当たり資産現在高・負債現在高（都道府県） - e-Stat",
+          "url": "https://www.e-stat.go.jp/index.php/dbview?sid=0003426664",
+          "note": "全国家計構造調査の都道府県別資産・負債表。検索結果スニペットおよび関連概要表で4県の総世帯値を確認。"
+        },
+        {
+          "title": "2019年全国家計構造調査 結果の概要（所得及び家計資産・負債）",
+          "url": "https://www.stat.go.jp/data/zenkokukakei/2019/pdf/gaiyou0518.pdf",
+          "note": "都道府県別の家計資産総額順位を確認。"
+        }
+      ]
+    },
+    {
+      "db": "Web",
+      "query": "東北電力 従量電灯B 料金単価 2026 冬季",
+      "used_sources": [
+        {
+          "title": "従量電灯B - 東北電力",
+          "url": "https://www.tohoku-epco.co.jp/dprivate/plan/home/lightb/",
+          "note": "基本料金および3段階の電力量料金単価を確認。標準的な従量電灯Bには冬期単価差がない。"
+        },
+        {
+          "title": "燃料費調整単価等のお知らせ - 東北電力",
+          "url": "https://www.tohoku-epco.co.jp/dprivate/attempt/adjust/adjust_value/",
+          "note": "東北エリアの燃料費等調整単価が月別に掲載されることを確認。"
+        }
+      ]
+    },
+    {
+      "db": "Web",
+      "query": "青森県 青森市 秋田県 秋田市 宮城県 仙台市 岩手県 盛岡市 住宅 省エネ 改修 補助 浴室暖房 令和8年度",
+      "used_sources": [
+        {
+          "title": "令和8年度青森市地球温暖化対策実行計画推進事業補助金",
+          "url": "https://www.city.aomori.aomori.jp/kurashi_kankyo/kankyo/1002031/1008434.html",
+          "note": "省エネ家電等（エアコン、冷蔵庫、給湯器）の買換え補助を確認。浴室暖房乾燥機の直接補助は確認できず。"
+        },
+        {
+          "title": "あおもりリビングスタイルガイドライン - 青森県",
+          "url": "https://www.pref.aomori.lg.jp/soshiki/kendo/kenju/yukisamu.html",
+          "note": "省エネ住宅基準・普及啓発を確認。浴室暖房乾燥機設置への県直接補助は確認できず。"
+        },
+        {
+          "title": "株式会社秋田銀行による「あおもりGX住宅ビルダーズ」へのサポーター参加及び住宅ローンの手数料優遇キャンペーン - 青森県",
+          "url": "https://www.pref.aomori.lg.jp/release/2026/80489.html",
+          "note": "青森県が推進するGX住宅に関連した住宅ローン手数料優遇を確認。直接補助ではない。"
+        },
+        {
+          "title": "令和8年度住宅リフォーム推進事業 - 秋田県",
+          "url": "https://www.pref.akita.lg.jp/pages/archive/94314",
+          "note": "断熱・省エネ改修等を含む住宅リフォーム推進事業を確認。"
+        },
+        {
+          "title": "住宅リフォーム支援事業 - 秋田市",
+          "url": "https://www.city.akita.lg.jp/kurashi/sumai/1007487/1007790.html",
+          "note": "令和8年度の住宅リフォーム支援、5万円補助等を確認。浴室暖房機を含み得る工事項目は対象工事例PDFで確認。"
+        },
+        {
+          "title": "令和8年度スマートエネルギー住宅普及促進事業補助金 - 宮城県",
+          "url": "https://www.pref.miyagi.jp/soshiki/kankyo-s/smart-energy.html",
+          "note": "既存住宅省エネルギー改修（2千円から9万円/箇所）等を確認。"
+        },
+        {
+          "title": "せんだい健幸省エネ住宅補助金（全体改修向け） - 仙台市",
+          "url": "https://www.city.sendai.jp/ondanka/kodannetsu/zentaikaishuhojo.html",
+          "note": "断熱性能を高める全体改修、上限120万円を確認。"
+        },
+        {
+          "title": "住まいの省エネルギー改修推進事業費補助金 - 岩手県",
+          "url": "https://www.pref.iwate.jp/kurashikankyou/kenchiku/kojin/hojo/1058930.html",
+          "note": "省エネ改修の補助率4割・上限300千円、ZEH水準の補助率8割・上限700千円を確認。"
+        },
+        {
+          "title": "住宅の省エネルギー改修等に関する補助金 - 盛岡市",
+          "url": "https://www.city.morioka.iwate.jp/kurashi/sumai/kenchikubutsu/1048026.html",
+          "note": "令和7年度募集終了、令和8年度募集は市ホームページ等で周知予定。省エネ改修の上限300,000円/戸または700,000円/戸を確認。"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "制度情報は2026-05-19時点の公開確認に基づく。",
+    "青森県の浴室暖房乾燥機設置に直結する県直接補助は、今回の検索範囲では確認できなかった。",
+    "全国家計構造調査の都道府県別値は2019年調査で、設置率2023年とは年次が異なる。",
+    "電気料金は東北電力の標準的な従量電灯Bを比較軸とし、自由料金・オール電化・個別契約は補足扱いとした。"
+  ]
+}

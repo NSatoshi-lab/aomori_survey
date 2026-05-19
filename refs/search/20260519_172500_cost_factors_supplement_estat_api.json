@@ -1,0 +1,68 @@
+{
+  "created_at": "2026-05-19T17:25:00+09:00",
+  "task": "浴室暖房乾燥機設置率と所得・資産指標の全都道府県レベル関連、青森県の補助制度情報アクセス性の追加確認",
+  "api_sources": [
+    {
+      "db": "e-Stat API",
+      "statsDataId": "0003426444",
+      "title": "2019年全国家計構造調査 所得に関する結果 [所得資産集計] 1世帯当たり年間収入額（都道府県）",
+      "parameters": {
+        "cdTab": "03-2019",
+        "cdCat01": "0",
+        "cdCat02": "0",
+        "cdCat03": "2",
+        "cdCat04": "0",
+        "cdTime": "2019000000"
+      }
+    },
+    {
+      "db": "e-Stat API",
+      "statsDataId": "0003426523",
+      "title": "2019年全国家計構造調査 家計資産・負債に関する結果 [所得資産集計] 1世帯当たり資産現在高・負債現在高（都道府県）",
+      "parameters": {
+        "cdTab": "04-2019",
+        "cdCat01": "0",
+        "cdCat02": "0",
+        "cdCat03": ["21", "22", "2", "4"],
+        "cdCat04": "00",
+        "cdTime": "2019000000"
+      }
+    }
+  ],
+  "local_sources": [
+    {
+      "path": "../入浴統計/data/processed/full_panel.csv",
+      "note": "2023年のbathroom_heater_rateを都道府県別設置率として使用。"
+    },
+    {
+      "url": "https://www.esri.cao.go.jp/jp/sna/data/data_list/kenmin/files/contents/tables/2022/soukatu7.xlsx",
+      "note": "2022年度の1人当たり県民所得を使用。"
+    }
+  ],
+  "web_sources_for_subsidy_access": [
+    {
+      "title": "青森市 令和8年度地球温暖化対策実行計画推進事業補助金",
+      "url": "https://www.city.aomori.aomori.jp/kurashi_kankyo/kankyo/1002031/1008434.html",
+      "note": "省エネ家電等と宅配ボックスが対象。浴室暖房乾燥機または既存住宅断熱改修の直接補助は確認できず。"
+    },
+    {
+      "title": "青森県 あおもりGX住宅ビルダーズ関連情報",
+      "url": "https://www.pref.aomori.lg.jp/release/2026/80489.html",
+      "note": "省エネ住宅普及の枠組みと住宅ローン手数料優遇を確認。全体・部分改修はZEH住宅ローン適用、手数料優遇なしと記載。"
+    },
+    {
+      "title": "青森県 あおもり発の積雪寒冷地型住宅最適化プロジェクト",
+      "url": "https://www.pref.aomori.lg.jp/soshiki/kendo/kenju/aomorigxsasutena.html",
+      "note": "令和7年度のあおもりGX住宅（新築A・改修）は試験的限定実施との記載を確認。"
+    }
+  ],
+  "outputs": [
+    "outputs/runs/20260519_pref_cost_indicators_vs_bathroom_heater_rate/pref_cost_indicators_analysis_dataset.csv",
+    "outputs/runs/20260519_pref_cost_indicators_vs_bathroom_heater_rate/pref_cost_indicator_associations.csv",
+    "outputs/runs/20260519_pref_cost_indicators_vs_bathroom_heater_rate/report.md"
+  ],
+  "summary": {
+    "national_association": "全47都道府県では5指標すべてが浴室暖房乾燥機設置率と正の関連を示した。単回帰R2は1人当たり県民所得0.275、年間収入0.426、金融資産0.641、純金融資産0.423、純資産総額0.604。",
+    "aomori_subsidy_access": "青森県・青森市にも省エネ住宅や省エネ家電関連の公式情報はあるが、宮城県・岩手県のような既存住宅省エネ改修補助ページに比べると、浴室暖房乾燥機や断熱改修の費用補助に直結する情報は見つけにくい。"
+  }
+}
