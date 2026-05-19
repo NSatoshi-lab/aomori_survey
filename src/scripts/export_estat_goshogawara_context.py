@@ -14,6 +14,8 @@ from typing import Any, Iterable
 
 import pandas as pd
 
+from env_utils import load_repo_env
+
 
 @dataclass(frozen=True)
 class MetricSpec:
@@ -632,12 +634,14 @@ def main() -> int:
     parser.add_argument("--tag", type=str, default="", help="outputs/runs/<tag> の tag（未指定なら自動生成）")
     args = parser.parse_args()
 
+    repo_root = Path(__file__).resolve().parents[2]
+    load_repo_env(repo_root)
+
     app_id = args.app_id.strip() or os.environ.get("ESTAT_APP_ID", "").strip()
     if not app_id:
         print("[error] e-Stat appId is required (--app-id or ESTAT_APP_ID).", file=sys.stderr)
         return 1
 
-    repo_root = Path(__file__).resolve().parents[2]
     tag = args.tag.strip() or _default_tag("estat_goshogawara_context")
     out_dir = repo_root / "outputs" / "runs" / tag
     out_dir.mkdir(parents=True, exist_ok=True)

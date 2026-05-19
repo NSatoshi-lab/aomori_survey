@@ -53,6 +53,36 @@ Base repo: `..\入浴統計`（参照専用）
 - OCR取り込みは `src/scripts/ocr_ingest_aomori_survey.py` を使い、レビュー用成果物は `outputs/runs/<tag>/` に出す。
 - 集計は `src/scripts/tabulate_aomori_paper_survey.py` を使い、結果は `outputs/runs/<tag>/` に出す。
 
+## Python Setup
+
+Pythonスクリプトの依存関係は `requirements.txt` にまとめる。
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+## e-Stat API
+
+e-Stat APIを使うスクリプトは、`--app-id` が未指定の場合に環境変数 `ESTAT_APP_ID` を読む。ローカルでは `.env.example` を参考に `.env` を作り、実際のappIdはGit管理しない。
+
+PowerShellで一時設定する場合:
+
+```powershell
+$env:ESTAT_APP_ID="YOUR_ESTAT_APP_ID"
+```
+
+代表的な再実行コマンド:
+
+```powershell
+python src/scripts/export_estat_goshogawara_context.py --tag 20260209_estat_goshogawara_context_rerun
+python src/scripts/export_estat_elderly_housing.py --tag 20260209_estat_elderly_housing_rerun
+```
+
+出力は `outputs/runs/<tag>/` に保存し、Git管理しない。
+
 ## Workflow (md → docx)
 
 - 編集は `paper.md` / `paper_en.md` を正とする。

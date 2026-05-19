@@ -1,0 +1,16 @@
+# Core analysis and e-Stat data retrieval
+pandas
+requests
+openpyxl
+
+# Statistical analysis and plots used by src/scripts
+numpy
+scipy
+statsmodels
+matplotlib
+
+# OCR/review utilities used by src/apps and src/scripts
+Pillow
+opencv-python
+pytesseract
+streamlit
