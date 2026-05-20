@@ -1,0 +1,169 @@
+{
+  "created_at": "2026-05-20T09:55:00+09:00",
+  "slug": "hoppogata_history_tohoku_recent_sources",
+  "purpose": "北方型住宅の成立・普及史、北海道のセントラル暖房普及、東北地方の近年住宅性能状況を、浴室暖房乾燥機設置率の解釈に接続するための追加調査。",
+  "queries": [
+    {
+      "source": "web",
+      "query": "北方型住宅 成立 歴史 普及 北海道 1988 1990"
+    },
+    {
+      "source": "web",
+      "query": "北方型住宅 歴史 北方型住宅2020 ZERO 北海道庁"
+    },
+    {
+      "source": "web",
+      "query": "北方型住宅 推進 歴史 セントラル暖房 全室暖房"
+    },
+    {
+      "source": "web",
+      "query": "東北 住宅 断熱性能 近年 調査 報告 省エネ基準 適合率"
+    },
+    {
+      "source": "web",
+      "query": "国土交通省 2025 住宅 省エネ基準 適合義務化 公式"
+    },
+    {
+      "source": "OpenAlex via Zotero OA pipeline",
+      "query": "北方型住宅 きた住まいる セントラル暖房 東北 断熱 住宅",
+      "log": "refs/search/20260520_hoppogata_tohoku_recent_zotero_oa.json",
+      "result": "PDF付きOA自動取得は0件。主要根拠はWeb、J-STAGE、機関リポジトリ、既存ローカル統計出力で補足。"
+    }
+  ],
+  "records": [
+    {
+      "id": "hkd_2016_kita_sumairu_history",
+      "type": "official_report",
+      "title": "「きた住まいる」制度について - 「北方型住宅」から「きた住まいる」への変遷",
+      "url": "https://www.hkd.mlit.go.jp/ky/jg/gijyutu/splaat000000rtss-att/splaat000000rv7c.pdf",
+      "publisher_or_authors": "北海道建設部住宅局建築指導課 / 北海道開発局技術研究発表会",
+      "year": 2016,
+      "accessed_at": "2026-05-20",
+      "notes": [
+        "北海道は1988年から北方型住宅制度を開始し、1990年10月に旭川市・北広島市で初の北方型住宅団地が建設された。",
+        "当初制度では住宅金融公庫融資基準等と連動し、BIS（断熱施工技術者）認定制度を融資要件の一つとして創設した。",
+        "2005年度から北方型住宅登録・保管制度、2014年度からきた住まいる制度へ移行。住宅性能の見える化と事業者情報公開を進めた。",
+        "北方型住宅基準には集中暖房等による住宅内の適正室温確保、全室暖房、断熱・気密性能が含まれる。"
+      ]
+    },
+    {
+      "id": "hokkaido_energy_guide",
+      "type": "official_web",
+      "title": "省エネガイド: 住宅も省エネにしよう",
+      "url": "https://www.pref.hokkaido.lg.jp/kz/gxs/jyuutaku.html",
+      "publisher_or_authors": "北海道経済部GX推進局GX推進課",
+      "updated_at": "2025-07-14",
+      "accessed_at": "2026-05-20",
+      "notes": [
+        "北方型住宅を、北国にふさわしい性能・設備を備えた住宅として説明。",
+        "特徴として断熱・気密性能、全室暖房、計画換気を明示している。",
+        "実験住宅比較として、高断熱・高気密仕様では逃げる熱と暖房エネルギーの低減を紹介している。"
+      ]
+    },
+    {
+      "id": "hokkaido_zero_carbon_housing",
+      "type": "official_web",
+      "title": "住まいのゼロカーボン化推進事業",
+      "url": "https://www.pref.hokkaido.lg.jp/kn/ksd/159060.html",
+      "publisher_or_authors": "北海道建設部住宅局建築指導課",
+      "updated_at": "2026-05-13",
+      "accessed_at": "2026-05-20",
+      "notes": [
+        "北方型住宅など住まいに関する情報をホッポラボへ接続。",
+        "住まいのゼロカーボン化推進事業は市町村が申請主体であり、道民・事業者が直接申請する制度ではない。"
+      ]
+    },
+    {
+      "id": "tatsu_2015_hokkaido_new_houses",
+      "type": "journal_article",
+      "title": "北海道における新築戸建て住宅の断熱および設備仕様調査: 一次エネルギー消費量の推定と設備の選択要因に関する考察",
+      "url": "https://www.jstage.jst.go.jp/article/aije/80/707/80_67/_article/-char/ja/",
+      "doi": "10.3130/aije.80.67",
+      "publisher_or_authors": "立松宏一ほか",
+      "year": 2015,
+      "accessed_at": "2026-05-20",
+      "notes": [
+        "北海道立総合研究機構北方建築総合研究所の著者を含む、新築戸建住宅の断熱・設備仕様調査。",
+        "キーワードに実態調査、外皮平均熱貫流率、暖房、給湯、省エネルギー基準、コストを含む。",
+        "北海道の新築戸建住宅では断熱・設備仕様が住宅選択や一次エネルギー消費と結びつくことを示す近年文献として使用。"
+      ]
+    },
+    {
+      "id": "env_household_co2_2023_region",
+      "type": "official_statistics",
+      "title": "家庭部門のCO2排出実態統計調査 令和5年度 地方別集計",
+      "url": "https://www.env.go.jp/earth/ondanka/kateico2tokei/co2/detail/02/",
+      "publisher_or_authors": "環境省",
+      "year": 2023,
+      "accessed_at": "2026-05-20",
+      "notes": [
+        "地方別CO2排出では北海道4.14t-CO2/世帯・年、東北3.46t-CO2/世帯・年。灯油由来は北海道1.73、東北0.99。",
+        "用途別では暖房由来CO2が北海道1.68、東北1.15。暖房構成比は北海道41.9%、東北33.1%。",
+        "寒冷地で暖房負荷が大きい点を示すが、北海道は東北よりセントラル暖房・住宅性能の制度的基盤が強い。"
+      ]
+    },
+    {
+      "id": "estat_household_co2_central_heating_2023",
+      "type": "official_statistics",
+      "title": "令和5年度 家庭部門のCO2排出実態統計調査 第3-1表 暖房使用状況",
+      "url": "https://www.e-stat.go.jp/stat-search/files?bunya_l=14&layout=dataset&page=1&stat_infid=000040277713&toukei=00650408",
+      "publisher_or_authors": "e-Stat / 環境省",
+      "year": 2023,
+      "accessed_at": "2026-05-20",
+      "notes": [
+        "セントラル暖房システム使用状況を含む暖房使用状況の政府統計表。",
+        "既存ローカル出力では、セントラル暖房使用率は北海道24.6%、東北4.0%。北海道は全国10地域中で突出して高い。"
+      ]
+    },
+    {
+      "id": "mlit_energy_standard_2025",
+      "type": "official_web",
+      "title": "省エネ基準引き上げへ。脱炭素化も。",
+      "url": "https://www.mlit.go.jp/shoene-jutaku/?yj_r=95",
+      "publisher_or_authors": "国土交通省",
+      "accessed_at": "2026-05-20",
+      "notes": [
+        "2025年4月以降に着工する住宅などに省エネ基準適合が義務化されたと説明。",
+        "2030年までにZEH/ZEB水準へ基準を引き上げ予定と説明。",
+        "省エネリフォームでは、住宅内の温度差が入浴時の事故リスクを高める要因となり、断熱性能の高い住宅で家全体の温度が安定することを説明。"
+      ]
+    },
+    {
+      "id": "mlit_energy_law_expansion",
+      "type": "official_web",
+      "title": "建築物省エネ法第10条 省エネ基準適合義務の対象拡大について",
+      "url": "https://www.mlit.go.jp/jutakukentiku/house/01.html",
+      "publisher_or_authors": "国土交通省",
+      "updated_at": "2022-10-21",
+      "accessed_at": "2026-05-20",
+      "notes": [
+        "令和4年改正により、原則としてすべての新築住宅・非住宅に省エネ基準適合が義務付けられると説明。",
+        "増改築部分の壁、屋根、窓などへの断熱材や窓等施工が基準適合の対象になると説明。"
+      ]
+    }
+  ],
+  "local_data": [
+    {
+      "path": "C:/Users/cross/Desktop/作成中書類/研究/入浴統計/data/processed/full_panel.csv",
+      "notes": [
+        "2023年の浴室暖房乾燥機設置率、二重サッシ・複層ガラス率、SMRを使用。",
+        "北海道は浴室暖房乾燥機設置率8.4%、二重サッシ・複層ガラス率78.0%、SMR0.99。",
+        "東北6県の二重サッシ・複層ガラス率は青森70.8%、秋田70.7%、岩手65.1%、山形55.5%、宮城43.0%、福島42.6%。"
+      ]
+    },
+    {
+      "path": "outputs/runs/20260126_153831_pref_bathroom_heater_vs_central_heating_region_proxy/central_heating_region_rates.csv",
+      "notes": [
+        "令和5年度家庭CO2統計から作成した地域別セントラル暖房使用率。",
+        "北海道24.6%、東北4.0%、関東甲信1.7%、北陸2.3%、東海1.3%、近畿0.4%、中国0.6%、四国0.8%、九州1.0%、沖縄0.8%。"
+      ]
+    }
+  ],
+  "synthesis": [
+    "北海道では、1988年開始の北方型住宅制度から、断熱・気密、全室暖房、計画換気、BIS等の専門技術者、住宅履歴保管、事業者情報公開へ展開する制度史が確認できる。",
+    "北方型住宅の制度史では集中暖房等・全室暖房が住宅性能の一部として扱われており、浴室暖房乾燥機単体ではなく住宅全体の暖房・断熱で寒冷対策を行う経路が想定できる。",
+    "令和5年度家庭CO2統計の地域別指標では、北海道のセントラル暖房使用率は24.6%で東北4.0%の約6倍であり、全国地域の中でも突出して高い。",
+    "浴室暖房乾燥機との直接的な代替関係を示す文献は今回検索でも確認できない。したがって、浴室暖房乾燥機低設置率とセントラル暖房普及の関係は、直接因果ではなく、住宅全体暖房が別経路の寒冷対策になっている可能性として記述する。",
+    "東北地方については、古い文献だけでなく2023年住宅ストック指標、令和5年度家庭CO2統計、国交省の2025年省エネ基準適合義務化を併せると、新築・改修政策は全国的に底上げ段階にある一方、住宅ストックの窓断熱とセントラル暖房では北海道との差が残ると整理できる。"
+  ]
+}

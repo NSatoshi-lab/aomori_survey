@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-05-20T00:00:00+09:00",
+  "slug": "hokkaido_aomori_akita_cost_factors",
+  "purpose": "北海道と青森県・秋田県を対比し、浴室暖房乾燥機設置率が低い一方で北海道のSMRが高くないことについて、料金・コスト要因から整理する。",
+  "scope": {
+    "areas": ["北海道", "青森県", "秋田県"],
+    "retrieved_at": "2026-05-20"
+  },
+  "local_data_sources": [
+    {
+      "path": "C:/Users/cross/Desktop/作成中書類/研究/入浴統計/data/processed/full_panel.csv",
+      "variables": ["bathroom_heater_rate", "smr", "double_glazing_window_rate"],
+      "year": 2023,
+      "finding": "北海道は浴室暖房乾燥機設置率8.4%、SMR 0.99、二重サッシ・複層ガラス率78.0%。青森県は10.7%、1.38、70.8%、秋田県は12.2%、1.27、70.7%。"
+    },
+    {
+      "path": "outputs/runs/20260519_pref_cost_indicators_vs_bathroom_heater_rate/pref_cost_indicators_analysis_dataset.csv",
+      "variables": ["per_capita_pref_income_2022_kJPY", "annual_income_2019_kJPY", "financial_assets_2019_kJPY", "net_financial_assets_2019_kJPY", "net_total_assets_2019_kJPY"],
+      "finding": "北海道は年間収入455.3万円/世帯、金融資産867.7万円/世帯、純資産総額1431.6万円/世帯で、全国順位では年間収入が低位、純資産総額は47都道府県中最下位。"
+    },
+    {
+      "path": "outputs/runs/20260126_153831_pref_bathroom_heater_vs_central_heating_region_proxy/hokkaido_central_heating_timeseries_table.md",
+      "variables": ["central_heating_use_rate"],
+      "finding": "北海道地域のセントラル暖房使用率は令和5年度24.7%。都道府県別ではなく北海道地域値。"
+    }
+  ],
+  "web_sources": [
+    {
+      "area": "北海道電力",
+      "title": "従量電灯",
+      "url": "https://www.hepco.co.jp/home/price/ratemenu/meterratelight.html",
+      "finding": "従量電灯Bは30A基本料金1,254円、電力量料金は120kWhまで35.69円/kWh、120kWh超280kWhまで41.98円/kWh、280kWh超45.70円/kWh。"
+    },
+    {
+      "area": "北海道",
+      "title": "住まいのゼロカーボン化推進事業",
+      "url": "https://www.pref.hokkaido.lg.jp/kn/ksd/159060.html",
+      "finding": "北方型住宅ZEROの新築住宅取得、省エネ改修、太陽光パネル・蓄電池等を導入する際に補助事業を実施する市町村を北海道が支援。道民・事業者は直接申請できない。"
+    },
+    {
+      "area": "札幌市",
+      "title": "札幌市住宅エコリフォーム補助制度",
+      "url": "https://www.city.sapporo.jp/toshi/jutaku/03reform/eco/eco.html?pref=hokkaido",
+      "finding": "札幌市民が行う省エネ改修やバリアフリー改修の費用を補助。令和8年度の事業概要を公開。パンフレットでは浴室の全体改修、高断熱浴槽、窓・玄関扉の断熱改修、床・屋根・天井・外壁の断熱改修等を確認。"
+    },
+    {
+      "area": "札幌市",
+      "title": "エネルギー源転換補助金制度",
+      "url": "https://www.city.sapporo.jp/kankyo/energy/hojo/energytenkan.html",
+      "finding": "灯油暖房・灯油給湯から電気・ガス熱源の省エネ機器への切替費用を補助。令和7年度は寒冷地エアコン上限35万円、エコキュート上限40万円、エコジョーズとコレモ上限75万円。令和8年度は準備中と記載。"
+    }
+  ],
+  "calculated_comparisons": [
+    {
+      "metric": "standard_electricity_bill_300kWh_30A_before_adjustments",
+      "hokkaido_jpy": 13168,
+      "tohoku_jpy": 11210,
+      "difference_jpy": 1958,
+      "difference_percent": 17.5,
+      "note": "北海道電力と東北電力の従量電灯B単価を用いた単純計算。燃料費調整、再エネ賦課金、国の値引き等は含めない。"
+    }
+  ],
+  "interpretation": [
+    "北海道は浴室暖房乾燥機設置率が低く、所得・資産余力も低位であるため、初期費用面では青森県・秋田県と同じ方向の制約を持つ。",
+    "電気料金は東北電力エリアより北海道電力エリアの標準単価が高く、電気式浴室暖房乾燥機の運用費不安は北海道でより強くなり得る。",
+    "一方、北海道は二重サッシ・複層ガラス率が高く、セントラル暖房等の全体暖房・断熱性能改善が浴室暖房乾燥機単体の必要性を下げている可能性がある。",
+    "北海道の補助制度は浴室暖房乾燥機単体よりも、住宅性能、断熱改修、暖房・給湯の熱源転換を支援する方向が目立つ。"
+  ],
+  "limitations": [
+    "SMRと設置率は都道府県集計の記述的比較であり、因果効果を示さない。",
+    "北海道のセントラル暖房使用率は地方別値であり、他県と完全に同一粒度の都道府県比較ではない。",
+    "電気料金の比較は標準的な従量電灯Bの単価表による単純計算であり、燃料費調整、契約プラン、灯油・ガス併用、自由料金、実使用量の差は反映していない。"
+  ]
+}

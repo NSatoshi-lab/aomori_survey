@@ -1,0 +1,21 @@
+{
+  "search": {
+    "db": "OpenAlex",
+    "query": "北方型住宅 きた住まいる セントラル暖房 東北 断熱 住宅",
+    "filter": "open_access.is_oa:true",
+    "requested_at": "2026-05-20T00:42:37Z",
+    "search_date": "2026-05-20",
+    "max_results": 5,
+    "dry_run": false,
+    "skip_without_pdf": true,
+    "log_tag": "20260520_hoppogata_tohoku_recent_zotero_oa"
+  },
+  "pipeline": {
+    "bridge_url": "http://127.0.0.1:23119/codex/import",
+    "collection_name": "青森調査",
+    "pdf_dir_oa": "C:\\Users\\cross\\OneDrive\\ZoteroLibrary\\pdf\\projects\\aomori_survey\\oa",
+    "bib_path": "C:\\Users\\cross\\OneDrive\\ZoteroLibrary\\aomori_survey.bib"
+  },
+  "results": [],
+  "generated_at": "2026-05-20T00:42:37Z"
+}

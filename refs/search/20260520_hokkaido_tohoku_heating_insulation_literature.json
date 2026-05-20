@@ -1,0 +1,129 @@
+{
+  "timestamp": "2026-05-20T09:00:00+09:00",
+  "slug": "hokkaido_tohoku_heating_insulation_literature",
+  "purpose": "北海道における住宅の暖房・断熱性能が東北地方の寒冷地と比較しても優れていることを示す研究結果・報告を文献検索中心に確認する。",
+  "scope": {
+    "areas": ["北海道", "東北地方", "青森県", "秋田県", "岩手県", "山形県"],
+    "retrieved_at": "2026-05-20"
+  },
+  "queries": [
+    {
+      "db": "Web/J-STAGE/CiNii",
+      "query": "北海道 東北 住宅 断熱性能 比較 研究 高断熱 高気密 住宅 暖房 J-STAGE"
+    },
+    {
+      "db": "Web/J-STAGE/CiNii",
+      "query": "北海道 高断熱 高気密住宅 セントラル暖房 システム 運転実態 調査"
+    },
+    {
+      "db": "Web/J-STAGE/CiNii",
+      "query": "東北地域の戸建住宅 冬期 室内温熱環境 暖房エネルギー 実測調査"
+    },
+    {
+      "db": "Web/J-STAGE/CiNii",
+      "query": "東北地方 断熱気密住宅 エネルギー消費量 暖房用 実態調査 数値計算"
+    },
+    {
+      "db": "OpenAlex/Zotero OA pipeline",
+      "query": "Hokkaido well insulated airtight houses central heating Tohoku district",
+      "log": "refs/search/20260520_hokkaido_tohoku_insulation_zotero_oa.json"
+    }
+  ],
+  "records": [
+    {
+      "id": "lit01",
+      "type": "journal_article",
+      "title": "北海道の高断熱・高気密住宅におけるセントラル暖房システムの運転実態に関する調査",
+      "authors": "藤原陽三, 絵内正道, 鈴木憲三, 羽山広文",
+      "year": 2008,
+      "journal": "日本建築学会環境系論文集",
+      "doi": "10.3130/aije.73.767",
+      "url": "https://eprints.lib.hokudai.ac.jp/repo/huscap/all/50462/AIJ.628.767-774.pdf",
+      "evidence": "北海道のセントラル暖房住宅では玄関、廊下、洗面、トイレ等にも温水パネルヒーターが設置されることが多く、住戸全体が暖房空間で、暖房されない非居室は少ないと記述。対象5戸の相当隙間面積は0.33-3.23cm2/m2。",
+      "use_in_memo": "北海道では浴室暖房乾燥機単体ではなく、住戸全体暖房・非居室暖房が寒冷リスクを低減し得る根拠。"
+    },
+    {
+      "id": "lit02",
+      "type": "journal_article",
+      "title": "北海道における高断熱戸建て住宅の温熱環境とエネルギー消費の実態: 熱損失係数が1.3W/m2Kレベルの住宅を主たる対象とした調査",
+      "authors": "立松宏一, 福島明, 鈴木大隆, 月館司, 廣田誠一, 高倉政寛, 池田裕雅",
+      "year": 2012,
+      "journal": "日本建築学会環境系論文集",
+      "doi": "10.3130/aije.77.713",
+      "url": "https://www.jstage.jst.go.jp/article/aije/77/679/77_713/_article/-char/ja/",
+      "evidence": "熱損失係数が主に1.3W/m2K程度の北海道高断熱戸建住宅を対象とし、暖房期を通じて室温が安定していたと報告。",
+      "use_in_memo": "北海道の高断熱住宅群では、暖房期の室温安定性が確認されている根拠。"
+    },
+    {
+      "id": "lit03",
+      "type": "journal_article",
+      "title": "高断熱住宅群の設計手法の分析とエネルギー消費実態に関する研究",
+      "authors": "丸山翔永, 森太郎",
+      "year": 2018,
+      "journal": "日本建築学会環境系論文集",
+      "doi": "10.3130/aije.83.515",
+      "url": "https://www.jstage.jst.go.jp/article/aije/83/748/83_515/_article/-char/ja/",
+      "evidence": "札幌市補助を受けた高断熱住宅120戸を対象とし、90%超がセントラル暖房を使用。北海道では省エネ基準を超える住宅が多く建てられていると記述。",
+      "use_in_memo": "札幌の高断熱住宅施策とセントラル暖房普及の近年の根拠。"
+    },
+    {
+      "id": "lit04",
+      "type": "journal_article",
+      "title": "東北地方における高断熱高気密住宅の健康性とエネルギー効率からみた評価",
+      "authors": "不詳（J-STAGE記事ページ参照）",
+      "year": 1995,
+      "journal": "住宅建築研究所報",
+      "doi": "10.20803/jusokennen.21.0_373",
+      "url": "https://www.jstage.jst.go.jp/article/jusokennen/21/0/21_9322/_article/-char/ja/",
+      "evidence": "東北地方でも高断熱高気密住宅が建設されるようになったが、北海道と比較して歴史が浅いと明記。仙台市内・盛岡市内の16戸の実測では冬期温熱環境は良好な住戸が多いが、乾燥等の課題も指摘。",
+      "use_in_memo": "東北の高断熱高気密住宅は北海道より導入の歴史が浅いという直接的な比較根拠。"
+    },
+    {
+      "id": "lit05",
+      "type": "journal_article",
+      "title": "東北地域の戸建住宅における冬期の室内温熱環境と暖房エネルギーに関する実測調査",
+      "authors": "源城かほり, 吉野博ほか",
+      "year": 2002,
+      "journal": "日本建築学会技術報告集",
+      "url": "https://www.jstage.jst.go.jp/article/aijt/8/15/8_KJ00004057188/_pdf/-char/ja",
+      "evidence": "東北の高断熱・気密性の高い戸建住宅15戸を対象とし、北海道や東北北部で石油セントラル暖房の導入が進むと記述。対象は八戸、秋田、盛岡、山形で、11戸が高断熱・気密性を持つ一方、従来型住宅4戸も比較対象に含む。",
+      "use_in_memo": "東北にも高断熱・セントラル暖房住宅は存在するが、対象地域・住宅にばらつきがある比較根拠。"
+    },
+    {
+      "id": "rep01",
+      "type": "official_report",
+      "title": "住宅の高断熱化目標水準に関する基礎調査 第2章 断熱技術、断熱建材・部品等の普及実態調査と技術動向調査",
+      "authors": "建築研究所",
+      "year": 2011,
+      "url": "https://www.kenken.go.jp/japanese/contents/publications/data/154/2_old.pdf",
+      "evidence": "北方型住宅のQ値基準1.6W/m2K以下は、北海道の一般的住宅を部分暖房した場合に比べ約2/3の灯油消費量で全室暖房可能なレベルと記述。北方型住宅ECOはQ値1.3W/m2K以下を基準とし、平成20年度建設住宅の80%が1.2-1.3W/m2K、平均1.24W/m2Kと報告。",
+      "use_in_memo": "北海道の制度的住宅性能水準が高く、全室暖房を前提にした省エネ水準が整備されている根拠。"
+    },
+    {
+      "id": "rep02",
+      "type": "official_web",
+      "title": "省エネガイド: 住宅も省エネにしよう",
+      "authors": "北海道",
+      "year": 2025,
+      "url": "https://www.pref.hokkaido.lg.jp/kz/gxs/jyuutaku.html",
+      "evidence": "北方型住宅は断熱・気密性能に優れ、全室暖房・計画換気を採用すると説明。実験住宅の比較として、逃げる熱は半分、暖房エネルギーは1/3まで減少と紹介。",
+      "use_in_memo": "学術文献の補助として、北海道行政が北方型住宅を全室暖房・計画換気付き高断熱住宅として位置づけている根拠。"
+    }
+  ],
+  "zotero_pipeline": {
+    "log": "refs/search/20260520_hokkaido_tohoku_insulation_zotero_oa.json",
+    "query": "Hokkaido well insulated airtight houses central heating Tohoku district",
+    "results_count": 0,
+    "note": "OpenAlex OA pipelineでは該当PDF付きOA文献の自動取得は0件。主要文献はJ-STAGE/CiNii/北海道大学機関リポジトリ経由で手動確認した。"
+  },
+  "synthesis": [
+    "北海道の優位性は、平均的住宅ストックを直接測定した全国比較というより、北方型住宅・高断熱高気密住宅・セントラル暖房住宅に関する研究蓄積と制度的基準で裏づけられる。",
+    "東北にも高断熱高気密・セントラル暖房住宅は存在するが、1995年研究では北海道より歴史が浅いとされ、2002年実測では地域・住宅・暖房運転方法のばらつきが大きい。",
+    "北海道の研究では、非居室を含む住戸全体の暖房空間化、暖房期の室温安定、高性能住宅への補助制度が繰り返し確認される。"
+  ],
+  "limitations": [
+    "北海道一般住宅ストック全体と東北全県の一般住宅ストック全体を同一指標で比較した文献は、この検索範囲では限定的であった。",
+    "高断熱住宅や補助対象住宅を対象にした研究は、北海道住宅全体の平均性能を直接表すものではない。",
+    "浴室・脱衣所の温熱環境を直接比較した文献ではなく、住宅全体の断熱・暖房方式から間接的に解釈している。"
+  ]
+}
