@@ -1,0 +1,112 @@
+{
+  "created_at": "2026-05-20T15:42:00+09:00",
+  "slug": "tohoku_cold_region_housing_systems_manual",
+  "purpose": "東北地方に北海道の北方型住宅制度・北方型住宅サポートシステム・きた住まいるに準ずる寒冷地住宅制度があるかを確認する。",
+  "queries": [
+    {
+      "source": "web",
+      "query": "東北 寒冷地住宅 制度 高断熱 高気密 住宅 サポートシステム"
+    },
+    {
+      "source": "web",
+      "query": "東北版 北方型住宅 寒冷地住宅 制度"
+    },
+    {
+      "source": "web",
+      "query": "青森県 積雪寒冷地型住宅 最適化 プロジェクト GX住宅 ビルダーズ"
+    },
+    {
+      "source": "web",
+      "query": "岩手型住宅 県独自 高断熱 省エネ住宅 基準"
+    },
+    {
+      "source": "web",
+      "query": "やまがた健康住宅 認証制度 高断熱 高気密"
+    },
+    {
+      "source": "web",
+      "query": "せんだい健幸省エネ住宅 認定制度"
+    },
+    {
+      "source": "web",
+      "query": "ふくしまZEH 公式 断熱性能 一般的なZEHより ワンランク上"
+    },
+    {
+      "source": "OpenAlex via Zotero OA pipeline",
+      "query": "東北 寒冷地住宅 高断熱 認証制度 岩手型住宅 やまがた健康住宅 せんだい健幸省エネ住宅",
+      "log": "refs/search/20260520_tohoku_cold_region_housing_systems_zotero_oa.json",
+      "result": "PDF付きOA自動取得は0件。制度情報は公式Webと関連団体ページを中心に確認。"
+    }
+  ],
+  "records": [
+    {
+      "prefecture_or_city": "青森県",
+      "system": "あおもりリビングスタイルガイドライン / あおもりGX住宅スタイル / あおもり発の積雪寒冷地型住宅最適化プロジェクト",
+      "url": "https://www.pref.aomori.lg.jp/release/2024/77940.html",
+      "additional_url": "https://www.pref.aomori.lg.jp/soshiki/kendo/kenju/aomorigxsasutena.html",
+      "evidence": "青森独自の省エネ住宅基準を設定し、新築住宅で断熱等性能等級6以上、一次エネルギー消費量削減率30%以上、気密性能C値0.7cm2/m2以下を掲げる。2025-2027年度の先導事業では積雪寒冷地に合った設計仕様、地域材、温湿度、光熱費、設計図書等のデータを集計して仕様・価格帯を最適化する。",
+      "classification": "近年の実証・普及型。北海道の北方型住宅に近い問題意識はあるが、制度開始は新しく、住宅履歴保管や事業者登録公開を長期運用するサポートシステムとしては未確認。"
+    },
+    {
+      "prefecture_or_city": "岩手県",
+      "system": "岩手型住宅ガイドライン",
+      "url": "https://www.pref.iwate.jp/_res/projects/default_project/_page_/001/010/274/iwategatajuutaku_guideline.pdf",
+      "evidence": "岩手で快適で健康的な暮らしを実現する住宅の普及を目的に、さらなる省エネ性能と岩手らしさを備えた岩手型住宅を設定。新築・リフォームの一戸建て住宅を想定し、断熱等性能等級6以上をスタンダードと考える旨を示す。",
+      "classification": "ガイドライン型。道の北方型住宅のような認定・住宅履歴保管・事業者登録公開までを含む包括制度とは確認できない。"
+    },
+    {
+      "prefecture_or_city": "宮城県",
+      "system": "みやぎゼロエネルギー住宅",
+      "url": "https://www.pref.miyagi.jp/site/miyagi-smartenergyhouse/zeroenergyhouse.html",
+      "evidence": "令和4年度から国のZEH水準を上回る断熱性能などを有し、快適性や災害対応能力を追求したZEHへの独自支援を実施。",
+      "classification": "ZEH上乗せ支援型。寒冷地住宅制度というより脱炭素住宅支援。"
+    },
+    {
+      "prefecture_or_city": "仙台市",
+      "system": "せんだい健幸省エネ住宅認定制度",
+      "url": "https://www.city.sendai.jp/ondanka/kodannetsu/nintei.html",
+      "evidence": "市独自の断熱等評価基準を定め、新築・改修で基準を満たす一戸建て住宅を認定。新築・改修それぞれにUA値とC値を考慮した3段階基準を設定。",
+      "classification": "市単位の認定制度。性能基準と認定は明確で、北方型住宅に近い部分があるが、対象地域は市内に限定される。"
+    },
+    {
+      "prefecture_or_city": "宮城県内関連団体",
+      "system": "みやすま健康省エネ住宅ラベリング制度",
+      "url": "https://www.mkj.or.jp/eco/labeling",
+      "evidence": "宮城県建築住宅センターが、HEAT20をベースとした独自の断熱性能基準を定め、新築一戸建て住宅を対象に適合状況を評価し認証ラベルを交付。",
+      "classification": "関連団体によるラベリング制度。自治体本体の制度ではないが、性能の見える化という点ではきた住まいるに一部近い。"
+    },
+    {
+      "prefecture_or_city": "秋田県",
+      "system": "秋田花まるっ住宅ガイドライン",
+      "url": "https://www.pref.akita.lg.jp/pages/archive/576",
+      "additional_url": "https://www.pref.akita.lg.jp/uploads/public/archive_0000000576_00/hanamarujuutakugaidorain.pdf",
+      "evidence": "高齢期の自立・介護、ライフスタイル変化対応を重視した住まいづくりの手引き。ガイドライン内では断熱・気密、換気、内部結露防止に触れる。",
+      "classification": "健康長寿・バリアフリー寄りのガイドライン。寒冷地高性能住宅の認証制度やサポートシステムとは異なる。"
+    },
+    {
+      "prefecture_or_city": "山形県",
+      "system": "やまぽっかの家（やまがた省エネ健康住宅）認証制度",
+      "url": "https://www.pref.yamagata.jp/tatekkana/support/kenkou/shoenekenkou-jigyosya.html",
+      "additional_url": "https://www.pref.yamagata.jp/050015/syoenejyutaku.html",
+      "evidence": "平成30年に県独自の高断熱高気密住宅認証制度を創設。県が審査し、設計時・壁の断熱工事施工時・完成後の3段階で基準確認を行う。登録事業者制度もあり、R8年3月末時点で設計適合証累計1174件、建設認定証累計1070件。",
+      "classification": "東北で北海道に最も近い制度の一つ。性能認証、施工途中検査、登録事業者、公表、補助支援がある。ただし北海道の住宅履歴保管システムと同等の仕組みまでは今回確認できない。"
+    },
+    {
+      "prefecture_or_city": "福島県",
+      "system": "ふくしまZEH（F-ZEH）推進事業",
+      "url": "https://fkc.or.jp/fzeh/index.php",
+      "additional_url": "https://www.pref.fukushima.lg.jp/uploaded/attachment/623994.pdf",
+      "evidence": "通常のZEHより高い性能と県産材利用等を含む住宅を支援。F-ZEHは断熱性能等級6以上、県産材10m3以上、木質バイオマスストーブ導入などを要件とし、令和7年度はF-ZEH 135万円/戸、F-ZEH+ 180万円/戸。",
+      "classification": "ZEH上乗せ補助型。寒冷地性や県産材を含むが、北方型住宅のような住宅履歴・技術者・事業者情報公開を核にした包括制度とは確認できない。"
+    }
+  ],
+  "synthesis": [
+    "東北にも、北海道の北方型住宅に近い目的を持つ制度・ガイドライン・認定制度は複数確認できる。",
+    "最も近いのは山形県のやまぽっかの家で、県独自基準、県審査、施工途中を含む3段階確認、登録事業者制度、公表、補助がある。",
+    "仙台市のせんだい健幸省エネ住宅、宮城県建築住宅センターのみやすまラベリングも、性能評価と認定・表示という点で近い。",
+    "青森県のあおもりGX住宅/積雪寒冷地型住宅最適化プロジェクトは、2025-2027年度の実証・普及型で、温湿度・光熱費・設計図書等のデータ収集を含むため、将来的な制度化の足場に見える。",
+    "岩手型住宅、秋田花まるっ住宅はガイドライン性が強く、北海道型のサポートシステムには届かない。",
+    "福島県のF-ZEH、宮城県のみやぎゼロエネルギー住宅はZEHの県独自上乗せ支援で、寒冷地住宅制度というより脱炭素住宅支援である。",
+    "今回の検索範囲では、北海道の北方型住宅サポートシステムのように、住宅履歴保管、技術者制度、性能基準、事業者登録・情報公開が長期に一体運用される東北全域または県制度は確認できなかった。"
+  ]
+}
