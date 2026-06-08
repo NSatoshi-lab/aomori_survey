@@ -1,0 +1,54 @@
+{
+  "search": {
+    "db": "CiNii Research",
+    "query": "八塚ほか2013の北東北結果確認",
+    "filter": {
+      "queries": [
+        {
+          "query": "浴室設備と冬期における入浴・浴室温熱環境の実態把握",
+          "url": "https://cir.nii.ac.jp/all?q=%E6%B5%B4%E5%AE%A4%E8%A8%AD%E5%82%99%E3%81%A8%E5%86%AC%E6%9C%9F%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E5%85%A5%E6%B5%B4%E3%83%BB%E6%B5%B4%E5%AE%A4%E6%B8%A9%E7%86%B1%E7%92%B0%E5%A2%83%E3%81%AE%E5%AE%9F%E6%85%8B%E6%8A%8A%E6%8F%A1",
+          "hit_count": 2,
+          "top_results": [
+            {
+              "title": "浴室設備と冬期における入浴 ・ 浴室温熱環境の実態把握 インターネット調査による地域・建築形態・築年数の検討",
+              "url": "https://cir.nii.ac.jp/crid/1572261552987644160"
+            },
+            {
+              "title": "浴室設備と冬期における入浴 ・ 浴室温熱環境の実態把握",
+              "url": "https://cir.nii.ac.jp/crid/1390001205202526848"
+            },
+            {
+              "title": "井上 隆",
+              "url": "https://cir.nii.ac.jp/crid/1420001326230157056"
+            },
+            {
+              "title": "前 真之",
+              "url": "https://cir.nii.ac.jp/crid/1420564276179537664"
+            }
+          ],
+          "error": null
+        },
+        {
+          "query": "八塚 春子 浴室設備 冬期 入浴 浴室温熱環境",
+          "url": "https://cir.nii.ac.jp/all?q=%E5%85%AB%E5%A1%9A%20%E6%98%A5%E5%AD%90%20%E6%B5%B4%E5%AE%A4%E8%A8%AD%E5%82%99%20%E5%86%AC%E6%9C%9F%20%E5%85%A5%E6%B5%B4%20%E6%B5%B4%E5%AE%A4%E6%B8%A9%E7%86%B1%E7%92%B0%E5%A2%83",
+          "hit_count": 2,
+          "top_results": [
+            {
+              "title": "浴室設備 と 冬期 における 入浴 ・ 浴室温熱環境 の実態把握 インターネット調査による地域・建築形態・築年数の検討",
+              "url": "https://cir.nii.ac.jp/crid/1572261552987644160"
+            },
+            {
+              "title": "浴室設備 と 冬期 における 入浴 ・ 浴室温熱環境 の実態把握",
+              "url": "https://cir.nii.ac.jp/crid/1390001205202526848"
+            }
+          ],
+          "error": null
+        }
+      ]
+    },
+    "requested_at": "2026-06-08T04:22:59Z",
+    "search_date": "2026-06-08",
+    "log_tag": "yatsuzuka2013_northeast_bathroom_coldness_cinii"
+  },
+  "generated_at": "2026-06-08T04:23:17Z"
+}

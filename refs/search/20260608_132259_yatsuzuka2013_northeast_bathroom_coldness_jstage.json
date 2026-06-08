@@ -1,0 +1,70 @@
+{
+  "search": {
+    "db": "J-STAGE",
+    "query": "八塚ほか2013の北東北結果確認",
+    "filter": {
+      "queries": [
+        {
+          "query": "浴室設備と冬期における入浴・浴室温熱環境の実態把握",
+          "url": "https://www.jstage.jst.go.jp/result/global/-char/ja?globalSearchKey=%E6%B5%B4%E5%AE%A4%E8%A8%AD%E5%82%99%E3%81%A8%E5%86%AC%E6%9C%9F%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E5%85%A5%E6%B5%B4%E3%83%BB%E6%B5%B4%E5%AE%A4%E6%B8%A9%E7%86%B1%E7%92%B0%E5%A2%83%E3%81%AE%E5%AE%9F%E6%85%8B%E6%8A%8A%E6%8F%A1",
+          "hit_count": 6,
+          "top_results": [
+            {
+              "title": "住宅における高断熱浴槽の湯温低下抑制効果に関する研究",
+              "url": "https://www.jstage.jst.go.jp/article/aije/79/700/79_515/_article/-char/ja"
+            },
+            {
+              "title": "浴室設備と冬期における入浴・浴室温熱環境の実態把握",
+              "url": "https://www.jstage.jst.go.jp/article/aije/78/688/78_489/_article/-char/ja"
+            },
+            {
+              "title": "世帯属性情報に基づく湯はり頻度予測モデルの構築",
+              "url": "https://www.jstage.jst.go.jp/article/shase/44/264/44_35/_article/-char/ja"
+            },
+            {
+              "title": "居住者視点によるヒートショック対策の検討",
+              "url": "https://www.jstage.jst.go.jp/article/seikisho/53/1/53_13/_article/-char/ja"
+            },
+            {
+              "title": "ウェブアンケート調査による高効率給湯器を導入した戸建住宅におけるエネルギー消費特性に関する研究",
+              "url": "https://www.jstage.jst.go.jp/article/aije/80/716/80_963/_article/-char/ja"
+            }
+          ],
+          "error": null
+        },
+        {
+          "query": "八塚 春子 浴室設備 冬期 入浴 浴室温熱環境",
+          "url": "https://www.jstage.jst.go.jp/result/global/-char/ja?globalSearchKey=%E5%85%AB%E5%A1%9A%20%E6%98%A5%E5%AD%90%20%E6%B5%B4%E5%AE%A4%E8%A8%AD%E5%82%99%20%E5%86%AC%E6%9C%9F%20%E5%85%A5%E6%B5%B4%20%E6%B5%B4%E5%AE%A4%E6%B8%A9%E7%86%B1%E7%92%B0%E5%A2%83",
+          "hit_count": 8,
+          "top_results": [
+            {
+              "title": "浴室設備と冬期における入浴・浴室温熱環境の実態把握",
+              "url": "https://www.jstage.jst.go.jp/article/aije/78/688/78_489/_article/-char/ja"
+            },
+            {
+              "title": "浴槽エプロン内における温湿度環境の実態調査",
+              "url": "https://www.jstage.jst.go.jp/article/aijt/28/68/28_290/_article/-char/ja"
+            },
+            {
+              "title": "住宅における高断熱浴槽の湯温低下抑制効果に関する研究",
+              "url": "https://www.jstage.jst.go.jp/article/aije/79/700/79_515/_article/-char/ja"
+            },
+            {
+              "title": "居住者視点によるヒートショック対策の検討",
+              "url": "https://www.jstage.jst.go.jp/article/seikisho/53/1/53_13/_article/-char/ja"
+            },
+            {
+              "title": "日本の冬季における高齢者の入浴死について",
+              "url": "https://www.jstage.jst.go.jp/article/jhesj/28/2/28_53/_article/-char/ja"
+            }
+          ],
+          "error": null
+        }
+      ]
+    },
+    "requested_at": "2026-06-08T04:22:59Z",
+    "search_date": "2026-06-08",
+    "log_tag": "yatsuzuka2013_northeast_bathroom_coldness_jstage"
+  },
+  "generated_at": "2026-06-08T04:23:17Z"
+}
