@@ -1,0 +1,21 @@
+{
+  "chatgpt.openOnStartup": true,
+  "files.exclude": {
+    "**/data/raw/**": true,
+    "**/outputs/**": true,
+    "**/outputs/runs/**": true,
+    "**/outputs/tmp/**": true
+  },
+  "files.watcherExclude": {
+    "**/data/raw/**": true,
+    "**/outputs/**": true,
+    "**/outputs/runs/**": true,
+    "**/outputs/tmp/**": true
+  },
+  "search.exclude": {
+    "**/data/raw/**": true,
+    "**/outputs/**": true,
+    "**/outputs/runs/**": true,
+    "**/outputs/tmp/**": true
+  }
+}
