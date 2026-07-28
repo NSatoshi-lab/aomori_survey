@@ -12,7 +12,10 @@ param(
   [string]$BibPath = "",
 
   [Parameter(Mandatory = $false)]
-  [string]$CslPath = ""
+  [string]$CslPath = "",
+
+  [Parameter(Mandatory = $false)]
+  [switch]$FormatOnki
 )
 
 $ErrorActionPreference = "Stop"
@@ -71,5 +74,19 @@ if ($LASTEXITCODE -ne 0) {
   throw ("Pandoc failed (exit={0}). See: {1}" -f $LASTEXITCODE, $cmdTxt)
 }
 
-Write-Host ("Done: {0}" -f $outputDocx)
+if ($FormatOnki) {
+  $formatter = Join-Path $repoRoot "src\\scripts\\format_onki_manuscript_docx.py"
+  if (-not (Test-Path $formatter)) {
+    throw ("ONKI formatter が見つかりません: {0}" -f $formatter)
+  }
+  $pythonCmd = Get-Command python -ErrorAction SilentlyContinue
+  if (-not $pythonCmd) {
+    throw "python が見つかりません。FormatOnkiにはpython-docxが必要です。"
+  }
+  & $pythonCmd.Source $formatter $outputDocx
+  if ($LASTEXITCODE -ne 0) {
+    throw ("ONKI formatting failed (exit={0})." -f $LASTEXITCODE)
+  }
+}
 
+Write-Host ("Done: {0}" -f $outputDocx)

@@ -7,7 +7,7 @@
 - 紙原票、スキャン、個人が推測できるメモ、詳細回収台帳はGit管理しない。
 - 上記の生データ・作業メモは `data/raw/` または外部保管先で管理する。
 - 匿名ID単位の入力済み解析CSVは `data/processed/aomori_survey_responses_anonymized.csv` とする。
-- 実配布・回収状況の公開可能な要約だけ必要な場合は `data/processed/aomori_survey_collection_summary.csv` とする。
+- 実配布・回収状況の公開可能な要約は `data/processed/aomori_survey_collection_summary.csv` に保存する。
 
 ## 期待する解析CSV
 

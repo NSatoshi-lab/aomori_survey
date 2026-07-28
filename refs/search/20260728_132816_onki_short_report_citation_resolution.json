@@ -1,0 +1,70 @@
+{
+  "search": {
+    "database": "Zotero local library and existing repository search logs",
+    "date": "2026-07-28",
+    "purpose": "日本温泉気候物理医学会雑誌への短報で使用する既存文献の選定と書誌確認",
+    "queries": [
+      "冬期における浴室温熱環境の全国調査",
+      "浴室設備と冬期における入浴・浴室温熱環境の実態把握",
+      "高齢者の入浴中突然死に関する調査研究",
+      "高齢者の入浴中心肺停止と地域性"
+    ]
+  },
+  "method": {
+    "new_external_search": false,
+    "zotero_bridge": "HTTP 404のため利用不可",
+    "fallback": "Zoteroローカルライブラリ検索および既存のrefs/searchログを使用",
+    "note": "新規文献の探索・登録は行わず、既収載文献と既確認済み書誌を短報用に選定した。"
+  },
+  "selected_references": [
+    {
+      "title": "冬期における浴室温熱環境の全国調査",
+      "authors": "大中忠勝ほか",
+      "year": 2007,
+      "journal": "人間と生活環境",
+      "volume_issue": "14(1)",
+      "doi": "10.24538/jhesj.14.1_11",
+      "zotero_item_key": "MJ6PQ8FR",
+      "citekey": "dazhong2007",
+      "use": "全国11都市の浴室温熱環境と札幌の全室暖房の背景"
+    },
+    {
+      "title": "浴室設備と冬期における入浴・浴室温熱環境の実態把握",
+      "authors": "八塚春子, 井上隆, 前真之, 森勇樹",
+      "year": 2013,
+      "journal": "日本建築学会環境系論文集",
+      "volume_issue_pages": "78(688):489-496",
+      "doi": "10.3130/aije.78.489",
+      "zotero_item_keys": [
+        "7QVN4MFU",
+        "ZBDDJF3K"
+      ],
+      "citekey": "bazhongc2013",
+      "use": "北東北ブロックの冬期非暖房時の浴室・脱衣室寒さとの比較",
+      "deduplication": "原稿では1文献として扱う"
+    },
+    {
+      "title": "高齢者の入浴中突然死に関する調査研究",
+      "authors": "重臣宗伯, 佐藤ワカナ, 円山啓司, 吉岡尚文",
+      "year": 2001,
+      "journal": "日本救急医学会雑誌",
+      "volume_issue_pages": "12(3):109-120",
+      "doi": "10.3893/jjaam.12.109",
+      "use": "青森を含む地域別の入浴中救急搬送と冬季浴室環境の医学的背景"
+    },
+    {
+      "title": "高齢者の入浴中心肺停止と地域性",
+      "authors": "重臣宗伯, 佐藤ワカナ, 柴田繁啓, 越村裕美, 円山啓司, 吉岡尚文",
+      "year": 2001,
+      "journal": "蘇生",
+      "volume_issue_pages": "20(2):145-148",
+      "doi": "10.11414/jjreanimatology1983.20.145",
+      "use": "青森・秋田群と寒冷期の脱衣場・浴室内温度の背景"
+    }
+  ],
+  "citation_policy": {
+    "style": "投稿誌に合わせた本文中の上付き相当の番号引用をMarkdownでは角括弧番号で管理する",
+    "causal_limit": "入浴事故文献は序論の背景に限定し、本調査から事故予防効果を推論しない",
+    "reference_limit": "30編以内"
+  }
+}

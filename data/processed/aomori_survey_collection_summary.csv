@@ -1,0 +1,17 @@
+field,value,unit,note
+survey_start_date,2026-03-11,date,倫理審査承認確認後に配布開始を依頼
+survey_end_date,2026-04-30,date,実際の回収終了日
+questionnaires_prepared,200,copies,準備部数
+questionnaires_distributed,190,copies,五所川原市在住の協力者が市内で配布
+questionnaires_not_distributed,10,copies,準備したが未配布
+questionnaires_collected,154,copies,回収部数
+questionnaires_not_collected,36,copies,配布したが未回収
+response_rate,81.1,percent,154/190
+analysis_eligible_responses,147,responses,Q7・該当者のQ8・浴室寒さが利用可能
+reason_analysis_responses,112,responses,浴室暖房乾燥機が未使用または未設置
+central_heating_analysis_responses,140,responses,セントラル暖房の無回答7票を除外
+distribution_area,五所川原市内,text,回答者住所は取得せず市内在住を個票単位では未確認
+distribution_method,協力者による手渡し配布・回収,text,五所川原市在住の協力者が実施
+ethics_committee,日本温泉気候物理医学会倫理審査会,text,
+ethics_approval_date,2026-03-11,date,
+ethics_approval_number,Onki26-01,text,
