@@ -1,0 +1,265 @@
+{
+  "created_at": "2026-07-28T09:24:49+09:00",
+  "slug": "hokkaido_insulation_grade56_recent",
+  "purpose": "北海道の最近の新築戸建住宅について、断熱等性能等級5・6以上の普及状況を青森県と比較できる公的データがあるか確認する。",
+  "search_date": "2026-07-27, 2026-07-28",
+  "databases": [
+    "一般社団法人住宅性能評価・表示協会",
+    "国土交通省",
+    "札幌市公式Web・PDF",
+    "環境省住宅脱炭素NAVI",
+    "Web検索"
+  ],
+  "queries": [
+    "北海道 新築戸建住宅 断熱等性能等級6 普及率 2024",
+    "site:hro.or.jp 北海道 新築戸建住宅 断熱性能 UA値 調査 2023",
+    "site:pref.hokkaido.lg.jp 断熱等性能等級6 普及率 住宅",
+    "北海道 住宅事業者 アンケート 断熱等級6 割合",
+    "住宅性能評価 表示協会 令和6年度 都道府県別 断熱等性能等級 北海道",
+    "令和6年度 都道府県別住宅性能評価書交付状況 北海道 一戸建て",
+    "札幌市 高断熱 高気密住宅 普及状況 事業者 アンケート 2024年度"
+  ],
+  "zotero_bridge": {
+    "status": "unavailable",
+    "check": "pwsh -File src/scripts/test_zotero_bridge.ps1",
+    "result": "ping・importともにNo endpoint found（HTTP 404）であったため、OA自動取込は実施せず、行政・制度運営主体の公開資料を手動確認した。"
+  },
+  "records": [
+    {
+      "id": "env_insulation_grade_thresholds",
+      "type": "official_web",
+      "title": "省エネ住宅とは",
+      "publisher": "環境省 住宅脱炭素NAVI",
+      "url": "https://policies.env.go.jp/earth/zeh/shoene/",
+      "accessed_at": "2026-07-28",
+      "evidence": [
+        "地域区分1・2の断熱等性能等級5はUA値0.40以下、等級6はUA値0.28以下、等級7はUA値0.20以下である。",
+        "地域区分3では等級5がUA値0.50以下、等級6がUA値0.28以下、等級7がUA値0.20以下、地域区分4では順に0.60以下、0.34以下、0.23以下である。",
+        "等級5は2022年4月、等級6・7は2022年10月に新設された。"
+      ],
+      "interpretation": "札幌市調査のUA値0.40以下・0.28以下は、地域区分2における等級5以上・等級6以上と読み替えられる。青森県との等級ラベル比較では地域区分に応じて基準値が異なる点に注意する。"
+    },
+    {
+      "id": "housing_performance_hokkaido_r6",
+      "type": "official_system_pdf",
+      "title": "令和6年度建設住宅性能評価書（新築）データ 新築戸建北海道",
+      "publisher": "一般社団法人住宅性能評価・表示協会",
+      "url": "https://hyoukakyoukai.ezas.jp/uups/a/files/kyoukai_hp/R6_010006-ko.pdf",
+      "year": 2024,
+      "accessed_at": "2026-07-27",
+      "denominator": "断熱等性能等級が掲載された北海道内の建設住宅性能評価書取得新築戸建403戸",
+      "results": {
+        "grade4": {
+          "n": 2,
+          "percent": 0.5
+        },
+        "grade5": {
+          "n": 343,
+          "percent": 85.1
+        },
+        "grade6": {
+          "n": 49,
+          "percent": 12.2
+        },
+        "grade7": {
+          "n": 9,
+          "percent": 2.2
+        },
+        "grade5_or_higher": {
+          "n": 401,
+          "denominator": 403,
+          "percent_calculated": 99.5
+        },
+        "grade6_or_higher": {
+          "n": 58,
+          "denominator": 403,
+          "percent_calculated": 14.4
+        }
+      },
+      "interpretation": "北海道全域を地理的範囲とする最新の同一尺度データとして使えるが、住宅性能評価書を取得した住宅に限定され、全新築戸建の普及率ではない。"
+    },
+    {
+      "id": "housing_performance_aomori_r6",
+      "type": "official_system_pdf",
+      "title": "令和6年度建設住宅性能評価書（新築）データ 新築戸建青森県",
+      "publisher": "一般社団法人住宅性能評価・表示協会",
+      "url": "https://hyoukakyoukai.ezas.jp/uups/a/files/kyoukai_hp/R6_020001-ko.pdf",
+      "year": 2024,
+      "accessed_at": "2026-07-27",
+      "denominator": "断熱等性能等級が掲載された青森県内の建設住宅性能評価書取得新築戸建137戸",
+      "results": {
+        "grade5": {
+          "n": 136,
+          "percent": 99.3
+        },
+        "grade6": {
+          "n": 0,
+          "percent": 0.0
+        },
+        "grade7": {
+          "n": 1,
+          "percent": 0.7
+        },
+        "grade5_or_higher": {
+          "n": 137,
+          "denominator": 137,
+          "percent_calculated": 100.0
+        },
+        "grade6_or_higher": {
+          "n": 1,
+          "denominator": 137,
+          "percent_calculated": 0.7
+        }
+      },
+      "interpretation": "北海道と同じ制度・年度・住宅種別で比較できる。等級5以上には差がない一方、等級6以上は北海道14.4%、青森県0.7%で、上位等級への移行差を示す。ただし評価書取得住宅に限る。"
+    },
+    {
+      "id": "housing_performance_hokkaido_r5",
+      "type": "official_system_pdf",
+      "title": "令和5年度建設住宅性能評価書（新築）データ 新築戸建北海道",
+      "publisher": "一般社団法人住宅性能評価・表示協会",
+      "url": "https://hyoukakyoukai.ezas.jp/uups/a/files/kyoukai_hp/R5_010006-ko.pdf",
+      "year": 2023,
+      "accessed_at": "2026-07-27",
+      "results": {
+        "grade5": {
+          "n": 361,
+          "percent": 86.8
+        },
+        "grade6": {
+          "n": 48,
+          "percent": 11.5
+        },
+        "grade7": {
+          "n": 1,
+          "percent": 0.2
+        },
+        "grade6_or_higher": {
+          "n": 49,
+          "denominator": 416,
+          "percent_calculated": 11.8
+        }
+      },
+      "interpretation": "北海道の評価書取得住宅では、等級6以上が2023年度11.8%から2024年度14.4%へ増えた。年度間で対象住宅の構成が同じとは限らないため、傾向の記述に限定する。"
+    },
+    {
+      "id": "housing_performance_aomori_r5",
+      "type": "official_system_pdf",
+      "title": "令和5年度建設住宅性能評価書（新築）データ 新築戸建青森県",
+      "publisher": "一般社団法人住宅性能評価・表示協会",
+      "url": "https://hyoukakyoukai.ezas.jp/uups/a/files/kyoukai_hp/R5_020001-ko.pdf",
+      "year": 2023,
+      "accessed_at": "2026-07-27",
+      "results": {
+        "grade5": {
+          "n": 172,
+          "percent": 99.4
+        },
+        "grade6": {
+          "n": 0,
+          "percent": 0.0
+        },
+        "grade7": {
+          "n": 0,
+          "percent": 0.0
+        },
+        "grade6_or_higher": {
+          "n": 0,
+          "denominator": 173,
+          "percent_calculated": 0.0
+        }
+      },
+      "interpretation": "2023年度も同一制度内では、北海道の等級6以上11.8%に対し青森県0%であった。"
+    },
+    {
+      "id": "sapporo_next_generation_housing_survey_2025",
+      "type": "official_municipal_survey_pdf",
+      "title": "札幌版次世代住宅に関する調査 集計結果",
+      "publisher": "札幌市",
+      "url": "https://www.city.sapporo.jp/toshi/jutaku/10shien/zisedai/documents/r7-syuukeikekka.pdf",
+      "survey_year": 2025,
+      "target_period": "2024年度",
+      "accessed_at": "2026-07-27",
+      "sample": {
+        "eligible_companies": 105,
+        "responding_companies": 41,
+        "response_rate_percent": 39.0,
+        "homes_represented": 1842,
+        "share_of_sapporo_confirmation_applications_percent": 46.9
+      },
+      "results": {
+        "ua_0_40_or_lower_grade5_equivalent_or_higher_percent": 96.5,
+        "ua_0_28_or_lower_grade6_equivalent_or_higher_percent": 52.5,
+        "previous_year_grade5_equivalent_or_higher_percent": 94.1,
+        "previous_year_grade6_equivalent_or_higher_percent": 40.8
+      },
+      "interpretation": "回答事業者の施工住宅を分母とする点で、あおもりGX住宅ビルダーズ施工住宅の集計に比較的近い。青森GXビルダーズ2025年実績の等級5以上88%、等級6以上34%に対し、札幌市の回答事業者施工分は等級5相当以上96.5%、等級6相当以上52.5%であった。ただし地域、年度、事業者選定、回答率が異なり、統計的・因果的比較はできない。"
+    },
+    {
+      "id": "mlit_housing_performance_r6_prefecture_counts",
+      "type": "official_pdf",
+      "title": "都道府県別住宅性能評価書交付状況（令和6年4月1日-令和7年3月31日）",
+      "publisher": "国土交通省",
+      "url": "https://www.mlit.go.jp/report/press/content/001896902.pdf",
+      "accessed_at": "2026-07-27",
+      "evidence": [
+        "一戸建て住宅の建設住宅性能評価書交付戸数は北海道447戸、青森県142戸である。",
+        "断熱等級別PDFの掲載母数は北海道403戸、青森県137戸で、交付総数と一致しない。したがって断熱等級別比率の分母は、等級別PDFに掲載された戸数を用いる。"
+      ],
+      "interpretation": "住宅性能評価書取得住宅という限定母集団であることと、等級掲載件数が交付総数より少ないことを示す。"
+    }
+  ],
+  "comparisons": [
+    {
+      "name": "同一制度・同一年度の比較",
+      "period": "2024年度",
+      "population": "建設住宅性能評価書を取得し、断熱等級が掲載された新築戸建",
+      "hokkaido": {
+        "grade5_or_higher": "401/403（99.5%）",
+        "grade6_or_higher": "58/403（14.4%）"
+      },
+      "aomori": {
+        "grade5_or_higher": "137/137（100.0%）",
+        "grade6_or_higher": "1/137（0.7%）"
+      },
+      "descriptive_difference_percentage_points": {
+        "grade5_or_higher_hokkaido_minus_aomori": -0.5,
+        "grade6_or_higher_hokkaido_minus_aomori": 13.7
+      },
+      "use": "「等級5以上の到達には差がみられないが、等級6以上への移行は北海道で多かった」という限定的な記述に使える。"
+    },
+    {
+      "name": "事業者施工住宅どうしの近似比較",
+      "period": "札幌市2024年度、青森GXビルダーズ2025年",
+      "population": "札幌市アンケート回答事業者施工住宅と、青森県GXビルダーズ施工住宅",
+      "sapporo": {
+        "grade5_equivalent_or_higher": "96.5%（1,842戸相当の回答集計）",
+        "grade6_equivalent_or_higher": "52.5%（同上）"
+      },
+      "aomori_gx_builders": {
+        "grade5_or_higher": "478/543（88%）",
+        "grade6_or_higher": "184/543（34%）"
+      },
+      "descriptive_difference_percentage_points": {
+        "grade5_or_higher_sapporo_minus_aomori": 8.5,
+        "grade6_or_higher_sapporo_minus_aomori": 18.5
+      },
+      "use": "札幌市の回答事業者では等級6相当以上が過半数で、青森GXビルダーズ施工分より高いことを記述的に示せる。北海道全体対青森県全体の比較とは書かない。"
+    }
+  ],
+  "synthesis": [
+    "北海道全体の全新築戸建を網羅する断熱等級別普及率は、今回確認した公開資料では見当たらなかった。",
+    "地理的に北海道全域を覆う最新資料として、住宅性能評価・表示協会の2024年度建設住宅性能評価書データがあり、等級掲載403戸中、等級5以上401戸（99.5%）、等級6以上58戸（14.4%）であった。",
+    "同じ2024年度・同制度の青森県は、等級掲載137戸中、等級5以上137戸（100.0%）、等級6以上1戸（0.7%）であった。比較可能性は高いが、評価書取得住宅に限られる。",
+    "青森GXビルダーズ施工住宅との比較に近い資料として札幌市の2025年事業者調査があり、2024年度施工1,842戸相当の回答集計で、等級5相当以上96.5%、等級6相当以上52.5%であった。青森GXビルダーズ2025年施工分の88%、34%より高いが、札幌市対青森県、2024年度対2025年、回答事業者対登録ビルダーという違いがある。",
+    "したがって「北海道では等級6以上の普及率が高い」と無限定に書くのではなく、「札幌市の回答事業者が2024年度に施工した新築戸建では、等級6相当以上が52.5%であった」「住宅性能評価書取得住宅に限る同年度比較でも、等級6以上は北海道14.4%、青森県0.7%であった」と母集団を明記する。"
+  ],
+  "limitations": [
+    "住宅性能評価制度は任意利用であり、評価書取得住宅は全新築戸建の代表標本ではない。",
+    "札幌市調査は41/105社、回収率39.0%で、1,842戸は札幌市の確認申請戸数の46.9%に相当するが、札幌市全体の実績ではないと原資料自身が注記している。",
+    "札幌市調査は2024年度、青森GXビルダーズ実績は2025年で年度が一致しない。",
+    "札幌市は北海道全体を代表せず、青森GXビルダーズも青森県内の全事業者・全新築戸建を代表しない。",
+    "等級5・6は地域区分別のUA値基準で定義されるため、UA値そのものの比較と等級ラベルの比較を混同しない。",
+    "これらの断熱等級分布は浴室暖房設備の設置率や浴室温度を直接示さず、断熱等級差から浴室の寒さの原因を因果的に結論づけることはできない。"
+  ]
+}
