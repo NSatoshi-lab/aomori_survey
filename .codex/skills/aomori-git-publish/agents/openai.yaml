@@ -1,0 +1,4 @@
+interface:
+  display_name: "青森調査 Git Publish"
+  short_description: "作業要旨付きコミットを作成し現在ブランチへ安全にプッシュ"
+  default_prompt: "Use $aomori-git-publish to summarize the completed work, create a Japanese commit with a descriptive body, and push the current branch."

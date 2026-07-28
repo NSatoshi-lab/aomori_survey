@@ -1,0 +1,40 @@
+{
+  "search": {
+    "database": "J-STAGE",
+    "date": "2026-07-28",
+    "purpose": "青森調査短報の研究起点として引用する前報の書誌と本文内容の確認",
+    "query": "10.11390/onki.2376",
+    "source_url": "https://www.jstage.jst.go.jp/article/onki/89/2/89_2376/_article/-char/ja"
+  },
+  "zotero": {
+    "bridge_check": "failed",
+    "result": "HTTP 404 for /codex/ping and /codex/import",
+    "fallback": "J-STAGEのOA本文で書誌と内容を確認し、番号引用として手動管理",
+    "pdf_repository_storage": false
+  },
+  "reference": {
+    "authors": [
+      "野城聡志"
+    ],
+    "title_ja": "寒冷地における浴室暖房乾燥機設置率と浴槽内での溺死及び溺水の関連：生態学的パネル解析",
+    "title_en": "Association between Bathroom Heating Dryer Installation Rate and Bathtub Drowning and Submersion in Cold Prefectures: An Ecological Panel Analysis",
+    "journal": "日本温泉気候物理医学会雑誌",
+    "year": 2026,
+    "volume": 89,
+    "issue": 2,
+    "pages": "66-76",
+    "doi": "10.11390/onki.2376",
+    "oa_full_text": true
+  },
+  "evidence_notes": [
+    "主要解析では、寒冷県において浴室暖房乾燥機設置率とW65/W66死亡の負の関連が非寒冷県より強い方向に示されたが、生態学的解析であり因果解釈はできない。",
+    "探索的サブ解析では、寒冷県のうち浴室暖房乾燥機設置率が下位1/3、2023年SMRが上位1/3という基準から青森県と秋田県が候補県として抽出された。",
+    "セントラル暖房使用率の公開統計は地方別であり、青森県・秋田県の県別普及状況や地方内の異質性を定量評価できなかった。",
+    "寒冷県の低設置率にはセントラル暖房による代替が関与する可能性が仮説として示され、浴室温度、暖房使用、代替暖房、入浴行動を統合した追加研究が求められた。"
+  ],
+  "manuscript_use": {
+    "citation_number": 3,
+    "role": "本アンケート調査の研究起点、候補地域選定、セントラル暖房に関する知識ギャップの根拠",
+    "interpretation_limit": "候補県抽出は探索的サブ解析として記載し、高リスクの確定分類や因果効果として扱わない"
+  }
+}
