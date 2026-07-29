@@ -28,5 +28,8 @@ refs/bib/*.bib
 # Local build artifacts
 outputs/*.xpi
 
+# Retired local manuscript drafts
+deliverables/05_manuscript/onki_short_report_ja.docx
+
 # Archived files
 archive/
