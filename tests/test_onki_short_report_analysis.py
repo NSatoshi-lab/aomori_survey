@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -14,9 +15,14 @@ sys.path.insert(0, str(REPO_ROOT / "src" / "scripts"))
 from analyze_onki_short_report import (  # noqa: E402
     DEFAULT_COLLECTION_SUMMARY,
     DEFAULT_INPUT,
+    FIGURE_FILENAMES,
+    FIGURE_FILENAMES_EN,
+    MONO,
     build_reason_summary,
+    build_table1,
     build_table2,
     prepare_analysis_set,
+    render_all_figures,
 )
 from tabulate_aomori_paper_survey import parse_reason_codes  # noqa: E402
 
@@ -123,6 +129,63 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
             int(row["without_denominator"]) + int(row["with_denominator"]),
             140,
         )
+
+    def test_figure_summary_counts(self) -> None:
+        table1 = build_table1(self.valid)
+        self.assertEqual(
+            int(
+                table1[
+                    table1["item"].eq("寒さ体感")
+                    & table1["category"].eq("浴室寒さ5-7")
+                ]["event_n"].iloc[0]
+            ),
+            66,
+        )
+        central_used = self.valid[
+            self.valid["q9_central_heating_use"].isin([1, 2])
+        ]
+        self.assertEqual(len(central_used), 28)
+        self.assertEqual(
+            int(central_used["q7_bath_heater_status"].eq(1).sum()),
+            19,
+        )
+
+    def test_three_japanese_figures_are_rendered(self) -> None:
+        reason_summary, _ = build_reason_summary(self.valid)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            paths = render_all_figures(
+                self.valid,
+                reason_summary,
+                Path(temp_dir),
+            )
+            self.assertEqual(set(paths), {1, 2, 3})
+            for number, path in paths.items():
+                self.assertEqual(path.name, FIGURE_FILENAMES[number])
+                self.assertTrue(path.exists())
+                self.assertGreater(path.stat().st_size, 10_000)
+
+    def test_three_english_submission_figures_are_rendered(self) -> None:
+        reason_summary, _ = build_reason_summary(self.valid)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            paths = render_all_figures(
+                self.valid,
+                reason_summary,
+                Path(temp_dir),
+                language="en",
+            )
+            self.assertEqual(set(paths), {1, 2, 3})
+            for number, path in paths.items():
+                self.assertEqual(path.name, FIGURE_FILENAMES_EN[number])
+                self.assertTrue(path.exists())
+                self.assertGreater(path.stat().st_size, 10_000)
+
+    def test_figure_palette_is_monochrome(self) -> None:
+        for color in MONO.values():
+            red = color[1:3]
+            green = color[3:5]
+            blue = color[5:7]
+            self.assertEqual(red, green)
+            self.assertEqual(green, blue)
 
 
 if __name__ == "__main__":

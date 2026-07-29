@@ -16,6 +16,9 @@ from docx.shared import Mm, Pt
 
 BODY_FONT = "Yu Mincho"
 LATIN_FONT = "Times New Roman"
+FIGURE_SECTION_TITLES = ("Figure Legends", "Figures")
+FIGURE_BODY_TITLES = ("Figure 1", "Figure 2", "Figure 3")
+LEGEND_PAGE_BREAK_PREFIXES = ("Figure 2.", "Figure 3.")
 
 
 def parse_args() -> argparse.Namespace:
@@ -86,11 +89,17 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
     for paragraph in document.paragraphs:
         paragraph_text = paragraph.text.strip()
         has_drawing = bool(paragraph._p.xpath(".//w:drawing"))
-        if paragraph_text.startswith(("Table 1.", "Table 2.", "Fig. 1.")):
+        if paragraph_text == "English Title":
+            paragraph.paragraph_format.page_break_before = True
+        elif paragraph_text in FIGURE_SECTION_TITLES:
+            paragraph.paragraph_format.page_break_before = True
+        elif paragraph_text in FIGURE_BODY_TITLES[1:]:
+            paragraph.paragraph_format.page_break_before = True
+        elif paragraph_text.startswith(LEGEND_PAGE_BREAK_PREFIXES):
             paragraph.paragraph_format.page_break_before = True
         if paragraph_text == "English Abstract":
             in_english_abstract = True
-        elif in_english_abstract and paragraph_text.startswith("Table 1."):
+        elif in_english_abstract and paragraph_text in FIGURE_SECTION_TITLES:
             in_english_abstract = False
 
         if has_drawing:

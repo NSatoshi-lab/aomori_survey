@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Generate manuscript tables and Figure 1 for the ONKI short report."""
+"""Generate manuscript summaries and three figures for the ONKI short report."""
 
 from __future__ import annotations
 
 import argparse
 import json
 import platform
+import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import Callable
@@ -14,6 +15,8 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib import font_manager
+from matplotlib import patheffects
 import pandas as pd
 
 from tabulate_aomori_paper_survey import (
@@ -54,6 +57,28 @@ REASON_DEFINITIONS: list[tuple[str, str, Callable[[set[int]], bool]]] = [
     ("other", "その他（理由8）", lambda codes: 8 in codes),
 ]
 
+FIGURE_FILENAMES = {
+    1: "onki_short_report_figure1_participant_profile.png",
+    2: "onki_short_report_figure2_barrier_by_bathroom_coldness.png",
+    3: "onki_short_report_figure3_heating_concurrent_use.png",
+}
+
+FIGURE_FILENAMES_EN = {
+    1: "onki_short_report_figure1_participant_profile_en.png",
+    2: "onki_short_report_figure2_barrier_by_bathroom_coldness_en.png",
+    3: "onki_short_report_figure3_heating_concurrent_use_en.png",
+}
+
+MONO = {
+    "black": "#111111",
+    "dark": "#3B3B3B",
+    "medium_dark": "#666666",
+    "medium": "#929292",
+    "light": "#BDBDBD",
+    "very_light": "#E3E3E3",
+    "white": "#FFFFFF",
+}
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -72,8 +97,11 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
-        "--figure-output",
-        help="Optional stable copy path for the submission Figure 1 PNG.",
+        "--figure-output-dir",
+        help=(
+            "Optional directory for stable copies of the three submission "
+            "figure PNG files."
+        ),
     )
     return parser.parse_args()
 
@@ -372,89 +400,521 @@ def build_table2(valid: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def render_figure1(
-    reason_summary: pd.DataFrame,
-    output_path: Path,
+def configure_japanese_plotting() -> str:
+    candidates = [
+        "Noto Sans JP",
+        "BIZ UDPゴシック",
+        "Yu Gothic UI",
+        "Meiryo UI",
+    ]
+    installed = {font.name for font in font_manager.fontManager.ttflist}
+    selected = next((name for name in candidates if name in installed), None)
+    if selected is None:
+        raise RuntimeError(
+            "日本語図を生成できるフォントが見つかりません。"
+            "Noto Sans JP等をインストールしてください。"
+        )
+    plt.rcParams.update(
+        {
+            "font.family": "sans-serif",
+            "font.sans-serif": [selected],
+            "axes.unicode_minus": False,
+            "figure.facecolor": MONO["white"],
+            "axes.facecolor": MONO["white"],
+            "text.color": MONO["black"],
+            "axes.labelcolor": MONO["black"],
+            "axes.edgecolor": MONO["black"],
+            "xtick.color": MONO["black"],
+            "ytick.color": MONO["black"],
+            "hatch.color": MONO["black"],
+            "hatch.linewidth": 0.9,
+        }
+    )
+    return selected
+
+
+def format_count_labels(
+    labels: list[str],
+    counts: list[int],
+    language: str = "ja",
+) -> list[str]:
+    if language == "en":
+        return [
+            f"{label} (n={count})"
+            for label, count in zip(labels, counts)
+        ]
+    return [
+        f"{label}（n={count}）"
+        for label, count in zip(labels, counts)
+    ]
+
+
+def apply_text_outline(
+    label: plt.Text,
+    foreground: str,
+    outline: str,
+    linewidth: float = 2.8,
+    weight_stroke_width: float = 1.3,
 ) -> None:
-    display_keys = [
-        "no_need",
-        "barrier",
-        "cost",
-        "housing_installation",
-        "operation_failure",
-        "other",
-    ]
-    english_labels = {
-        "no_need": "Unnecessary (reason 1)",
-        "barrier": "Any barrier (reasons 2-7)",
-        "cost": "Cost (reasons 2-3)",
-        "housing_installation": "Housing/installation (reasons 4-5)",
-        "operation_failure": "Operation/failure (reasons 6-7)",
-        "other": "Other (reason 8)",
-    }
-    display = reason_summary[
-        reason_summary["reason_key"].isin(display_keys)
-        & reason_summary["bathroom_cold_group"].isin(["寒さ1-4", "寒さ5-7"])
-    ].copy()
-    labels = [english_labels[key] for key in display_keys]
+    label.set_color(foreground)
+    label.set_fontweight(900)
+    label.set_path_effects(
+        [
+            patheffects.Stroke(linewidth=linewidth, foreground=outline),
+            patheffects.Stroke(
+                linewidth=weight_stroke_width,
+                foreground=foreground,
+            ),
+            patheffects.Normal(),
+        ]
+    )
 
-    plt.rcParams["font.sans-serif"] = [
-        "Yu Gothic",
-        "Meiryo",
-        "MS Gothic",
-        "DejaVu Sans",
-    ]
-    plt.rcParams["axes.unicode_minus"] = False
-    fig, ax = plt.subplots(figsize=(8.5, 5.2))
-    y_positions = list(range(len(display_keys)))
-    offsets = {"寒さ1-4": -0.12, "寒さ5-7": 0.12}
-    colors = {"寒さ1-4": "#4C78A8", "寒さ5-7": "#E45756"}
-    legend_labels = {
-        "寒さ1-4": "Coldness 1-4",
-        "寒さ5-7": "Coldness 5-7",
-    }
 
-    for group in ["寒さ1-4", "寒さ5-7"]:
-        subset = (
-            display[display["bathroom_cold_group"].eq(group)]
-            .set_index("reason_key")
-            .loc[display_keys]
+def draw_donut(
+    ax: plt.Axes,
+    counts: list[int],
+    labels: list[str],
+    colors: list[str],
+    hatches: list[str],
+    title: str,
+    legend_columns: int = 1,
+    language: str = "ja",
+) -> None:
+    wedges, _, autotexts = ax.pie(
+        counts,
+        startangle=90,
+        counterclock=False,
+        colors=colors,
+        wedgeprops={
+            "width": 0.42,
+            "edgecolor": MONO["black"],
+            "linewidth": 0.9,
+        },
+        autopct=lambda pct: f"{pct:.1f}%" if pct >= 5 else "",
+        pctdistance=0.77,
+        textprops={
+            "fontsize": 14,
+            "fontweight": "bold",
+            "color": MONO["black"],
+        },
+    )
+    for wedge, hatch in zip(wedges, hatches):
+        wedge.set_hatch(hatch)
+    for wedge, label in zip(wedges, autotexts):
+        red, green, blue, _ = wedge.get_facecolor()
+        luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+        if luminance < 0.48:
+            apply_text_outline(label, MONO["white"], MONO["black"])
+        else:
+            apply_text_outline(label, MONO["black"], MONO["white"])
+
+    ax.set_title(title, fontsize=16, fontweight="bold", pad=12)
+    ax.legend(
+        wedges,
+        format_count_labels(labels, counts, language=language),
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.02),
+        frameon=False,
+        fontsize=12.5,
+        ncol=legend_columns,
+        handlelength=1.5,
+        handleheight=1.2,
+        columnspacing=1.2,
+        labelspacing=0.8,
+    )
+    ax.set_aspect("equal")
+
+
+def render_figure1_profile(
+    valid: pd.DataFrame,
+    output_path: Path,
+    language: str = "ja",
+) -> None:
+    configure_japanese_plotting()
+    english = language == "en"
+    fig, axes = plt.subplots(2, 2, figsize=(9.2, 7.4))
+    fig.suptitle(
+        (
+            f"Participant characteristics (n={len(valid)})"
+            if english
+            else f"回答者の基礎情報（n={len(valid)}）"
+        ),
+        fontsize=20,
+        fontweight="bold",
+        y=0.99,
+    )
+
+    age_categories = ["18-49歳", "50-59歳", "60-69歳", "70歳以上"]
+    age_labels = (
+        ["18-49 years", "50-59 years", "60-69 years", "70 years or older"]
+        if english
+        else age_categories
+    )
+    age_counts = [
+        int(valid["age_compact"].eq(category).sum())
+        for category in age_categories
+    ]
+    draw_donut(
+        axes[0, 0],
+        age_counts,
+        age_labels,
+        [
+            MONO["dark"],
+            MONO["medium_dark"],
+            MONO["light"],
+            MONO["very_light"],
+        ],
+        ["", "///", "\\\\", "xx"],
+        "Age" if english else "年齢",
+        legend_columns=2,
+        language=language,
+    )
+
+    housing_counts = [
+        int(valid["q2_housing_type"].eq(code).sum()) for code in [1, 2]
+    ]
+    draw_donut(
+        axes[0, 1],
+        housing_counts,
+        (
+            ["Detached house", "Multi-unit housing"]
+            if english
+            else ["一戸建て", "集合住宅"]
+        ),
+        [MONO["dark"], MONO["very_light"]],
+        ["", "///"],
+        "Housing type" if english else "住宅種別",
+        language=language,
+    )
+
+    heater_counts = [
+        int(valid["q7_bath_heater_status"].eq(code).sum()) for code in [1, 2, 3]
+    ]
+    draw_donut(
+        axes[1, 0],
+        heater_counts,
+        (
+            ["Installed and used", "Installed but not used", "Not installed"]
+            if english
+            else ["設置して使用", "設置しているが未使用", "未設置"]
+        ),
+        [MONO["dark"], MONO["medium"], MONO["very_light"]],
+        ["", "///", "xx"],
+        "Bathroom heater-dryer" if english else "浴室暖房乾燥機",
+        language=language,
+    )
+
+    ax = axes[1, 1]
+    total = len(valid)
+    bathroom_cold = int(valid["bathroom_cold_5_7"].sum())
+    dressingroom_cold = int(valid["dressingroom_cold_5_7"].sum())
+    cold_counts = [bathroom_cold, dressingroom_cold]
+    cold_pct = [count / total * 100.0 for count in cold_counts]
+    other_pct = [100.0 - value for value in cold_pct]
+    y_positions = [0, 1]
+    ax.barh(
+        y_positions,
+        cold_pct,
+        color=MONO["dark"],
+        edgecolor=MONO["black"],
+        linewidth=0.9,
+        hatch="///",
+        height=0.50,
+        label="寒さ5-7",
+    )
+    ax.barh(
+        y_positions,
+        other_pct,
+        left=cold_pct,
+        color=MONO["very_light"],
+        edgecolor=MONO["black"],
+        linewidth=0.9,
+        hatch="xx",
+        height=0.50,
+        label="寒さ1-4",
+    )
+    for position, count, pct in zip(y_positions, cold_counts, cold_pct):
+        label = ax.text(
+            pct / 2,
+            position,
+            (
+                f"{count}/{total}\n({pct:.1f}%)"
+                if english
+                else f"{count}/{total}人\n（{pct:.1f}%）"
+            ),
+            ha="center",
+            va="center",
+            fontsize=11.5,
         )
-        x = subset["pct"].astype(float).to_numpy()
-        lower = x - subset["ci95_lo_pct"].astype(float).to_numpy()
-        upper = subset["ci95_hi_pct"].astype(float).to_numpy() - x
-        y = [position + offsets[group] for position in y_positions]
-        ax.errorbar(
-            x,
-            y,
-            xerr=[lower, upper],
-            fmt="o",
-            capsize=3,
-            markersize=6,
-            linewidth=1.3,
-            color=colors[group],
-            label=legend_labels[group],
-        )
+        apply_text_outline(label, MONO["white"], MONO["black"], linewidth=2.6)
 
     ax.set_yticks(y_positions)
-    ax.set_yticklabels(labels)
+    ax.set_yticklabels(
+        ["Bathroom", "Dressing room"] if english else ["浴室", "脱衣所"],
+        fontsize=13,
+    )
     ax.invert_yaxis()
     ax.set_xlim(0, 100)
-    ax.set_xlabel("Selected responses (%)")
-    ax.set_title("Reasons for non-use or non-installation by bathroom coldness")
-    ax.grid(axis="x", alpha=0.25)
-    ax.legend(title="Bathroom coldness")
-    fig.text(
-        0.01,
-        0.01,
-        "Multiple responses were allowed. Points show proportions; "
-        "horizontal lines show Wilson 95% confidence intervals.",
-        fontsize=9,
+    ax.set_xticks([0, 50, 100])
+    ax.tick_params(axis="x", labelsize=10.5)
+    ax.set_xlabel(
+        "Respondents (%)" if english else "回答者割合（%）",
+        fontsize=11.5,
     )
-    fig.tight_layout(rect=(0, 0.04, 1, 1))
+    ax.set_title(
+        "Perceived coldness" if english else "寒さ体感",
+        fontsize=16,
+        fontweight="bold",
+        pad=12,
+    )
+    ax.legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.23),
+        frameon=False,
+        labels=(
+            ["Coldness 5-7", "Coldness 1-4"]
+            if english
+            else ["寒さ5-7", "寒さ1-4"]
+        ),
+        fontsize=11.5,
+        ncol=2,
+        handlelength=1.8,
+        handleheight=1.2,
+    )
+    ax.grid(axis="x", color=MONO["light"], linewidth=0.8)
+    ax.set_axisbelow(True)
+    for spine in ["top", "right", "left"]:
+        ax.spines[spine].set_visible(False)
+
+    fig.subplots_adjust(
+        left=0.05,
+        right=0.95,
+        top=0.91,
+        bottom=0.08,
+        wspace=0.30,
+        hspace=0.58,
+    )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
+
+
+def render_figure2_barrier(
+    reason_summary: pd.DataFrame,
+    output_path: Path,
+    language: str = "ja",
+) -> None:
+    configure_japanese_plotting()
+    english = language == "en"
+    groups = ["寒さ5-7", "寒さ1-4"]
+    rows = (
+        reason_summary[
+            reason_summary["reason_key"].eq("barrier")
+            & reason_summary["bathroom_cold_group"].isin(groups)
+        ]
+        .set_index("bathroom_cold_group")
+        .loc[groups]
+    )
+    barrier_pct = rows["pct"].astype(float).to_list()
+    no_barrier_pct = [100.0 - value for value in barrier_pct]
+    y_positions = [0, 1]
+
+    fig, ax = plt.subplots(figsize=(8.6, 3.8))
+    ax.barh(
+        y_positions,
+        barrier_pct,
+        color=MONO["dark"],
+        edgecolor=MONO["black"],
+        linewidth=0.9,
+        hatch="///",
+        height=0.52,
+        label=(
+            "At least one barrier (reasons 2-7)"
+            if english
+            else "障壁あり（理由2-7）"
+        ),
+    )
+    ax.barh(
+        y_positions,
+        no_barrier_pct,
+        left=barrier_pct,
+        color=MONO["very_light"],
+        edgecolor=MONO["black"],
+        linewidth=0.9,
+        hatch="xx",
+        height=0.52,
+        label="No barrier" if english else "障壁なし",
+    )
+    for position, (_, row) in zip(y_positions, rows.iterrows()):
+        label = ax.text(
+            float(row["pct"]) / 2,
+            position,
+            (
+                (
+                    f"{int(row['event_n'])}/{int(row['denominator'])} "
+                    f"({float(row['pct']):.1f}%)"
+                )
+                if english
+                else (
+                    f"{int(row['event_n'])}/{int(row['denominator'])}人"
+                    f"（{float(row['pct']):.1f}%）"
+                )
+            ),
+            ha="center",
+            va="center",
+            fontsize=14,
+        )
+        apply_text_outline(label, MONO["white"], MONO["black"], linewidth=2.6)
+
+    ax.set_yticks(y_positions)
+    ax.set_yticklabels(
+        (
+            [
+                "Bathroom coldness 5-7\n"
+                f"(n={int(rows.loc['寒さ5-7', 'denominator'])})",
+                "Bathroom coldness 1-4\n"
+                f"(n={int(rows.loc['寒さ1-4', 'denominator'])})",
+            ]
+            if english
+            else [
+                f"浴室寒さ5-7\n（n={int(rows.loc['寒さ5-7', 'denominator'])}）",
+                f"浴室寒さ1-4\n（n={int(rows.loc['寒さ1-4', 'denominator'])}）",
+            ]
+        ),
+        fontsize=12.5,
+    )
+    ax.invert_yaxis()
+    ax.set_xlim(0, 100)
+    ax.set_xticks([0, 25, 50, 75, 100])
+    ax.tick_params(axis="x", labelsize=11.5)
+    ax.set_xlabel(
+        "Respondents (%)" if english else "回答者割合（%）",
+        fontsize=13,
+    )
+    ax.set_title(
+        (
+            "Barriers to installation or use by perceived bathroom coldness"
+            if english
+            else "浴室寒さ別にみた未設置・未使用の障壁"
+        ),
+        fontsize=16 if english else 17,
+        fontweight="bold",
+        pad=14,
+    )
+    ax.grid(axis="x", color=MONO["light"], linewidth=0.8)
+    ax.set_axisbelow(True)
+    ax.legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.22),
+        frameon=False,
+        fontsize=11.5,
+        ncol=2,
+        handlelength=2.0,
+        handleheight=1.2,
+    )
+    for spine in ["top", "right", "left"]:
+        ax.spines[spine].set_visible(False)
+    fig.subplots_adjust(left=0.20, right=0.97, top=0.82, bottom=0.30)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+
+def render_figure3_heating(
+    valid: pd.DataFrame,
+    output_path: Path,
+    language: str = "ja",
+) -> None:
+    configure_japanese_plotting()
+    english = language == "en"
+    central_available = valid[valid["q9_central_heating_use"].isin([1, 2, 3])]
+    central_used = central_available[
+        central_available["q9_central_heating_use"].isin([1, 2])
+    ]
+    central_not_used = len(central_available) - len(central_used)
+    concurrent = int(central_used["q7_bath_heater_status"].eq(1).sum())
+    not_concurrent = len(central_used) - concurrent
+
+    fig, axes = plt.subplots(1, 2, figsize=(9.0, 4.4))
+    fig.suptitle(
+        (
+            "Central heating and concurrent bathroom heater-dryer use"
+            if english
+            else "セントラル暖房の使用と浴室暖房乾燥機との併用"
+        ),
+        fontsize=16 if english else 17,
+        fontweight="bold",
+        y=0.98,
+    )
+    draw_donut(
+        axes[0],
+        [len(central_used), central_not_used],
+        (
+            ["Used central heating", "Did not use central heating"]
+            if english
+            else ["セントラル暖房を使用", "使用していない"]
+        ),
+        [MONO["dark"], MONO["very_light"]],
+        ["///", "xx"],
+        (
+            f"Central heating (n={len(central_available)})"
+            if english
+            else f"セントラル暖房（n={len(central_available)}）"
+        ),
+        language=language,
+    )
+    draw_donut(
+        axes[1],
+        [concurrent, not_concurrent],
+        (
+            [
+                "Also used a bathroom heater-dryer",
+                "Did not use or install one",
+            ]
+            if english
+            else ["浴室暖房乾燥機も使用", "未使用・未設置"]
+        ),
+        [MONO["dark"], MONO["very_light"]],
+        ["///", "xx"],
+        (
+            f"Concurrent use among users (n={len(central_used)})"
+            if english
+            else f"使用者における併用（n={len(central_used)}）"
+        ),
+        language=language,
+    )
+    fig.subplots_adjust(
+        left=0.05,
+        right=0.95,
+        top=0.82,
+        bottom=0.18,
+        wspace=0.32,
+    )
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+
+def render_all_figures(
+    valid: pd.DataFrame,
+    reason_summary: pd.DataFrame,
+    output_dir: Path,
+    language: str = "ja",
+) -> dict[int, Path]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    filenames = (
+        FIGURE_FILENAMES_EN
+        if language == "en"
+        else FIGURE_FILENAMES
+    )
+    paths = {
+        number: output_dir / filename
+        for number, filename in filenames.items()
+    }
+    render_figure1_profile(valid, paths[1], language=language)
+    render_figure2_barrier(reason_summary, paths[2], language=language)
+    render_figure3_heating(valid, paths[3], language=language)
+    return paths
 
 
 def write_markdown_tables(
@@ -558,6 +1018,8 @@ def validate_results(
     assert int(valid["q9_central_heating_use"].eq(99).sum()) == 7
     assert set(central_rows["without_denominator"]) == {112}
     assert set(central_rows["with_denominator"]) == {28}
+    central_used = valid[valid["q9_central_heating_use"].isin([1, 2])]
+    assert int(central_used["q7_bath_heater_status"].eq(1).sum()) == 19
 
     return {
         "questionnaires_prepared": prepared,
@@ -689,15 +1151,33 @@ def main() -> int:
     reason_summary, reason_differences = build_reason_summary(valid)
     table2 = build_table2(valid)
 
-    figure_path = output_dir / "figures" / "figure1_reason_by_bathroom_cold.png"
-    render_figure1(reason_summary, figure_path)
-    if args.figure_output:
-        stable_figure = Path(args.figure_output).resolve()
-        render_figure1(reason_summary, stable_figure)
+    figure_paths = render_all_figures(
+        valid,
+        reason_summary,
+        output_dir / "figures",
+    )
+    english_figure_paths = render_all_figures(
+        valid,
+        reason_summary,
+        output_dir / "figures_en",
+        language="en",
+    )
+    if args.figure_output_dir:
+        stable_figure_dir = Path(args.figure_output_dir).resolve()
+        stable_figure_dir.mkdir(parents=True, exist_ok=True)
+        for paths, filenames in [
+            (figure_paths, FIGURE_FILENAMES),
+            (english_figure_paths, FIGURE_FILENAMES_EN),
+        ]:
+            for number, source in paths.items():
+                shutil.copy2(
+                    source,
+                    stable_figure_dir / filenames[number],
+                )
 
     table1.to_csv(output_dir / "table1_characteristics.csv", index=False)
     table2.to_csv(output_dir / "table2_equipment_and_cold.csv", index=False)
-    reason_summary.to_csv(output_dir / "figure1_reason_summary.csv", index=False)
+    reason_summary.to_csv(output_dir / "figure2_reason_summary.csv", index=False)
     reason_differences.to_csv(
         output_dir / "reason_difference_summary.csv",
         index=False,

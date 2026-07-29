@@ -55,19 +55,25 @@
 
 ### 1. 回答者と住環境
 
-解析対象147人のうち、60-69歳が61人（41.5%）、70歳以上が29人（19.7%）であった。一戸建てが132人（89.8%）、持家が130人（88.4%）、築30年以上が77人（52.4%）であった。浴室暖房乾燥機を設置して使用していた者は35人（23.8%）、設置しているが使用していない者は13人（8.8%）、未設置は99人（67.3%）であった。浴室寒さ5-7群は66/147人（44.9%、95%CI [37.1, 53.0]）、脱衣所寒さ5-7群は77/147人（52.4%、95%CI [44.4, 60.3]）であった（Table 1）。
+解析対象147人のうち、60-69歳が61人（41.5%）、70歳以上が29人（19.7%）であった。一戸建てが132人（89.8%）、持家が130人（88.4%）、築30年以上が77人（52.4%）であった。浴室暖房乾燥機を設置して使用していた者は35人（23.8%）、設置しているが使用していない者は13人（8.8%）、未設置は99人（67.3%）であった。浴室寒さ5-7群は66/147人（44.9%、95%CI [37.1, 53.0]）、脱衣所寒さ5-7群は77/147人（52.4%、95%CI [44.4, 60.3]）であった（Fig. 1）。
+
+&lt;Fig. 1 here&gt;
 
 ### 2. 未設置・未使用理由と浴室寒さ
 
 未使用・未設置112人のうち、障壁ありは69人（61.6%、95%CI [52.4, 70.1]）、不要は31人（27.7%、95%CI [20.2, 36.6]）であった。障壁の内訳は、費用系41人（36.6%）、住宅・設置制約系27人（24.1%）、使用方法・故障系3人（2.7%）であった。不要と障壁の両方を選択した者は3人、費用系と住宅・設置制約系の両方を選択した者は2人であり、その他の障壁分類間に重複はなかった。
 
-障壁ありは、浴室寒さ5-7群で53/62人（85.5%、95%CI [74.7, 92.2]）、寒さ1-4群で16/50人（32.0%、95%CI [20.8, 45.8]）であった。割合差は53.5パーセントポイント（95%CI [35.9, 66.6]）であった。一方、不要は寒さ5-7群で4/62人（6.5%、95%CI [2.5, 15.5]）、寒さ1-4群で27/50人（54.0%、95%CI [40.4, 67.0]）で、割合差は-47.6パーセントポイント（95%CI [-61.2, -31.2]）であった。費用系の割合差は30.0パーセントポイント（95%CI [12.2, 44.9]）、住宅・設置制約系は21.9パーセントポイント（95%CI [6.1, 35.8]）であった（Fig. 1）。
+障壁ありは、浴室寒さ5-7群で53/62人（85.5%、95%CI [74.7, 92.2]）、寒さ1-4群で16/50人（32.0%、95%CI [20.8, 45.8]）であった。割合差は53.5パーセントポイント（95%CI [35.9, 66.6]）であった（Fig. 2）。一方、不要は寒さ5-7群で4/62人（6.5%、95%CI [2.5, 15.5]）、寒さ1-4群で27/50人（54.0%、95%CI [40.4, 67.0]）で、割合差は-47.6パーセントポイント（95%CI [-61.2, -31.2]）であった。費用系の割合差は30.0パーセントポイント（95%CI [12.2, 44.9]）、住宅・設置制約系は21.9パーセントポイント（95%CI [6.1, 35.8]）であった。
 
-### 3. 暖房設備別の寒さ体感
+&lt;Fig. 2 here&gt;
 
-セントラル暖房に回答した140人のうち、使用者は28人（20.0%、95%CI [14.2, 27.4]）であった。使用者28人のうち、浴室暖房乾燥機を使用していた者は19人（67.9%、95%CI [49.3, 82.1]）、設置しているが未使用または未設置の者は9人（32.1%、95%CI [17.9, 50.7]）であった。
+### 3. 暖房設備の利用状況
 
-浴室暖房乾燥機の不使用者では浴室寒さ5-7群が62/112人（55.4%）であったのに対し、使用者では4/35人（11.4%）であった。セントラル暖房の不使用者では61/112人（54.5%）、使用者では2/28人（7.1%）であった（Table 2）。これらは未調整の横断比較であり、設備による寒さ改善効果を示すものではない。
+セントラル暖房に回答した140人のうち、使用者は28人（20.0%、95%CI [14.2, 27.4]）であった。使用者28人のうち、浴室暖房乾燥機を使用していた者は19人（67.9%、95%CI [49.3, 82.1]）、設置しているが未使用または未設置の者は9人（32.1%、95%CI [17.9, 50.7]）であった（Fig. 3）。
+
+浴室暖房乾燥機の不使用者では浴室寒さ5-7群が62/112人（55.4%、95%CI [46.1, 64.2]）であったのに対し、使用者では4/35人（11.4%、95%CI [4.5, 26.0]）であり、割合差（使用者-不使用者）は-43.9パーセントポイント（95%CI [-55.2, -26.7]）であった。セントラル暖房の不使用者では61/112人（54.5%、95%CI [45.3, 63.4]）、使用者では2/28人（7.1%、95%CI [2.0, 22.7]）であり、割合差（使用者-不使用者）は-47.3パーセントポイント（95%CI [-57.6, -29.3]）であった。これらは未調整の横断比較であり、設備による寒さ改善効果を示すものではない。
+
+&lt;Fig. 3 here&gt;
 
 ## IV 考察
 
@@ -114,53 +120,30 @@ Objective: Following an exploratory ecological analysis that identified Aomori a
 
 English keywords: bathroom heater-dryer; bathroom coldness; residential environment; adoption barriers; cold climate
 
-## Table 1. Participant, Housing, Equipment, and Perceived Coldness Characteristics
+## Figures
 
-| Item | Category | n/N (%) | 95%CI |
-| --- | --- | ---: | --- |
-| Age | 18-49 years | 32/147 (21.8) | [15.9, 29.1] |
-| Age | 50-59 years | 25/147 (17.0) | [11.8, 23.9] |
-| Age | 60-69 years | 61/147 (41.5) | [33.9, 49.6] |
-| Age | ≥70 years | 29/147 (19.7) | [14.1, 26.9] |
-| Housing type | Detached house | 132/147 (89.8) | [83.8, 93.7] |
-| Housing type | Apartment/condominium | 15/147 (10.2) | [6.3, 16.1] |
-| Building age | <30 years | 62/147 (42.2) | [34.5, 50.3] |
-| Building age | ≥30 years | 77/147 (52.4) | [44.4, 60.3] |
-| Building age | Unknown | 8/147 (5.4) | [2.8, 10.4] |
-| Tenure | Owner-occupied | 130/147 (88.4) | [82.3, 92.7] |
-| Tenure | Rented | 16/147 (10.9) | [6.8, 16.9] |
-| Tenure | Missing | 1/147 (0.7) | [0.1, 3.8] |
-| Bathroom window | Double window/double glazing | 111/147 (75.5) | [68.0, 81.8] |
-| Bathroom window | Single glazing | 26/147 (17.7) | [12.4, 24.6] |
-| Bathroom window | No window | 7/147 (4.8) | [2.3, 9.5] |
-| Bathroom window | Unknown/missing | 3/147 (2.0) | [0.7, 5.8] |
-| Bathroom heater-dryer | Installed and used | 35/147 (23.8) | [17.6, 31.3] |
-| Bathroom heater-dryer | Installed but not used | 13/147 (8.8) | [5.2, 14.5] |
-| Bathroom heater-dryer | Not installed | 99/147 (67.3) | [59.4, 74.4] |
-| Central heating | Used 24 hours | 16/147 (10.9) | [6.8, 16.9] |
-| Central heating | Used for limited hours | 12/147 (8.2) | [4.7, 13.7] |
-| Central heating | Not used | 112/147 (76.2) | [68.7, 82.3] |
-| Central heating | Missing | 7/147 (4.8) | [2.3, 9.5] |
-| Perceived coldness | Bathroom score 5-7 | 66/147 (44.9) | [37.1, 53.0] |
-| Perceived coldness | Dressing-room score 5-7 | 77/147 (52.4) | [44.4, 60.3] |
+### Figure 1
 
-Note: CIs were calculated using the Wilson method. Scores of 5-7 indicate "slightly cold," "cold," or "very cold."
+![deliverables/figures/onki_short_report_figure1_participant_profile_en.png](deliverables/figures/onki_short_report_figure1_participant_profile_en.png){width=95%}&nbsp;
 
-## Table 2. Bathroom and Dressing-room Coldness Scores of 5-7 by Heating Equipment Use or Installation
+### Figure 2
 
-| Equipment classification | Area | Comparison group n/N (%; 95%CI) | Equipment group n/N (%; 95%CI) | Difference (pp; 95%CI) |
-| --- | --- | --- | --- | --- |
-| Bathroom heater-dryer use | Bathroom | Not used 62/112 (55.4; [46.1, 64.2]) | Used 4/35 (11.4; [4.5, 26.0]) | -43.9 [-55.2, -26.7] |
-| Bathroom heater-dryer use | Dressing room | Not used 70/112 (62.5; [53.3, 70.9]) | Used 7/35 (20.0; [10.0, 35.9]) | -42.5 [-55.5, -24.1] |
-| Bathroom heater-dryer installation | Bathroom | Not installed 55/99 (55.6; [45.7, 65.0]) | Installed 11/48 (22.9; [13.3, 36.5]) | -32.6 [-46.1, -15.9] |
-| Bathroom heater-dryer installation | Dressing room | Not installed 63/99 (63.6; [53.8, 72.4]) | Installed 14/48 (29.2; [18.2, 43.2]) | -34.5 [-48.5, -17.4] |
-| Central heating use | Bathroom | Not used 61/112 (54.5; [45.3, 63.4]) | Used 2/28 (7.1; [2.0, 22.7]) | -47.3 [-57.6, -29.3] |
-| Central heating use | Dressing room | Not used 68/112 (60.7; [51.5, 69.3]) | Used 4/28 (14.3; [5.7, 31.5]) | -46.4 [-58.5, -26.9] |
+![deliverables/figures/onki_short_report_figure2_barrier_by_bathroom_coldness_en.png](deliverables/figures/onki_short_report_figure2_barrier_by_bathroom_coldness_en.png){width=95%}&nbsp;
 
-Note: Proportion CIs were calculated using the Wilson method; difference CIs were calculated using the Newcombe-Wilson method. Differences were calculated as the equipment group minus the comparison group. Seven respondents with missing central heating data were excluded. These are unadjusted cross-sectional comparisons and do not estimate equipment effects.
+### Figure 3
 
-## Fig. 1. Reasons for Non-use or Non-installation of Bathroom Heater-Dryers by Perceived Bathroom Coldness
+![deliverables/figures/onki_short_report_figure3_heating_concurrent_use_en.png](deliverables/figures/onki_short_report_figure3_heating_concurrent_use_en.png){width=95%}&nbsp;
 
-[![deliverables/figures/onki_short_report_figure1_reason_by_bathroom_cold.png](deliverables/figures/onki_short_report_figure1_reason_by_bathroom_cold.png){width=90%}](deliverables/figures/onki_short_report_figure1_reason_by_bathroom_cold.png)
+## Figure Legends
 
-Note: The analysis included 112 respondents who did not use or had not installed a bathroom heater-dryer: 50 with coldness scores of 1-4 and 62 with scores of 5-7. Points show proportions, and horizontal lines show Wilson 95% CIs. Multiple responses were allowed, so percentages do not sum to 100%. "Unnecessary" indicates reason 1; "any barrier," reasons 2-7; "cost," reasons 2-3; "housing/installation," reasons 4-5; and "operation/failure," reasons 6-7.
+### Figure 1. Participant and housing characteristics
+
+The panels show age, housing type, bathroom heater-dryer installation and use status, and perceived coldness in the bathroom and dressing room. Percentages use all 147 respondents as the denominator. Coldness scores of 5-7 correspond to "somewhat cold," "cold," or "very cold."
+
+### Figure 2. Barriers to installation or use by perceived bathroom coldness
+
+The analysis includes 112 respondents who had not installed or did not use a bathroom heater-dryer. At least one barrier was defined as selection of any reason from 2 to 7. Reasons were collected as multiple responses. The coldness 5-7 and coldness 1-4 groups included 62 and 50 respondents, respectively.
+
+### Figure 3. Central heating use and concurrent bathroom heater-dryer use
+
+The left panel includes 140 respondents who provided information on central heating use; 7 respondents with missing information were excluded. The right panel is restricted to the 28 central heating users. Respondents who had installed but did not use a bathroom heater-dryer and those who had not installed one were classified as not concurrently using one.
