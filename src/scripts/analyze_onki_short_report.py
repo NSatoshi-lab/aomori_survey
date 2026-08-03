@@ -59,14 +59,14 @@ REASON_DEFINITIONS: list[tuple[str, str, Callable[[set[int]], bool]]] = [
 
 FIGURE_FILENAMES = {
     1: "onki_short_report_figure1_participant_profile.png",
-    2: "onki_short_report_figure2_barrier_by_bathroom_coldness.png",
-    3: "onki_short_report_figure3_heating_concurrent_use.png",
+    2: "onki_short_report_figure2_heating_concurrent_use.png",
+    3: "onki_short_report_figure3_barrier_by_bathroom_coldness.png",
 }
 
 FIGURE_FILENAMES_EN = {
     1: "onki_short_report_figure1_participant_profile_en.png",
-    2: "onki_short_report_figure2_barrier_by_bathroom_coldness_en.png",
-    3: "onki_short_report_figure3_heating_concurrent_use_en.png",
+    2: "onki_short_report_figure2_heating_concurrent_use_en.png",
+    3: "onki_short_report_figure3_barrier_by_bathroom_coldness_en.png",
 }
 
 MONO = {
@@ -699,7 +699,7 @@ def render_figure1_profile(
     plt.close(fig)
 
 
-def render_figure2_barrier(
+def render_barrier_figure(
     reason_summary: pd.DataFrame,
     output_path: Path,
     language: str = "ja",
@@ -820,7 +820,7 @@ def render_figure2_barrier(
     plt.close(fig)
 
 
-def render_figure3_heating(
+def render_heating_figure(
     valid: pd.DataFrame,
     output_path: Path,
     language: str = "ja",
@@ -912,8 +912,8 @@ def render_all_figures(
         for number, filename in filenames.items()
     }
     render_figure1_profile(valid, paths[1], language=language)
-    render_figure2_barrier(reason_summary, paths[2], language=language)
-    render_figure3_heating(valid, paths[3], language=language)
+    render_heating_figure(valid, paths[2], language=language)
+    render_barrier_figure(reason_summary, paths[3], language=language)
     return paths
 
 
@@ -1177,7 +1177,7 @@ def main() -> int:
 
     table1.to_csv(output_dir / "table1_characteristics.csv", index=False)
     table2.to_csv(output_dir / "table2_equipment_and_cold.csv", index=False)
-    reason_summary.to_csv(output_dir / "figure2_reason_summary.csv", index=False)
+    reason_summary.to_csv(output_dir / "figure3_reason_summary.csv", index=False)
     reason_differences.to_csv(
         output_dir / "reason_difference_summary.csv",
         index=False,
