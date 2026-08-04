@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export manuscript Tables 1 and 2 as an English Excel workbook."""
+"""Export manuscript Table 1 as a submission-ready English workbook."""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ ITEM_LABELS = {
     "住宅種別": "Housing type",
     "築年帯": "Building age",
     "所有形態": "Tenure",
+    "入浴頻度": "Winter bathing frequency",
     "浴室窓": "Bathroom window",
     "浴室暖房乾燥機": "Bathroom heater-dryer",
     "セントラル暖房": "Central heating",
@@ -35,6 +36,11 @@ CATEGORY_LABELS = {
     "持家": "Owner-occupied",
     "賃貸": "Rented",
     "無回答": "Missing",
+    "毎日": "Daily",
+    "週4-6回": "4-6 times/week",
+    "週1-3回": "1-3 times/week",
+    "月1-3回": "1-3 times/month",
+    "ほとんど入浴しない": "Almost never",
     "二重サッシ・複層ガラス": "Double window/double glazing",
     "単板ガラス": "Single glazing",
     "窓なし": "No window",
@@ -81,25 +87,18 @@ def format_ci(low: float, high: float) -> str:
 def build_table1(table1: pd.DataFrame) -> pd.DataFrame:
     output = pd.DataFrame(
         {
-            "Item": table1["item"].map(ITEM_LABELS),
+            "Characteristic": table1["item"].map(ITEM_LABELS),
             "Category": table1["category"].map(CATEGORY_LABELS),
-            "n/N (%)": table1.apply(
+            "n (%)": table1.apply(
                 lambda row: (
-                    f"{int(row['event_n'])}/{int(row['denominator'])} "
-                    f"({row['pct']:.1f})"
-                ),
-                axis=1,
-            ),
-            "95% CI": table1.apply(
-                lambda row: format_ci(
-                    row["ci95_lo_pct"],
-                    row["ci95_hi_pct"],
+                    f"{int(row['event_n'])} "
+                    f"({int(row['event_n']) / int(row['denominator']) * 100.0:.1f})"
                 ),
                 axis=1,
             ),
         }
     )
-    if output[["Item", "Category"]].isna().any().any():
+    if output[["Characteristic", "Category"]].isna().any().any():
         raise ValueError("Unmapped Table 1 label")
     return output
 
@@ -138,18 +137,21 @@ def style_workbook(output_xlsx: Path) -> None:
 
     workbook = load_workbook(output_xlsx)
     for sheet in workbook.worksheets:
-        sheet.freeze_panes = "A2"
-        for cell in sheet[1]:
+        sheet.freeze_panes = "A4"
+        sheet.merge_cells("A1:C1")
+        sheet["A1"] = "Table 1. Characteristics of respondents (n=147)"
+        sheet["A1"].font = Font(bold=True)
+        sheet["A1"].alignment = Alignment(wrap_text=True, vertical="center")
+        for cell in sheet[3]:
             cell.font = Font(bold=True)
             cell.alignment = Alignment(wrap_text=True, vertical="center")
-        for row in sheet.iter_rows(min_row=2):
+        for row in sheet.iter_rows(min_row=4):
             for cell in row:
                 cell.alignment = Alignment(wrap_text=True, vertical="top")
         for column_index, column in enumerate(sheet.columns, start=1):
             max_length = max(len(str(cell.value or "")) for cell in column)
             sheet.column_dimensions[get_column_letter(column_index)].width = min(
-                max(max_length + 2, 12),
-                42,
+                max(max_length + 2, 12), 46
             )
     workbook.save(output_xlsx)
 
@@ -159,31 +161,32 @@ def main() -> None:
     analysis_dir = args.analysis_dir.resolve()
     output_xlsx = args.output_xlsx.resolve()
     table1 = pd.read_csv(analysis_dir / "table1_characteristics.csv")
-    table2 = pd.read_csv(analysis_dir / "table2_equipment_and_cold.csv")
     output_xlsx.parent.mkdir(parents=True, exist_ok=True)
     with pd.ExcelWriter(output_xlsx, engine="openpyxl") as writer:
-        build_table1(table1).to_excel(writer, sheet_name="Table 1", index=False)
-        build_table2(table2).to_excel(writer, sheet_name="Table 2", index=False)
-        captions = pd.DataFrame(
-            {
-                "Figure/Table": ["Table 1", "Table 2", "Fig. 1"],
-                "English title": [
-                    (
-                        "Participant, Housing, Equipment, and Perceived "
-                        "Coldness Characteristics"
-                    ),
-                    (
-                        "Bathroom and Dressing-room Coldness Scores of 5-7 "
-                        "by Heating Equipment Use or Installation"
-                    ),
-                    (
-                        "Reasons for Non-use or Non-installation of Bathroom "
-                        "Heater-Dryers by Perceived Bathroom Coldness"
-                    ),
-                ],
-            }
+        exported = build_table1(table1)
+        exported.to_excel(
+            writer,
+            sheet_name="Table 1",
+            index=False,
+            startrow=2,
         )
-        captions.to_excel(writer, sheet_name="Captions", index=False)
+        worksheet = writer.sheets["Table 1"]
+        footnote_row = len(exported) + 5
+        worksheet.cell(
+            row=footnote_row,
+            column=1,
+            value=(
+                "Values are n (%). Percentages use all 147 respondents as "
+                "the denominator. Coldness scores range from 1 (very warm) "
+                "to 7 (very cold); scores 5-7 indicate perceived coldness."
+            ),
+        )
+        worksheet.merge_cells(
+            start_row=footnote_row,
+            start_column=1,
+            end_row=footnote_row,
+            end_column=3,
+        )
     style_workbook(output_xlsx)
     print(output_xlsx)
 

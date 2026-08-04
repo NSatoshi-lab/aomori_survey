@@ -17,6 +17,7 @@ from analyze_onki_short_report import (  # noqa: E402
     DEFAULT_INPUT,
     FIGURE_FILENAMES,
     FIGURE_FILENAMES_EN,
+    FIGURE_REASON_KEYS,
     MONO,
     build_reason_summary,
     build_table1,
@@ -25,6 +26,9 @@ from analyze_onki_short_report import (  # noqa: E402
     render_all_figures,
 )
 from tabulate_aomori_paper_survey import parse_reason_codes  # noqa: E402
+from export_onki_submission_tables import (  # noqa: E402
+    build_table1 as build_submission_table1,
+)
 
 
 class OnkiShortReportAnalysisTests(unittest.TestCase):
@@ -79,12 +83,16 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
         housing = code_sets.apply(lambda codes: bool(codes.intersection({4, 5})))
         operation = code_sets.apply(lambda codes: bool(codes.intersection({6, 7})))
         barrier = cost | housing | operation
+        other = code_sets.apply(lambda codes: 8 in codes)
+        other_only = code_sets.apply(lambda codes: codes == {8})
 
         self.assertEqual(int(no_need.sum()), 31)
         self.assertEqual(int(barrier.sum()), 69)
         self.assertEqual(int(cost.sum()), 41)
         self.assertEqual(int(housing.sum()), 27)
         self.assertEqual(int(operation.sum()), 3)
+        self.assertEqual(int(other.sum()), 17)
+        self.assertEqual(int(other_only.sum()), 15)
         self.assertEqual(int((no_need & barrier).sum()), 3)
         self.assertEqual(int((cost & housing).sum()), 2)
         self.assertEqual(int((cost & operation).sum()), 0)
@@ -109,6 +117,34 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
                 int(barrier_comparison["denominator"]),
             ),
             (16, 50),
+        )
+
+    def test_reason_groups_and_sensitivity_analysis(self) -> None:
+        reason_summary, reason_differences = build_reason_summary(self.valid)
+
+        def counts(key: str, group: str) -> tuple[int, int]:
+            row = reason_summary[
+                reason_summary["reason_key"].eq(key)
+                & reason_summary["bathroom_cold_group"].eq(group)
+            ].iloc[0]
+            return int(row["event_n"]), int(row["denominator"])
+
+        self.assertEqual(counts("cost", "寒さ5-7"), (31, 62))
+        self.assertEqual(counts("cost", "寒さ1-4"), (10, 50))
+        self.assertEqual(counts("housing_installation", "寒さ5-7"), (21, 62))
+        self.assertEqual(counts("housing_installation", "寒さ1-4"), (6, 50))
+        self.assertEqual(counts("barrier_2_5", "寒さ5-7"), (51, 62))
+        self.assertEqual(counts("barrier_2_5", "寒さ1-4"), (15, 50))
+
+        sensitivity = reason_differences[
+            reason_differences["reason_key"].eq("barrier_2_5")
+        ].iloc[0]
+        self.assertAlmostEqual(float(sensitivity["difference_pp"]), 52.3, places=1)
+        self.assertAlmostEqual(
+            float(sensitivity["difference_ci95_lo_pp"]), 34.5, places=1
+        )
+        self.assertAlmostEqual(
+            float(sensitivity["difference_ci95_hi_pp"]), 65.5, places=1
         )
 
     def test_central_heating_missing_values_are_excluded(self) -> None:
@@ -149,31 +185,55 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
             int(central_used["q7_bath_heater_status"].eq(1).sum()),
             19,
         )
+        bathing_frequency = table1[table1["item"].eq("入浴頻度")]
+        self.assertEqual(
+            list(bathing_frequency["category"]),
+            ["毎日", "週4-6回", "週1-3回", "月1-3回", "ほとんど入浴しない"],
+        )
+        self.assertEqual(int(bathing_frequency["event_n"].sum()), 147)
+        self.assertTrue(table1["denominator"].eq(147).all())
+        self.assertIn(
+            "不明・無回答",
+            set(table1.loc[table1["item"].eq("浴室窓"), "category"]),
+        )
 
-    def test_three_japanese_figures_are_rendered(self) -> None:
-        reason_summary, _ = build_reason_summary(self.valid)
+        submission_table = build_submission_table1(table1)
+        self.assertEqual(
+            list(submission_table.columns),
+            ["Characteristic", "Category", "n (%)"],
+        )
+        self.assertFalse(submission_table.isna().any().any())
+
+    def test_japanese_submission_figure_is_rendered(self) -> None:
+        reason_summary, reason_differences = build_reason_summary(self.valid)
         with tempfile.TemporaryDirectory() as temp_dir:
             paths = render_all_figures(
                 self.valid,
                 reason_summary,
+                reason_differences,
                 Path(temp_dir),
             )
-            self.assertEqual(set(paths), {1, 2, 3})
+            self.assertEqual(set(paths), {1})
+            self.assertEqual(
+                FIGURE_REASON_KEYS,
+                ["barrier", "cost", "housing_installation", "no_need"],
+            )
             for number, path in paths.items():
                 self.assertEqual(path.name, FIGURE_FILENAMES[number])
                 self.assertTrue(path.exists())
                 self.assertGreater(path.stat().st_size, 10_000)
 
-    def test_three_english_submission_figures_are_rendered(self) -> None:
-        reason_summary, _ = build_reason_summary(self.valid)
+    def test_english_submission_figure_is_rendered(self) -> None:
+        reason_summary, reason_differences = build_reason_summary(self.valid)
         with tempfile.TemporaryDirectory() as temp_dir:
             paths = render_all_figures(
                 self.valid,
                 reason_summary,
+                reason_differences,
                 Path(temp_dir),
                 language="en",
             )
-            self.assertEqual(set(paths), {1, 2, 3})
+            self.assertEqual(set(paths), {1})
             for number, path in paths.items():
                 self.assertEqual(path.name, FIGURE_FILENAMES_EN[number])
                 self.assertTrue(path.exists())
