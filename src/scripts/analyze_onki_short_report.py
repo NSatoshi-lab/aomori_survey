@@ -72,7 +72,13 @@ FIGURE_FILENAMES_EN = {
     1: "onki_short_report_figure1_reasons_by_bathroom_coldness_en.png",
 }
 
-FIGURE_REASON_KEYS = ["barrier", "cost", "housing_installation", "no_need"]
+FIGURE_REASON_KEYS = [
+    "barrier_2_5",
+    "cost",
+    "housing_installation",
+    "barrier",
+    "no_need",
+]
 
 MONO = {
     "black": "#111111",
@@ -136,27 +142,6 @@ def proportion_summary(events: int, total: int) -> dict[str, float | int]:
         "ci95_lo_pct": round(lo * 100.0, 2),
         "ci95_hi_pct": round(hi * 100.0, 2),
     }
-
-
-def newcombe_difference(
-    events_a: int,
-    total_a: int,
-    events_b: int,
-    total_b: int,
-) -> tuple[float, float, float]:
-    """Newcombe-Wilson CI for the difference p_a - p_b."""
-    p_a = events_a / total_a
-    p_b = events_b / total_b
-    lo_a, hi_a = wilson_ci(events_a, total_a)
-    lo_b, hi_b = wilson_ci(events_b, total_b)
-    difference = p_a - p_b
-    lower = difference - ((p_a - lo_a) ** 2 + (hi_b - p_b) ** 2) ** 0.5
-    upper = difference + ((hi_a - p_a) ** 2 + (p_b - lo_b) ** 2) ** 0.5
-    return (
-        round(difference * 100.0, 2),
-        round(lower * 100.0, 2),
-        round(upper * 100.0, 2),
-    )
 
 
 def prepare_analysis_set(input_csv: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -298,7 +283,7 @@ def build_table1(valid: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def build_reason_summary(valid: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+def build_reason_summary(valid: pd.DataFrame) -> pd.DataFrame:
     target = valid[valid["q7_bath_heater_status"].isin([2, 3])].copy()
     target["reason_code_set"] = target["q8_reason_codes"].apply(
         lambda value: set(parse_reason_codes(value))
@@ -323,28 +308,7 @@ def build_reason_summary(valid: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFram
             )
             rows.append(summary)
 
-    summary_df = pd.DataFrame(rows)
-    difference_rows = []
-    for key, label, _ in REASON_DEFINITIONS:
-        low_group = target[target["bathroom_cold_group"].eq("寒さ1-4")]
-        high_group = target[target["bathroom_cold_group"].eq("寒さ5-7")]
-        difference, ci_lo, ci_hi = newcombe_difference(
-            int(high_group[key].sum()),
-            len(high_group),
-            int(low_group[key].sum()),
-            len(low_group),
-        )
-        difference_rows.append(
-            {
-                "reason_key": key,
-                "reason_label": label,
-                "contrast": "寒さ5-7 - 寒さ1-4",
-                "difference_pp": difference,
-                "difference_ci95_lo_pp": ci_lo,
-                "difference_ci95_hi_pp": ci_hi,
-            }
-        )
-    return summary_df, pd.DataFrame(difference_rows)
+    return pd.DataFrame(rows)
 
 
 def equipment_groups(
@@ -395,12 +359,6 @@ def build_table2(valid: pd.DataFrame) -> pd.DataFrame:
             with_events = int(with_equipment[outcome].sum())
             without_summary = proportion_summary(without_events, len(without))
             with_summary = proportion_summary(with_events, len(with_equipment))
-            difference, ci_lo, ci_hi = newcombe_difference(
-                with_events,
-                len(with_equipment),
-                without_events,
-                len(without),
-            )
             rows.append(
                 {
                     "equipment_key": key,
@@ -417,9 +375,6 @@ def build_table2(valid: pd.DataFrame) -> pd.DataFrame:
                     "with_pct": with_summary["pct"],
                     "with_ci95_lo_pct": with_summary["ci95_lo_pct"],
                     "with_ci95_hi_pct": with_summary["ci95_hi_pct"],
-                    "difference_pp": difference,
-                    "difference_ci95_lo_pp": ci_lo,
-                    "difference_ci95_hi_pp": ci_hi,
                 }
             )
     return pd.DataFrame(rows)
@@ -726,36 +681,31 @@ def render_figure1_profile(
 
 def render_reason_figure(
     reason_summary: pd.DataFrame,
-    reason_differences: pd.DataFrame,
     output_path: Path,
     language: str = "ja",
 ) -> None:
-    """Render four reason classifications with group CIs and differences."""
+    """Render five reason classifications with group-specific Wilson CIs."""
     configure_japanese_plotting()
     english = language == "en"
     labels = (
         {
-            "barrier": "Any reason 2-7",
+            "barrier_2_5": "Cost or housing/installation (reasons 2-5)",
             "cost": "Cost (reasons 2-3)",
             "housing_installation": "Housing/installation (reasons 4-5)",
+            "barrier": "Any reason 2-7",
             "no_need": "No need (reason 1)",
         }
         if english
         else {
-            "barrier": "理由2-7のいずれか",
+            "barrier_2_5": "費用・住宅設置制約（理由2-5）",
             "cost": "費用系（理由2-3）",
             "housing_installation": "住宅・設置制約系（理由4-5）",
+            "barrier": "理由2-7のいずれか",
             "no_need": "不要（理由1）",
         }
     )
     y_positions = list(range(len(FIGURE_REASON_KEYS)))
-    fig, (ax_proportion, ax_difference) = plt.subplots(
-        1,
-        2,
-        figsize=(8.2, 5.4),
-        gridspec_kw={"width_ratios": [2.1, 1.25], "wspace": 0.08},
-        sharey=True,
-    )
+    fig, ax = plt.subplots(figsize=(7.8, 6.0))
 
     group_styles = [
         ("寒さ5-7", -0.14, "o", MONO["black"]),
@@ -780,7 +730,7 @@ def render_reason_figure(
             - group_rows["pct"].astype(float)
         ).to_list()
         shifted_y = [position + offset for position in y_positions]
-        ax_proportion.errorbar(
+        ax.errorbar(
             percentages,
             shifted_y,
             xerr=[lower_errors, upper_errors],
@@ -808,7 +758,7 @@ def render_reason_figure(
         )
         for position, (_, row) in zip(shifted_y, group_rows.iterrows()):
             displayed_pct = int(row["event_n"]) / int(row["denominator"]) * 100.0
-            ax_proportion.text(
+            ax.text(
                 float(row["ci95_hi_pct"]) + 1.8,
                 position,
                 f"{int(row['event_n'])}/{int(row['denominator'])} "
@@ -825,103 +775,41 @@ def render_reason_figure(
                 },
             )
 
-    difference_rows = (
-        reason_differences[
-            reason_differences["reason_key"].isin(FIGURE_REASON_KEYS)
-        ]
-        .set_index("reason_key")
-        .loc[FIGURE_REASON_KEYS]
-    )
-    differences = difference_rows["difference_pp"].astype(float).to_list()
-    difference_lower_errors = (
-        difference_rows["difference_pp"].astype(float)
-        - difference_rows["difference_ci95_lo_pp"].astype(float)
-    ).to_list()
-    difference_upper_errors = (
-        difference_rows["difference_ci95_hi_pp"].astype(float)
-        - difference_rows["difference_pp"].astype(float)
-    ).to_list()
-    ax_difference.errorbar(
-        differences,
-        y_positions,
-        xerr=[difference_lower_errors, difference_upper_errors],
-        fmt="D",
-        color=MONO["black"],
-        ecolor=MONO["black"],
-        elinewidth=1.4,
-        capsize=3.5,
-        markersize=6,
-    )
-    for position, (_, row) in zip(y_positions, difference_rows.iterrows()):
-        ax_difference.text(
-            float(row["difference_ci95_hi_pp"]) + 3.0,
-            position,
-            f"{format_one_decimal(float(row['difference_pp']))} "
-            f"[{format_one_decimal(float(row['difference_ci95_lo_pp']))}, "
-            f"{format_one_decimal(float(row['difference_ci95_hi_pp']))}]",
-            ha="left",
-            va="center",
-            fontsize=12.5,
-            bbox={
-                "facecolor": MONO["white"],
-                "edgecolor": "none",
-                "pad": 0.4,
-                "alpha": 0.85,
-            },
-        )
-
-    ax_proportion.set_yticks(y_positions)
-    ax_proportion.set_yticklabels(
+    ax.set_yticks(y_positions)
+    ax.set_yticklabels(
         [labels[key] for key in FIGURE_REASON_KEYS],
         fontsize=12.5,
     )
-    ax_proportion.invert_yaxis()
-    ax_proportion.set_xlim(0, 132)
-    ax_proportion.set_xticks([0, 25, 50, 75, 100])
-    ax_proportion.set_xlabel(
+    ax.invert_yaxis()
+    ax.set_xlim(0, 125)
+    ax.set_xticks([0, 25, 50, 75, 100])
+    ax.set_xlabel(
         "Respondents (%)" if english else "回答者割合（%）",
         fontsize=12.0,
     )
-    ax_proportion.set_title(
-        "Group proportion (95% CI)" if english else "群別割合（95%CI）",
+    ax.set_title(
+        (
+            "Proportions by perceived bathroom coldness (95% CI)"
+            if english
+            else "浴室寒さ体感別の割合（95%CI）"
+        ),
         fontsize=13.5,
         fontweight="bold",
     )
-    ax_proportion.grid(axis="x", color=MONO["light"], linewidth=0.8)
-    ax_proportion.legend(
+    ax.grid(axis="x", color=MONO["light"], linewidth=0.8)
+    ax.legend(
         loc="upper center",
-        bbox_to_anchor=(0.55, -0.17),
+        bbox_to_anchor=(0.50, -0.16),
         frameon=False,
         fontsize=11.5,
         ncol=2,
     )
+    ax.set_axisbelow(True)
+    ax.tick_params(axis="x", labelsize=11.0)
+    for spine in ["top", "right", "left"]:
+        ax.spines[spine].set_visible(False)
 
-    ax_difference.axvline(0, color=MONO["medium"], linewidth=1.0)
-    ax_difference.set_xlim(-75, 120)
-    ax_difference.set_xticks([-50, 0, 50, 100])
-    ax_difference.set_xlabel(
-        (
-            "Coldness 5-7 minus 1-4 (percentage points)"
-            if english
-            else "寒さ5-7 - 1-4（パーセントポイント）"
-        ),
-        fontsize=11.5,
-    )
-    ax_difference.set_title(
-        "Difference (95% CI)" if english else "割合差（95%CI）",
-        fontsize=13.5,
-        fontweight="bold",
-    )
-    ax_difference.grid(axis="x", color=MONO["light"], linewidth=0.8)
-
-    for ax in [ax_proportion, ax_difference]:
-        ax.set_axisbelow(True)
-        ax.tick_params(axis="x", labelsize=11.0)
-        for spine in ["top", "right", "left"]:
-            ax.spines[spine].set_visible(False)
-    ax_difference.tick_params(axis="y", left=False, labelleft=False)
-
-    fig.subplots_adjust(left=0.22, right=0.98, top=0.88, bottom=0.24)
+    fig.subplots_adjust(left=0.37, right=0.98, top=0.88, bottom=0.22)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
@@ -1003,9 +891,7 @@ def render_heating_figure(
 
 
 def render_all_figures(
-    valid: pd.DataFrame,
     reason_summary: pd.DataFrame,
-    reason_differences: pd.DataFrame,
     output_dir: Path,
     language: str = "ja",
 ) -> dict[int, Path]:
@@ -1021,7 +907,6 @@ def render_all_figures(
     }
     render_reason_figure(
         reason_summary,
-        reason_differences,
         paths[1],
         language=language,
     )
@@ -1072,14 +957,6 @@ def write_markdown_tables(
         ),
         axis=1,
     )
-    t2["割合差（pp）[95%CI]"] = t2.apply(
-        lambda row: (
-            f"{row['difference_pp']:.1f} "
-            f"[{row['difference_ci95_lo_pp']:.1f}, "
-            f"{row['difference_ci95_hi_pp']:.1f}]"
-        ),
-        axis=1,
-    )
     (output_dir / "table2.md").write_text(
         as_markdown(
             t2[
@@ -1088,7 +965,6 @@ def write_markdown_tables(
                     "outcome_label",
                     "設備なし n/N (%)",
                     "設備あり n/N (%)",
-                    "割合差（pp）[95%CI]",
                 ]
             ]
         ),
@@ -1101,7 +977,6 @@ def validate_results(
     flagged: pd.DataFrame,
     valid: pd.DataFrame,
     reason_summary: pd.DataFrame,
-    reason_differences: pd.DataFrame,
     table2: pd.DataFrame,
 ) -> dict[str, int | float]:
     def reason_count(key: str, group: str) -> int:
@@ -1144,12 +1019,18 @@ def validate_results(
     assert reason_count("housing_installation", "寒さ1-4") == 6
     assert reason_count("barrier_2_5", "寒さ5-7") == 51
     assert reason_count("barrier_2_5", "寒さ1-4") == 15
-    sensitivity_difference = reason_differences.loc[
-        reason_differences["reason_key"].eq("barrier_2_5")
+    primary_high = reason_summary[
+        reason_summary["reason_key"].eq("barrier_2_5")
+        & reason_summary["bathroom_cold_group"].eq("寒さ5-7")
     ].iloc[0]
-    assert round(float(sensitivity_difference["difference_pp"]), 1) == 52.3
-    assert round(float(sensitivity_difference["difference_ci95_lo_pp"]), 1) == 34.5
-    assert round(float(sensitivity_difference["difference_ci95_hi_pp"]), 1) == 65.5
+    primary_low = reason_summary[
+        reason_summary["reason_key"].eq("barrier_2_5")
+        & reason_summary["bathroom_cold_group"].eq("寒さ1-4")
+    ].iloc[0]
+    assert round(float(primary_high["ci95_lo_pct"]), 1) == 71.0
+    assert round(float(primary_high["ci95_hi_pct"]), 1) == 89.8
+    assert round(float(primary_low["ci95_lo_pct"]), 1) == 19.1
+    assert round(float(primary_low["ci95_hi_pct"]), 1) == 43.8
     assert set(central_rows["without_denominator"]) == {112}
     assert set(central_rows["with_denominator"]) == {28}
     central_used = valid[valid["q9_central_heating_use"].isin([1, 2])]
@@ -1176,7 +1057,6 @@ def write_report(
     output_dir: Path,
     qc: dict[str, int | float],
     reason_summary: pd.DataFrame,
-    reason_differences: pd.DataFrame,
     table2: pd.DataFrame,
 ) -> None:
     def reason_row(key: str, group: str) -> pd.Series:
@@ -1185,24 +1065,20 @@ def write_report(
             & reason_summary["bathroom_cold_group"].eq(group)
         ].iloc[0]
 
-    barrier_all = reason_row("barrier", "全体")
+    primary_all = reason_row("barrier_2_5", "全体")
+    primary_low = reason_row("barrier_2_5", "寒さ1-4")
+    primary_high = reason_row("barrier_2_5", "寒さ5-7")
     barrier_low = reason_row("barrier", "寒さ1-4")
     barrier_high = reason_row("barrier", "寒さ5-7")
     no_need_all = reason_row("no_need", "全体")
+    no_need_low = reason_row("no_need", "寒さ1-4")
+    no_need_high = reason_row("no_need", "寒さ5-7")
     cost_low = reason_row("cost", "寒さ1-4")
     cost_high = reason_row("cost", "寒さ5-7")
     housing_low = reason_row("housing_installation", "寒さ1-4")
     housing_high = reason_row("housing_installation", "寒さ5-7")
     other_all = reason_row("other", "全体")
     other_only_all = reason_row("other_only", "全体")
-    sensitivity_low = reason_row("barrier_2_5", "寒さ1-4")
-    sensitivity_high = reason_row("barrier_2_5", "寒さ5-7")
-    barrier_diff = reason_differences[
-        reason_differences["reason_key"].eq("barrier")
-    ].iloc[0]
-    sensitivity_diff = reason_differences[
-        reason_differences["reason_key"].eq("barrier_2_5")
-    ].iloc[0]
     central_bath = table2[
         table2["equipment_key"].eq("central_heating")
         & table2["outcome"].eq("bathroom_cold_5_7")
@@ -1223,53 +1099,52 @@ def write_report(
         "## 主要結果",
         "",
         (
-            f"- 障壁あり: {barrier_all['event_n']}/{barrier_all['denominator']} "
-            f"({barrier_all['pct']:.2f}%, "
-            f"95%CI [{barrier_all['ci95_lo_pct']:.2f}, "
-            f"{barrier_all['ci95_hi_pct']:.2f}])"
+            f"- 費用・住宅設置制約: {primary_all['event_n']}/"
+            f"{primary_all['denominator']} ({primary_all['pct']:.2f}%)"
         ),
         (
             f"- 不要: {no_need_all['event_n']}/{no_need_all['denominator']} "
-            f"({no_need_all['pct']:.2f}%, "
-            f"95%CI [{no_need_all['ci95_lo_pct']:.2f}, "
-            f"{no_need_all['ci95_hi_pct']:.2f}])"
+            f"({no_need_all['pct']:.2f}%)"
         ),
         (
-            f"- 障壁あり（寒さ1-4）: {barrier_low['event_n']}/"
-            f"{barrier_low['denominator']} ({barrier_low['pct']:.2f}%)"
+            f"- 費用・住宅設置制約（寒さ5-7）: "
+            f"{primary_high['event_n']}/{primary_high['denominator']} "
+            f"({primary_high['pct']:.2f}%)"
         ),
         (
-            f"- 障壁あり（寒さ5-7）: {barrier_high['event_n']}/"
-            f"{barrier_high['denominator']} ({barrier_high['pct']:.2f}%)"
+            f"- 費用・住宅設置制約（寒さ1-4）: "
+            f"{primary_low['event_n']}/{primary_low['denominator']} "
+            f"({primary_low['pct']:.2f}%)"
         ),
         (
-            f"- 障壁ありの割合差（寒さ5-7 - 寒さ1-4）: "
-            f"{barrier_diff['difference_pp']:.2f}pp, "
-            f"95%CI [{barrier_diff['difference_ci95_lo_pp']:.2f}, "
-            f"{barrier_diff['difference_ci95_hi_pp']:.2f}]"
+            f"- 理由2-7のいずれか: 寒さ5-7群 "
+            f"{barrier_high['event_n']}/{barrier_high['denominator']} "
+            f"({barrier_high['pct']:.2f}%)、寒さ1-4群 "
+            f"{barrier_low['event_n']}/{barrier_low['denominator']} "
+            f"({barrier_low['pct']:.2f}%)"
         ),
         (
             f"- 費用系: 寒さ5-7群 {cost_high['event_n']}/"
-            f"{cost_high['denominator']}、寒さ1-4群 {cost_low['event_n']}/"
-            f"{cost_low['denominator']}"
+            f"{cost_high['denominator']} ({cost_high['pct']:.2f}%)、"
+            f"寒さ1-4群 {cost_low['event_n']}/{cost_low['denominator']} "
+            f"({cost_low['pct']:.2f}%)"
         ),
         (
             f"- 住宅・設置制約系: 寒さ5-7群 {housing_high['event_n']}/"
-            f"{housing_high['denominator']}、寒さ1-4群 "
-            f"{housing_low['event_n']}/{housing_low['denominator']}"
+            f"{housing_high['denominator']} ({housing_high['pct']:.2f}%)、"
+            f"寒さ1-4群 {housing_low['event_n']}/"
+            f"{housing_low['denominator']} ({housing_low['pct']:.2f}%)"
+        ),
+        (
+            f"- 不要: 寒さ5-7群 {no_need_high['event_n']}/"
+            f"{no_need_high['denominator']} ({no_need_high['pct']:.2f}%)、"
+            f"寒さ1-4群 {no_need_low['event_n']}/{no_need_low['denominator']} "
+            f"({no_need_low['pct']:.2f}%)"
         ),
         (
             f"- その他（理由8）: {other_all['event_n']}/"
             f"{other_all['denominator']}、理由8のみ: "
             f"{other_only_all['event_n']}/{other_only_all['denominator']}"
-        ),
-        (
-            f"- 理由2-5感度解析: 寒さ5-7群 {sensitivity_high['event_n']}/"
-            f"{sensitivity_high['denominator']}、寒さ1-4群 "
-            f"{sensitivity_low['event_n']}/{sensitivity_low['denominator']}、"
-            f"割合差 {sensitivity_diff['difference_pp']:.2f}pp, 95%CI "
-            f"[{sensitivity_diff['difference_ci95_lo_pp']:.2f}, "
-            f"{sensitivity_diff['difference_ci95_hi_pp']:.2f}]"
         ),
         (
             f"- 浴室寒さ5-7（セントラル暖房不使用）: "
@@ -1289,14 +1164,13 @@ def write_report(
         f"- Q7/Q8不整合: {qc['q7_q8_inconsistency_n']}部",
         (
             f"- セントラル暖房無回答: "
-            f"{qc['central_heating_missing_n']}部（比較から除外）"
+            f"{qc['central_heating_missing_n']}部（解析から除外）"
         ),
         "",
         "## 統計記述",
         "",
-        "- 割合の95%CI: Wilson法",
-        "- 割合差の95%CI: Newcombe-Wilson法",
-        "- 調整回帰およびp値中心の評価は実施しない",
+        "- Figure 1の割合の95%CI: Wilson法",
+        "- 群間差、調整回帰およびp値による評価は実施しない",
         "",
     ]
     (output_dir / "report.md").write_text("\n".join(lines), encoding="utf-8")
@@ -1316,19 +1190,15 @@ def main() -> int:
     collection_summary = pd.read_csv(collection_path, dtype=str)
     flagged, valid = prepare_analysis_set(input_csv)
     table1 = build_table1(valid)
-    reason_summary, reason_differences = build_reason_summary(valid)
+    reason_summary = build_reason_summary(valid)
     table2 = build_table2(valid)
 
     figure_paths = render_all_figures(
-        valid,
         reason_summary,
-        reason_differences,
         output_dir / "figures",
     )
     english_figure_paths = render_all_figures(
-        valid,
         reason_summary,
-        reason_differences,
         output_dir / "figures_en",
         language="en",
     )
@@ -1353,21 +1223,11 @@ def main() -> int:
     reason_summary.loc[
         reason_summary["reason_key"].isin(["other", "other_only"])
     ].to_csv(output_dir / "reason8_summary.csv", index=False)
-    sensitivity = reason_summary.loc[
+    reason2_5 = reason_summary.loc[
         reason_summary["reason_key"].eq("barrier_2_5")
-    ].merge(
-        reason_differences.loc[
-            reason_differences["reason_key"].eq("barrier_2_5")
-        ],
-        on=["reason_key", "reason_label"],
-        how="left",
-    )
-    sensitivity.to_csv(
-        output_dir / "reason2_5_sensitivity_summary.csv",
-        index=False,
-    )
-    reason_differences.to_csv(
-        output_dir / "reason_difference_summary.csv",
+    ]
+    reason2_5.to_csv(
+        output_dir / "reason2_5_summary.csv",
         index=False,
     )
     write_markdown_tables(table1, table2, output_dir)
@@ -1377,13 +1237,12 @@ def main() -> int:
         flagged,
         valid,
         reason_summary,
-        reason_differences,
         table2,
     )
     pd.DataFrame(
         [{"metric": key, "value": value} for key, value in qc.items()]
     ).to_csv(output_dir / "qc_summary.csv", index=False)
-    write_report(output_dir, qc, reason_summary, reason_differences, table2)
+    write_report(output_dir, qc, reason_summary, table2)
 
     meta = {
         "created_at": datetime.now().isoformat(timespec="seconds"),
@@ -1396,8 +1255,8 @@ def main() -> int:
             "matplotlib": matplotlib.__version__,
         },
         "methods": {
-            "proportion_ci": "Wilson 95% CI",
-            "difference_ci": "Newcombe-Wilson 95% CI",
+            "proportion_ci": "Wilson 95% CI (Figure 1)",
+            "between_group_difference": False,
             "adjusted_regression": False,
             "p_value_testing": False,
         },

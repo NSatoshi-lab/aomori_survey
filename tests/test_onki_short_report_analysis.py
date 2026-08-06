@@ -98,7 +98,7 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
         self.assertEqual(int((cost & operation).sum()), 0)
         self.assertEqual(int((housing & operation).sum()), 0)
 
-        reason_summary, _ = build_reason_summary(self.valid)
+        reason_summary = build_reason_summary(self.valid)
         barrier_cold = reason_summary[
             reason_summary["reason_key"].eq("barrier")
             & reason_summary["bathroom_cold_group"].eq("寒さ5-7")
@@ -119,33 +119,34 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
             (16, 50),
         )
 
-    def test_reason_groups_and_sensitivity_analysis(self) -> None:
-        reason_summary, reason_differences = build_reason_summary(self.valid)
+    def test_reason_groups_and_wilson_intervals(self) -> None:
+        reason_summary = build_reason_summary(self.valid)
 
-        def counts(key: str, group: str) -> tuple[int, int]:
+        def summary_row(key: str, group: str):
             row = reason_summary[
                 reason_summary["reason_key"].eq(key)
                 & reason_summary["bathroom_cold_group"].eq(group)
             ].iloc[0]
-            return int(row["event_n"]), int(row["denominator"])
+            return row
 
-        self.assertEqual(counts("cost", "寒さ5-7"), (31, 62))
-        self.assertEqual(counts("cost", "寒さ1-4"), (10, 50))
-        self.assertEqual(counts("housing_installation", "寒さ5-7"), (21, 62))
-        self.assertEqual(counts("housing_installation", "寒さ1-4"), (6, 50))
-        self.assertEqual(counts("barrier_2_5", "寒さ5-7"), (51, 62))
-        self.assertEqual(counts("barrier_2_5", "寒さ1-4"), (15, 50))
-
-        sensitivity = reason_differences[
-            reason_differences["reason_key"].eq("barrier_2_5")
-        ].iloc[0]
-        self.assertAlmostEqual(float(sensitivity["difference_pp"]), 52.3, places=1)
-        self.assertAlmostEqual(
-            float(sensitivity["difference_ci95_lo_pp"]), 34.5, places=1
-        )
-        self.assertAlmostEqual(
-            float(sensitivity["difference_ci95_hi_pp"]), 65.5, places=1
-        )
+        expected = [
+            ("barrier_2_5", "寒さ5-7", 51, 62, 82.26, 70.96, 89.79),
+            ("barrier_2_5", "寒さ1-4", 15, 50, 30.00, 19.10, 43.75),
+            ("cost", "寒さ5-7", 31, 62, 50.00, 37.92, 62.08),
+            ("cost", "寒さ1-4", 10, 50, 20.00, 11.24, 33.04),
+            ("housing_installation", "寒さ5-7", 21, 62, 33.87, 23.34, 46.28),
+            ("housing_installation", "寒さ1-4", 6, 50, 12.00, 5.62, 23.81),
+            ("barrier", "寒さ5-7", 53, 62, 85.48, 74.66, 92.17),
+            ("barrier", "寒さ1-4", 16, 50, 32.00, 20.76, 45.81),
+            ("no_need", "寒さ5-7", 4, 62, 6.45, 2.54, 15.45),
+            ("no_need", "寒さ1-4", 27, 50, 54.00, 40.40, 67.03),
+        ]
+        for key, group, events, total, pct, ci_low, ci_high in expected:
+            row = summary_row(key, group)
+            self.assertEqual((int(row["event_n"]), int(row["denominator"])), (events, total))
+            self.assertAlmostEqual(float(row["pct"]), pct, places=2)
+            self.assertAlmostEqual(float(row["ci95_lo_pct"]), ci_low, places=2)
+            self.assertAlmostEqual(float(row["ci95_hi_pct"]), ci_high, places=2)
 
     def test_central_heating_missing_values_are_excluded(self) -> None:
         self.assertEqual(
@@ -164,6 +165,25 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
         self.assertEqual(
             int(row["without_denominator"]) + int(row["with_denominator"]),
             140,
+        )
+        self.assertEqual(
+            list(table2.columns),
+            [
+                "equipment_key",
+                "equipment_label",
+                "outcome",
+                "outcome_label",
+                "without_event_n",
+                "without_denominator",
+                "without_pct",
+                "without_ci95_lo_pct",
+                "without_ci95_hi_pct",
+                "with_event_n",
+                "with_denominator",
+                "with_pct",
+                "with_ci95_lo_pct",
+                "with_ci95_hi_pct",
+            ],
         )
 
     def test_figure_summary_counts(self) -> None:
@@ -205,18 +225,22 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
         self.assertFalse(submission_table.isna().any().any())
 
     def test_japanese_submission_figure_is_rendered(self) -> None:
-        reason_summary, reason_differences = build_reason_summary(self.valid)
+        reason_summary = build_reason_summary(self.valid)
         with tempfile.TemporaryDirectory() as temp_dir:
             paths = render_all_figures(
-                self.valid,
                 reason_summary,
-                reason_differences,
                 Path(temp_dir),
             )
             self.assertEqual(set(paths), {1})
             self.assertEqual(
                 FIGURE_REASON_KEYS,
-                ["barrier", "cost", "housing_installation", "no_need"],
+                [
+                    "barrier_2_5",
+                    "cost",
+                    "housing_installation",
+                    "barrier",
+                    "no_need",
+                ],
             )
             for number, path in paths.items():
                 self.assertEqual(path.name, FIGURE_FILENAMES[number])
@@ -224,12 +248,10 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
                 self.assertGreater(path.stat().st_size, 10_000)
 
     def test_english_submission_figure_is_rendered(self) -> None:
-        reason_summary, reason_differences = build_reason_summary(self.valid)
+        reason_summary = build_reason_summary(self.valid)
         with tempfile.TemporaryDirectory() as temp_dir:
             paths = render_all_figures(
-                self.valid,
                 reason_summary,
-                reason_differences,
                 Path(temp_dir),
                 language="en",
             )

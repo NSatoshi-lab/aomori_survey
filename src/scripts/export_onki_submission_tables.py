@@ -123,10 +123,6 @@ def build_table2(table2: pd.DataFrame) -> pd.DataFrame:
                     f"({row.with_pct:.1f}; "
                     f"{format_ci(row.with_ci95_lo_pct, row.with_ci95_hi_pct)})"
                 ),
-                "Difference (pp; 95% CI)": (
-                    f"{row.difference_pp:.1f} "
-                    f"{format_ci(row.difference_ci95_lo_pp, row.difference_ci95_hi_pp)}"
-                ),
             }
         )
     return pd.DataFrame(rows)

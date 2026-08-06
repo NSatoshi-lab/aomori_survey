@@ -11,7 +11,7 @@
 
 ## 和文抄録
 
-目的：前報の探索的解析で低い浴室暖房乾燥機設置率かつ高い標準化死亡比の寒冷県候補となった青森県において、浴室暖房乾燥機の未設置・未使用理由と浴室寒さ体感との関係を主に記述し、セントラル暖房の使用および浴室暖房乾燥機との併用を副次的に検討する。方法：2026年3月11日-4月30日に五所川原市内で無記名の横断質問紙調査を行った。190部を配布し154部を回収した。主要解析は147人、セントラル暖房別解析は140人を対象とし、割合のWilson 95%信頼区間（CI）と群間の割合差のNewcombe 95%CIを算出した。結果：浴室寒さ5-7群は66/147人（44.9%）であった。浴室暖房乾燥機の未使用・未設置者112人では、「障壁あり」が69人（61.6%）、不要が31人（27.7%）であった。障壁ありは浴室寒さ5-7群で53/62人（85.5%）、寒さ1-4群で16/50人（32.0%）で、割合差は53.5パーセントポイント（95%CI [35.9, 66.6]）であった。セントラル暖房使用者は28/140人（20.0%）で、そのうち19/28人が浴室暖房乾燥機も使用していた。結論：便宜抽出標本内で、浴室を寒いと感じながら費用または設置上の制約を回答した者が観察された。セントラル暖房と浴室暖房乾燥機の併用も多く、単純な代替関係だけでは本標本の設備利用パターンを説明しにくかった。
+目的：前報の探索的解析で低い浴室暖房乾燥機設置率かつ高い標準化死亡比の寒冷県候補となった青森県において、浴室暖房乾燥機の未設置・未使用理由を浴室寒さ体感別に主に記述し、セントラル暖房の使用および浴室暖房乾燥機との併用を副次的に記述する。方法：2026年3月11日-4月30日に五所川原市内で無記名の横断質問紙調査を行った。190部を配布し154部を回収した。主要解析は147人、セントラル暖房別解析は140人を対象とし、寒さ体感群別に人数と割合を記述した。結果：浴室寒さ5-7群は66/147人（44.9%）であった。浴室暖房乾燥機の不使用者112人では、費用または住宅・設置制約を66人（58.9%）、不要を31人（27.7%）が回答した。費用または住宅・設置制約を回答した者は、浴室寒さ5-7群で51/62人（82.3%）、寒さ1-4群で15/50人（30.0%）であった。セントラル暖房使用者は28/140人（20.0%）で、そのうち19/28人が浴室暖房乾燥機も使用していた。結論：便宜抽出標本内で、浴室を寒いと感じながら費用または設置上の制約を回答した者が観察された。セントラル暖房使用者28人中19人に浴室暖房乾燥機との併用が観察され、単純な排他的代替だけでは本標本の設備利用パターンを説明しにくかった。
 
 キーワード：浴室暖房乾燥機、浴室寒さ、住環境、導入障壁、寒冷地
 
@@ -19,7 +19,7 @@
 
 本邦では、寒冷期に増加する入浴事故の防止は、公衆衛生上の重要な課題である[1]。前報では、浴室暖房乾燥機設置率が高いほど、W65「浴槽内での溺死及び溺水」およびW66「浴槽への転落による溺死及び溺水」の死亡数が少ないという方向の関連が、非寒冷県よりも寒冷県で強い可能性が示唆された[2]。探索的サブ解析では、浴室暖房乾燥機設置率が低く、標準化死亡比（SMR; 観測死亡数/期待死亡数）が高い寒冷県の候補として、青森県と秋田県が抽出された[2]。しかし、既存の広域集計からは、青森県における低設置率の背景、浴室の寒さ体感、および暖房設備の使用実態を把握することはできなかった。
 
-そこで本研究では、青森県五所川原市内で配布した質問紙の便宜抽出標本を用い、浴室暖房乾燥機を設置していない、または使用していない回答者が挙げた理由の内訳と、浴室の寒さ体感との関係を主に記述することを目的とした。副次的に、セントラル暖房の使用状況および浴室暖房乾燥機との併用状況を記述した。
+そこで本研究では、青森県五所川原市内で配布した質問紙の便宜抽出標本を用い、浴室暖房乾燥機を設置していない、または使用していない回答者が挙げた理由の内訳を、浴室の寒さ体感別に記述することを目的とした。副次的に、セントラル暖房の使用状況および浴室暖房乾燥機との併用状況を記述した。
 
 ## II 方法
 
@@ -31,9 +31,9 @@
 
 ### 2. 調査項目と変数
 
-基本属性、住宅条件、冬季の自宅入浴頻度、暖房設備、ならびに冬季の脱衣所および浴室の寒さ体感を尋ねた。浴室暖房乾燥機の回答肢は「設置して使用」「設置しているが未使用」「未設置」とし、後二者を合わせて「不使用者」と定義した。不使用者には未設置・未使用理由を複数回答で尋ねた。質問票では、セントラル暖房を、1か所の熱源で作った温水を配管で各室へ送り、パネルヒーター、ファンコンベクターまたは床暖房などで住宅全体を暖める方式と説明し、使用状況を「24時間使用」「時間限定使用」「不使用」で尋ねた。
+回答者の基本属性、住宅条件、冬季の自宅入浴頻度、暖房設備、ならびに冬季の脱衣所および浴室の寒さ体感を尋ねた。浴室暖房乾燥機の回答肢は「設置して使用」「設置しているが未使用」「未設置」とし、後二者を合わせて「不使用者」と定義した。不使用者には未設置・未使用理由を複数回答で尋ねた。質問票では、セントラル暖房を「1か所の熱源で作った温水を配管で各室へ送り、パネルヒーター、ファンコンベクターまたは床暖房などで住宅全体を暖める方式」と説明し、使用状況を「24時間使用」「時間限定使用」「不使用」で尋ねた。
 
-これらの理由のうち、理由1「既に十分暖かいので必要がない」を「不要」とした。理由2「電気代が気になる」と理由3「設置費用が高い」を「費用系」、理由4「住宅の構造上、設置が難しい」と理由5「賃貸で工事できない」を「住宅・設置制約系」、理由6「使い方がわからない」と理由7「故障中で使えない」を「使用方法・故障系」とした。理由2-7のいずれかを選択した者を「障壁あり」とした。理由8は「その他」とした。複数回答であるため、「不要」と「障壁あり」の重複、および障壁分類間の重複を許容した。
+これらの理由のうち、理由1「既に十分暖かいので必要がない」を「不要」とした。理由2「電気代が気になる」と理由3「設置費用が高い」を「費用系」、理由4「住宅の構造上、設置が難しい」と理由5「賃貸で工事できない」を「住宅・設置制約系」、理由6「使い方がわからない」と理由7「故障中で使えない」を「使用方法・故障系」とした。理由2-5のいずれかを選択した者を「費用・住宅設置制約」、理由2-7のいずれかを選択した者を「障壁あり」とした。理由8は「その他」とした。複数回答であるため、「不要」と「障壁あり」の重複、および障壁分類間の重複を許容した。
 
 冬季の寒さ体感は、1「非常に暖かい」、4「どちらでもない」、7「非常に寒い」を両端と中立点とする7件法で尋ねた。事前に定めた区分により5-7を寒さ5-7群、1-4を寒さ1-4群とした。セントラル暖房は24時間使用または時間限定使用を「使用」、不使用を「不使用」とした。
 
@@ -41,7 +41,7 @@
 
 154部のうち、浴室暖房乾燥機の設置・使用状況が無回答の3部と、不使用者のうち理由が無回答の4部を除いた147部を主要解析対象とした。このうち不使用者112部を理由解析の対象とした。浴室暖房乾燥機を使用しながら理由欄にも回答した4部は、使用状況を原回答のまま扱い、理由解析には含めなかった。セントラル暖房別解析は同項目が無回答の7部を除く140部とした。各解析には利用可能例を用い、欠測値の補完は行わなかった。
 
-カテゴリ変数は人数と割合で示した。未設置・未使用理由は、「不要」、理由2-7のいずれか、費用系、住宅・設置制約系の4分類について寒さ2群の割合を比較した。割合の95%CIはWilson法、寒さ5-7群から寒さ1-4群を引いた割合差の95%CIはNewcombe-Wilson法で算出した。理由分類別比較は探索的解析とし、多重性の調整、調整回帰およびp値による評価は行わなかった。理由2-5のいずれかに限定した感度解析も行った。解析にはPython 3.11.3、pandas 2.2.3およびmatplotlib 3.10.8を用いた。
+カテゴリ変数は人数と割合で示した。未設置・未使用理由は、費用・住宅設置制約、費用系、住宅・設置制約系、理由2-7のいずれか、および不要の5分類について、寒さ2群別に人数と割合を記述した。各割合の95%CIはWilson法で算出し、Fig. 1に示した。群間差、調整回帰およびp値による評価は行わなかった。解析にはPython 3.11.3、pandas 2.2.3およびmatplotlib 3.10.8を用いた。
 
 ### 4. 倫理的配慮
 
@@ -61,23 +61,23 @@
 
 ### 3. 浴室暖房乾燥機の未設置・未使用理由と浴室寒さ
 
-不使用者112人のうち、理由2-7のいずれかを選択した者は69人（61.6%）、不要は31人（27.7%）であった。理由8「その他」は17人（15.2%）で、この理由のみを選択した者は15人（13.4%）であった。不要と理由2-7の両方を選択した者は3人であった。
+不使用者112人のうち、費用・住宅設置制約を選択した者は66人（58.9%）、理由2-7のいずれかを選択した者は69人（61.6%）、不要は31人（27.7%）であった。理由8「その他」は17人（15.2%）で、この理由のみを選択した者は15人（13.4%）であった。不要と理由2-7の両方を選択した者は3人であった。
 
-寒さ5-7群と寒さ1-4群を比較すると、理由2-7のいずれかは53/62人（85.5%）対16/50人（32.0%）で、割合差は53.5パーセントポイント（95%CI [35.9, 66.6]）であった。費用系は31/62人（50.0%）対10/50人（20.0%）、住宅・設置制約系は21/62人（33.9%）対6/50人（12.0%）であった。不要は4/62人（6.5%）対27/50人（54.0%）であった（Fig. 1）。理由2-5のいずれかに限定した感度解析では、寒さ5-7群で51/62人（82.3%、95%CI [71.0, 89.8]）、寒さ1-4群で15/50人（30.0%）で、割合差は52.3パーセントポイント（95%CI [34.5, 65.5]）であった。
+寒さ5-7群では、費用・住宅設置制約を51/62人（82.3%）、費用系を31/62人（50.0%）、住宅・設置制約系を21/62人（33.9%）、理由2-7のいずれかを53/62人（85.5%）、不要を4/62人（6.5%）が選択した。寒さ1-4群では、それぞれ15/50人（30.0%）、10/50人（20.0%）、6/50人（12.0%）、16/50人（32.0%）、27/50人（54.0%）であった（Fig. 1）。
 
 &lt;Fig. 1 here&gt;
 
 ## IV 考察
 
-本調査の主要所見は、浴室を寒いと感じる不使用者62人のうち、51人（82.3%）が費用系または住宅・設置制約系の理由を選択したことである。内訳は費用系31人、住宅・設置制約系21人であり、浴室の寒さ対策を促す際には必要性の周知に加えて、使用費、設置費および住宅側の工事制約を考慮する必要があることを示す記述的所見である。
+本調査の主要所見は、浴室を寒いと感じる不使用者62人のうち、51人（82.3%）が費用系または住宅・設置制約系の理由を選択したことである。内訳は費用系31人、住宅・設置制約系21人であった。このような回答が観察されたことから、浴室の寒さ対策を検討する際には、必要性の周知に加えて、使用費、設置費および住宅側の工事制約を把握する必要がある。
 
-理由は複数回答であり、理由1「不要」と理由2-7の重複も3人に認めたため、「障壁あり」と「障壁なし」を相互排他的に分類したものではない。寒さ2群間の53.5パーセントポイントの差も、費用・設置制約が寒さを生じさせたことを示す因果効果ではなく、寒さを感じる者が制約を理由として認識・回答しやすいという逆方向の解釈も可能である。理由2-5に限定した感度解析でも同様の分布を認めたが、これらは多重性を調整していない探索的比較である。
+北海道では、浴室の寒さや室間温度差が他地域より小さいことが報告されている[3,4]。これらの知見を踏まえ、前報では、寒冷地においてセントラル暖房等の全館暖房が浴室暖房乾燥機を代替し得る可能性に言及した[2]。本調査では、セントラル暖房使用者28/140人のうち浴室寒さ5-7群は2人であり、19人は浴室暖房乾燥機も使用していた。この併用状況から、少なくとも本標本の設備利用パターンは、セントラル暖房による単純な排他的代替だけでは説明しにくかった。
 
-セントラル暖房使用者は28/140人で、そのうち浴室寒さ5-7群は2人、浴室暖房乾燥機との併用は19人であった。北海道では全館暖房を背景に浴室の寒さや室間温度差が小さいことが報告されているが[3,4]、本調査の比較は便宜抽出標本によるもので、断熱性能、築年、所有形態などの住宅特性による交絡を除けない。また、自己申告には想起および回答の誤差があり、標本は五所川原市や青森県を代表しない。室温と健康アウトカムを測定していないため、暖房設備による寒さの改善効果や入浴事故との関連は評価できない。
+本研究には限界がある。理由1「既に十分暖かいので必要がない」は寒さ体感の評価と定義上重なり、「不要」と理由2-7の両方を選択した者も3人いたため、「不要」と「障壁あり」は相互排他的ではない。寒さ体感別に示した割合は因果効果を意味せず、寒さを感じる者ほど制約を認識・回答しやすいという逆方向の解釈も可能である。また、本調査は便宜抽出による自己申告調査であり、五所川原市や青森県を代表せず、想起・回答誤差を伴う。断熱性能、築年、所有形態などによる交絡も残り、セントラル暖房が浴室や脱衣所まで実際に暖めていたかは確認していない。室温および健康アウトカムも測定していないため、青森県全体での両設備の代替関係、暖房設備による寒さの改善効果、入浴事故との関連は評価できない。
 
 ## V 結論
 
-五所川原市内の便宜抽出標本では、浴室を寒いと感じる浴室暖房乾燥機の不使用者の多くが、費用または住宅・設置上の制約を回答した。寒冷地の浴室対策を検討する際には、設備の必要性だけでなく、導入・使用を妨げる具体的制約と住宅の暖房構成を把握する必要がある。
+五所川原市内の便宜抽出標本では、浴室を寒いと感じる浴室暖房乾燥機の不使用者のうち、費用または住宅・設置上の制約を回答した者が観察された。寒冷地の浴室対策を検討する際には、設備の必要性だけでなく、導入・使用を妨げる具体的制約と住宅の暖房構成を把握する必要がある。
 
 ## 謝辞
 
@@ -104,7 +104,7 @@ Reasons for Non-installation or Non-use of Bathroom Heater-Dryers and Perceived 
 
 ## English Abstract
 
-Objective: Following an exploratory ecological analysis that identified Aomori as a candidate cold prefecture with a low bathroom heater-dryer installation rate and a high standardized mortality ratio, we primarily described reasons for non-installation or non-use and their relationship with perceived bathroom coldness. Secondarily, we described central heating use and concurrent bathroom heater-dryer use. Methods: We conducted an anonymous cross-sectional questionnaire survey in Goshogawara City, Japan, from March 11 to April 30, 2026. Of 190 questionnaires distributed, 154 were returned. The primary analysis included 147 respondents, and the central heating analysis included 140 respondents. Wilson 95% confidence intervals (CIs) were calculated for proportions, and Newcombe 95% CIs were calculated for differences in proportions. Results: Overall, 66/147 respondents (44.9%) reported bathroom coldness scores of 5-7. Among 112 respondents who did not use or had not installed a bathroom heater-dryer, 69 (61.6%) selected at least one barrier, whereas 31 (27.7%) selected that heating was unnecessary. Barriers were selected by 53/62 respondents (85.5%) in the coldness 5-7 group and 16/50 (32.0%) in the coldness 1-4 group, a difference of 53.5 percentage points (95% CI [35.9, 66.6]). Central heating was used by 28/140 respondents (20.0%), of whom 19/28 also used a bathroom heater-dryer. Conclusions: Within this convenience sample, some respondents perceived their bathrooms as cold while reporting cost-related or installation-related constraints. Frequent concurrent use of central heating and bathroom heater-dryers suggested that a simple substitution relationship alone did not explain the equipment-use pattern in this sample. These findings do not estimate citywide prevalence or establish effects of heating equipment on coldness or bathing-related health outcomes.
+Objective: Following an exploratory ecological analysis that identified Aomori as a candidate cold prefecture with a low bathroom heater-dryer installation rate and a high standardized mortality ratio, we primarily described reasons for non-installation or non-use by perceived bathroom coldness group. Secondarily, we described central heating use and concurrent bathroom heater-dryer use. Methods: We conducted an anonymous cross-sectional questionnaire survey in Goshogawara City, Japan, from March 11 to April 30, 2026. Of 190 questionnaires distributed, 154 were returned. The primary analysis included 147 respondents, and the central heating analysis included 140 respondents. Counts and percentages were described by perceived coldness group. Results: Overall, 66/147 respondents (44.9%) reported bathroom coldness scores of 5-7. Among 112 respondents who did not use or had not installed a bathroom heater-dryer, 66 (58.9%) reported cost-related or housing/installation-related constraints, whereas 31 (27.7%) selected that heating was unnecessary. Cost-related or housing/installation-related constraints were reported by 51/62 respondents (82.3%) in the coldness 5-7 group and 15/50 (30.0%) in the coldness 1-4 group. Central heating was used by 28/140 respondents (20.0%), of whom 19/28 also used a bathroom heater-dryer. Conclusions: Within this convenience sample, some respondents perceived their bathrooms as cold while reporting cost-related or installation-related constraints. Concurrent use of central heating and bathroom heater-dryers was observed in 19/28 central heating users, indicating that a simple mutually exclusive substitution alone did not explain the equipment-use pattern in this sample. These findings do not estimate citywide prevalence or establish effects of heating equipment on coldness or bathing-related health outcomes.
 
 English keywords: bathroom heater-dryer; bathroom coldness; residential environment; adoption barriers; cold climate
 
@@ -151,7 +151,7 @@ Values are n (%), with all 147 respondents as the denominator. Coldness scores r
 
 ### Figure 1. Reasons for non-installation or non-use by perceived bathroom coldness
 
-The analysis includes 112 respondents who had not installed or did not use a bathroom heater-dryer. The coldness 5-7 and coldness 1-4 groups included 62 and 50 respondents, respectively. Reasons were collected as multiple responses. Reasons 2-7 denote selection of any prespecified constraint; cost-related reasons comprise reasons 2-3, and housing/installation-related reasons comprise reasons 4-5. Group proportions are shown as n/N (%) with Wilson 95% confidence intervals. Differences are coldness 5-7 minus coldness 1-4 and are shown with Newcombe-Wilson 95% confidence intervals. Comparisons are exploratory and were not adjusted for multiplicity.
+The analysis includes 112 respondents who had not installed or did not use a bathroom heater-dryer. The coldness 5-7 and coldness 1-4 groups included 62 and 50 respondents, respectively. Reasons were collected as multiple responses. Cost-related or housing/installation-related constraints comprise reasons 2-5; cost-related reasons comprise reasons 2-3; housing/installation-related reasons comprise reasons 4-5; and any prespecified constraint comprises reasons 2-7. Group proportions are shown as n/N (%) with Wilson 95% confidence intervals. Between-group differences and p values were not calculated.
 
 ## Figures
 
