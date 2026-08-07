@@ -683,15 +683,15 @@ def render_reason_figure(
     output_path: Path,
     language: str = "ja",
 ) -> None:
-    """Render four reason classifications as group-specific horizontal bars."""
+    """Render four reason classifications in two group-specific panels."""
     configure_japanese_plotting()
     english = language == "en"
     labels = (
         {
-            "barrier_2_5": "Cost or housing/installation constraints (reasons 2-5)",
-            "cost": "  Cost-related (reasons 2-3)",
-            "housing_installation": "  Housing/installation-related (reasons 4-5)",
-            "no_need": "No need (reason 1)",
+            "barrier_2_5": "Cost/housing constraints (2-5)",
+            "cost": "  Cost (2-3)",
+            "housing_installation": "  Housing/installation (4-5)",
+            "no_need": "No need (1)",
         }
         if english
         else {
@@ -702,13 +702,18 @@ def render_reason_figure(
         }
     )
     y_positions = list(range(len(FIGURE_REASON_KEYS)))
-    fig, ax = plt.subplots(figsize=(7.8, 5.1))
+    fig, axes = plt.subplots(
+        nrows=1,
+        ncols=2,
+        figsize=(9.4, 5.1),
+        sharey=True,
+    )
 
-    group_styles = [
-        ("寒さ5-7", -0.16, MONO["black"]),
-        ("寒さ1-4", 0.16, MONO["light"]),
+    groups = [
+        ("寒さ1-4", 50),
+        ("寒さ5-7", 62),
     ]
-    for group, offset, color in group_styles:
+    for panel_index, (ax, (group, group_n)) in enumerate(zip(axes, groups)):
         group_rows = (
             reason_summary[
                 reason_summary["reason_key"].isin(FIGURE_REASON_KEYS)
@@ -718,29 +723,15 @@ def render_reason_figure(
             .loc[FIGURE_REASON_KEYS]
         )
         percentages = group_rows["pct"].astype(float).to_list()
-        shifted_y = [position + offset for position in y_positions]
         ax.barh(
-            shifted_y,
+            y_positions,
             percentages,
-            height=0.27,
-            color=color,
+            height=0.50,
+            color=MONO["medium_dark"],
             edgecolor=MONO["black"],
             linewidth=0.9,
-            label=(
-                (
-                    "Coldness 5-7 (n=62)"
-                    if group == "寒さ5-7"
-                    else "Coldness 1-4 (n=50)"
-                )
-                if english
-                else (
-                    "寒さ5-7（n=62）"
-                    if group == "寒さ5-7"
-                    else "寒さ1-4（n=50）"
-                )
-            ),
         )
-        for position, (_, row) in zip(shifted_y, group_rows.iterrows()):
+        for position, (_, row) in zip(y_positions, group_rows.iterrows()):
             displayed_pct = int(row["event_n"]) / int(row["denominator"]) * 100.0
             ax.text(
                 displayed_pct + 1.3,
@@ -749,45 +740,57 @@ def render_reason_figure(
                 f"({format_one_decimal(displayed_pct)}%)",
                 ha="left",
                 va="center",
-                fontsize=11.5,
+                fontsize=14.0,
                 color=MONO["black"],
             )
 
-    ax.set_yticks(y_positions)
-    ax.set_yticklabels(
-        [labels[key] for key in FIGURE_REASON_KEYS],
-        fontsize=12.5,
-    )
-    ax.invert_yaxis()
-    ax.set_xlim(0, 112)
-    ax.set_xticks([0, 25, 50, 75, 100])
-    ax.set_xlabel(
-        "Respondents (%)" if english else "回答者割合（%）",
-        fontsize=12.0,
-    )
-    ax.set_title(
+        ax.set_xlim(0, 112)
+        ax.set_xticks([0, 25, 50, 75, 100])
+        ax.set_title(
+            (
+                f"Bathroom coldness {group.removeprefix('寒さ')} (n={group_n})"
+                if english
+                else f"浴室寒さ{group.removeprefix('寒さ')}（n={group_n}）"
+            ),
+            fontsize=14.5,
+            fontweight="bold",
+        )
+        ax.grid(axis="x", color=MONO["light"], linewidth=0.8)
+        ax.set_axisbelow(True)
+        ax.tick_params(axis="x", labelsize=12.5)
+        if panel_index == 0:
+            ax.set_yticks(y_positions)
+            ax.set_yticklabels(
+                [labels[key] for key in FIGURE_REASON_KEYS],
+                fontsize=14.0,
+            )
+            ax.invert_yaxis()
+        else:
+            ax.tick_params(axis="y", left=False, labelleft=False)
+        for spine in ["top", "right", "left"]:
+            ax.spines[spine].set_visible(False)
+
+    fig.suptitle(
         (
-            "Reasons by perceived bathroom coldness"
+            "Reasons for non-installation or non-use of a bathroom heater-dryer"
             if english
-            else "浴室寒さ体感別の未設置・未使用理由"
+            else "浴室暖房乾燥機の未設置・未使用理由"
         ),
-        fontsize=13.5,
+        fontsize=17.0,
         fontweight="bold",
     )
-    ax.grid(axis="x", color=MONO["light"], linewidth=0.8)
-    ax.legend(
-        loc="upper center",
-        bbox_to_anchor=(0.50, -0.16),
-        frameon=False,
-        fontsize=11.5,
-        ncol=2,
+    fig.supxlabel(
+        "Respondents (%)" if english else "回答者割合（%）",
+        fontsize=14.0,
+        y=0.04,
     )
-    ax.set_axisbelow(True)
-    ax.tick_params(axis="x", labelsize=11.0)
-    for spine in ["top", "right", "left"]:
-        ax.spines[spine].set_visible(False)
-
-    fig.subplots_adjust(left=0.42, right=0.98, top=0.86, bottom=0.23)
+    fig.subplots_adjust(
+        left=0.28,
+        right=0.98,
+        top=0.78,
+        bottom=0.16,
+        wspace=0.18,
+    )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
@@ -1233,7 +1236,10 @@ def main() -> int:
             "matplotlib": matplotlib.__version__,
         },
         "methods": {
-            "figure1_display": "Observed n/N (%) without confidence intervals",
+            "figure1_display": (
+                "Observed n/N (%) without confidence intervals in two "
+                "group-specific panels"
+            ),
             "between_group_difference": False,
             "adjusted_regression": False,
             "p_value_testing": False,

@@ -149,9 +149,9 @@ Values are n (%), with all 147 respondents as the denominator. Coldness scores r
 
 ## Figure Legends
 
-### Figure 1. Reasons for non-installation or non-use by perceived bathroom coldness
+### Figure 1. Reasons for non-installation or non-use of a bathroom heater-dryer by perceived bathroom coldness
 
-The analysis includes 112 respondents who had not installed or did not use a bathroom heater-dryer. The coldness 5-7 and coldness 1-4 groups included 62 and 50 respondents, respectively. Reasons were collected as multiple responses; therefore, percentages do not sum to 100%. Cost-related or housing/installation-related constraints comprise reasons 2-5; cost-related reasons comprise reasons 2-3; and housing/installation-related reasons comprise reasons 4-5. Bars show the observed n/N (%) within each group. Confidence intervals are not shown; between-group differences and p values were not calculated.
+The analysis includes 112 respondents who had not installed or did not use a bathroom heater-dryer. The left and right panels show the coldness 1-4 group (n=50) and the coldness 5-7 group (n=62), respectively, using the same scale and bar style. Reasons were collected as multiple responses; therefore, percentages do not sum to 100%. Cost-related or housing/installation-related constraints comprise reasons 2-5; cost-related reasons comprise reasons 2-3; and housing/installation-related reasons comprise reasons 4-5. Bars show the observed n/N (%) within each group. Confidence intervals are not shown; between-group differences and p values were not calculated.
 
 ## Figures
 
