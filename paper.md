@@ -41,7 +41,7 @@
 
 154部のうち、浴室暖房乾燥機の設置・使用状況が無回答の3部と、不使用者のうち理由が無回答の4部を除いた147部を主要解析対象とした。このうち不使用者112部を理由解析の対象とした。浴室暖房乾燥機を使用しながら理由欄にも回答した4部は、使用状況を原回答のまま扱い、理由解析には含めなかった。セントラル暖房別解析は同項目が無回答の7部を除く140部とした。各解析には利用可能例を用い、欠測値の補完は行わなかった。
 
-カテゴリ変数は人数と割合で示した。未設置・未使用理由は、費用・住宅設置制約、費用系、住宅・設置制約系、理由2-7のいずれか、および不要の5分類について、寒さ2群別に人数と割合を記述した。各割合の95%CIはWilson法で算出し、Fig. 1に示した。群間差、調整回帰およびp値による評価は行わなかった。解析にはPython 3.11.3、pandas 2.2.3およびmatplotlib 3.10.8を用いた。
+カテゴリ変数は人数と割合で示した。未設置・未使用理由は、費用・住宅設置制約、費用系、住宅・設置制約系、理由2-7のいずれか、および不要の5分類について、寒さ2群別に人数と割合を記述した。このうち、費用・住宅設置制約、費用系、住宅・設置制約系および不要の4分類をFig. 1に示した。群間差、調整回帰およびp値による評価は行わなかった。解析にはPython 3.11.3、pandas 2.2.3およびmatplotlib 3.10.8を用いた。
 
 ### 4. 倫理的配慮
 
@@ -151,7 +151,7 @@ Values are n (%), with all 147 respondents as the denominator. Coldness scores r
 
 ### Figure 1. Reasons for non-installation or non-use by perceived bathroom coldness
 
-The analysis includes 112 respondents who had not installed or did not use a bathroom heater-dryer. The coldness 5-7 and coldness 1-4 groups included 62 and 50 respondents, respectively. Reasons were collected as multiple responses. Cost-related or housing/installation-related constraints comprise reasons 2-5; cost-related reasons comprise reasons 2-3; housing/installation-related reasons comprise reasons 4-5; and any prespecified constraint comprises reasons 2-7. Group proportions are shown as n/N (%) with Wilson 95% confidence intervals. Between-group differences and p values were not calculated.
+The analysis includes 112 respondents who had not installed or did not use a bathroom heater-dryer. The coldness 5-7 and coldness 1-4 groups included 62 and 50 respondents, respectively. Reasons were collected as multiple responses; therefore, percentages do not sum to 100%. Cost-related or housing/installation-related constraints comprise reasons 2-5; cost-related reasons comprise reasons 2-3; and housing/installation-related reasons comprise reasons 4-5. Bars show the observed n/N (%) within each group. Confidence intervals are not shown; between-group differences and p values were not calculated.
 
 ## Figures
 

@@ -76,7 +76,6 @@ FIGURE_REASON_KEYS = [
     "barrier_2_5",
     "cost",
     "housing_installation",
-    "barrier",
     "no_need",
 ]
 
@@ -684,34 +683,32 @@ def render_reason_figure(
     output_path: Path,
     language: str = "ja",
 ) -> None:
-    """Render five reason classifications with group-specific Wilson CIs."""
+    """Render four reason classifications as group-specific horizontal bars."""
     configure_japanese_plotting()
     english = language == "en"
     labels = (
         {
-            "barrier_2_5": "Cost or housing/installation (reasons 2-5)",
-            "cost": "Cost (reasons 2-3)",
-            "housing_installation": "Housing/installation (reasons 4-5)",
-            "barrier": "Any reason 2-7",
+            "barrier_2_5": "Cost or housing/installation constraints (reasons 2-5)",
+            "cost": "  Cost-related (reasons 2-3)",
+            "housing_installation": "  Housing/installation-related (reasons 4-5)",
             "no_need": "No need (reason 1)",
         }
         if english
         else {
             "barrier_2_5": "費用・住宅設置制約（理由2-5）",
-            "cost": "費用系（理由2-3）",
-            "housing_installation": "住宅・設置制約系（理由4-5）",
-            "barrier": "理由2-7のいずれか",
+            "cost": "　内訳：費用系（理由2-3）",
+            "housing_installation": "　内訳：住宅・設置制約系（理由4-5）",
             "no_need": "不要（理由1）",
         }
     )
     y_positions = list(range(len(FIGURE_REASON_KEYS)))
-    fig, ax = plt.subplots(figsize=(7.8, 6.0))
+    fig, ax = plt.subplots(figsize=(7.8, 5.1))
 
     group_styles = [
-        ("寒さ5-7", -0.14, "o", MONO["black"]),
-        ("寒さ1-4", 0.14, "s", MONO["medium_dark"]),
+        ("寒さ5-7", -0.16, MONO["black"]),
+        ("寒さ1-4", 0.16, MONO["light"]),
     ]
-    for group, offset, marker, color in group_styles:
+    for group, offset, color in group_styles:
         group_rows = (
             reason_summary[
                 reason_summary["reason_key"].isin(FIGURE_REASON_KEYS)
@@ -721,27 +718,14 @@ def render_reason_figure(
             .loc[FIGURE_REASON_KEYS]
         )
         percentages = group_rows["pct"].astype(float).to_list()
-        lower_errors = (
-            group_rows["pct"].astype(float)
-            - group_rows["ci95_lo_pct"].astype(float)
-        ).to_list()
-        upper_errors = (
-            group_rows["ci95_hi_pct"].astype(float)
-            - group_rows["pct"].astype(float)
-        ).to_list()
         shifted_y = [position + offset for position in y_positions]
-        ax.errorbar(
-            percentages,
+        ax.barh(
             shifted_y,
-            xerr=[lower_errors, upper_errors],
-            fmt=marker,
+            percentages,
+            height=0.27,
             color=color,
-            ecolor=color,
-            elinewidth=1.4,
-            capsize=3.5,
-            markersize=7,
-            markerfacecolor=(MONO["white"] if marker == "s" else color),
-            markeredgewidth=1.3,
+            edgecolor=MONO["black"],
+            linewidth=0.9,
             label=(
                 (
                     "Coldness 5-7 (n=62)"
@@ -759,20 +743,14 @@ def render_reason_figure(
         for position, (_, row) in zip(shifted_y, group_rows.iterrows()):
             displayed_pct = int(row["event_n"]) / int(row["denominator"]) * 100.0
             ax.text(
-                float(row["ci95_hi_pct"]) + 1.8,
+                displayed_pct + 1.3,
                 position,
                 f"{int(row['event_n'])}/{int(row['denominator'])} "
                 f"({format_one_decimal(displayed_pct)}%)",
                 ha="left",
                 va="center",
-                fontsize=12.5,
-                color=color,
-                bbox={
-                    "facecolor": MONO["white"],
-                    "edgecolor": "none",
-                    "pad": 0.4,
-                    "alpha": 0.85,
-                },
+                fontsize=11.5,
+                color=MONO["black"],
             )
 
     ax.set_yticks(y_positions)
@@ -781,7 +759,7 @@ def render_reason_figure(
         fontsize=12.5,
     )
     ax.invert_yaxis()
-    ax.set_xlim(0, 125)
+    ax.set_xlim(0, 112)
     ax.set_xticks([0, 25, 50, 75, 100])
     ax.set_xlabel(
         "Respondents (%)" if english else "回答者割合（%）",
@@ -789,9 +767,9 @@ def render_reason_figure(
     )
     ax.set_title(
         (
-            "Proportions by perceived bathroom coldness (95% CI)"
+            "Reasons by perceived bathroom coldness"
             if english
-            else "浴室寒さ体感別の割合（95%CI）"
+            else "浴室寒さ体感別の未設置・未使用理由"
         ),
         fontsize=13.5,
         fontweight="bold",
@@ -809,7 +787,7 @@ def render_reason_figure(
     for spine in ["top", "right", "left"]:
         ax.spines[spine].set_visible(False)
 
-    fig.subplots_adjust(left=0.37, right=0.98, top=0.88, bottom=0.22)
+    fig.subplots_adjust(left=0.42, right=0.98, top=0.86, bottom=0.23)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
@@ -1169,7 +1147,7 @@ def write_report(
         "",
         "## 統計記述",
         "",
-        "- Figure 1の割合の95%CI: Wilson法",
+        "- Figure 1: 各群の観察人数、分母および割合を表示",
         "- 群間差、調整回帰およびp値による評価は実施しない",
         "",
     ]
@@ -1255,7 +1233,7 @@ def main() -> int:
             "matplotlib": matplotlib.__version__,
         },
         "methods": {
-            "proportion_ci": "Wilson 95% CI (Figure 1)",
+            "figure1_display": "Observed n/N (%) without confidence intervals",
             "between_group_difference": False,
             "adjusted_regression": False,
             "p_value_testing": False,
