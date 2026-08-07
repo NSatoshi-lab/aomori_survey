@@ -7,8 +7,8 @@ import argparse
 from pathlib import Path
 
 from docx import Document
-from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
-from docx.enum.text import WD_LINE_SPACING
+from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_TABLE_ALIGNMENT
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Mm, Pt
@@ -17,6 +17,9 @@ from docx.shared import Mm, Pt
 BODY_FONT = "Yu Mincho"
 LATIN_FONT = "Times New Roman"
 BACK_MATTER_SECTION_TITLES = ("Tables", "Figure Legends", "Figures")
+TABLE1_HEADERS = ("Characteristic", "Category", "n (%)")
+TABLE1_COLUMN_WIDTHS_MM = (45, 75, 30)
+TABLE1_FOOTNOTE_PREFIX = "Values are n (%)"
 
 
 def parse_args() -> argparse.Namespace:
@@ -56,6 +59,143 @@ def prevent_row_split(row) -> None:
     table_row_properties.append(cannot_split)
 
 
+def get_or_add_child(parent, tag_name: str):
+    child = parent.find(qn(tag_name))
+    if child is None:
+        child = OxmlElement(tag_name)
+        parent.append(child)
+    return child
+
+
+def set_table_fixed_width(table, widths_mm: tuple[int, ...]) -> None:
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    table.autofit = False
+    table_properties = table._tbl.tblPr
+    layout = get_or_add_child(table_properties, "w:tblLayout")
+    layout.set(qn("w:type"), "fixed")
+    table_width = get_or_add_child(table_properties, "w:tblW")
+    table_width.set(qn("w:w"), str(Mm(sum(widths_mm)).twips))
+    table_width.set(qn("w:type"), "dxa")
+
+    for column, width_mm in zip(table.columns, widths_mm):
+        width = Mm(width_mm)
+        column.width = width
+        for cell in column.cells:
+            cell.width = width
+            cell_properties = cell._tc.get_or_add_tcPr()
+            cell_width = get_or_add_child(cell_properties, "w:tcW")
+            cell_width.set(qn("w:w"), str(width.twips))
+            cell_width.set(qn("w:type"), "dxa")
+
+
+def set_cell_margins(
+    cell,
+    *,
+    top_mm: float,
+    right_mm: float,
+    bottom_mm: float,
+    left_mm: float,
+) -> None:
+    cell_properties = cell._tc.get_or_add_tcPr()
+    margins = get_or_add_child(cell_properties, "w:tcMar")
+    for edge, value_mm in (
+        ("top", top_mm),
+        ("right", right_mm),
+        ("bottom", bottom_mm),
+        ("left", left_mm),
+    ):
+        margin = get_or_add_child(margins, f"w:{edge}")
+        margin.set(qn("w:w"), str(Mm(value_mm).twips))
+        margin.set(qn("w:type"), "dxa")
+
+
+def set_table_borders_none(table) -> None:
+    table_properties = table._tbl.tblPr
+    borders = get_or_add_child(table_properties, "w:tblBorders")
+    for edge in ("top", "left", "bottom", "right", "insideH", "insideV"):
+        border = get_or_add_child(borders, f"w:{edge}")
+        border.set(qn("w:val"), "nil")
+
+
+def set_cell_horizontal_borders(
+    cell,
+    *,
+    top: tuple[str, str] | None = None,
+    bottom: tuple[str, str] | None = None,
+) -> None:
+    cell_properties = cell._tc.get_or_add_tcPr()
+    borders = get_or_add_child(cell_properties, "w:tcBorders")
+    for edge, specification in (("top", top), ("bottom", bottom)):
+        border = get_or_add_child(borders, f"w:{edge}")
+        if specification is None:
+            border.set(qn("w:val"), "nil")
+            continue
+        size, color = specification
+        border.set(qn("w:val"), "single")
+        border.set(qn("w:sz"), size)
+        border.set(qn("w:space"), "0")
+        border.set(qn("w:color"), color)
+
+
+def is_table1(table) -> bool:
+    if not table.rows or len(table.rows[0].cells) != len(TABLE1_HEADERS):
+        return False
+    return tuple(cell.text.strip() for cell in table.rows[0].cells) == TABLE1_HEADERS
+
+
+def format_table1(table) -> None:
+    set_table_fixed_width(table, TABLE1_COLUMN_WIDTHS_MM)
+    set_table_borders_none(table)
+
+    group_starts = [
+        row_index
+        for row_index in range(1, len(table.rows))
+        if table.rows[row_index].cells[0].text.strip()
+    ]
+    group_boundaries = group_starts + [len(table.rows)]
+
+    for row_index, row in enumerate(table.rows):
+        is_header = row_index == 0
+        is_group_start = row_index in group_starts
+        is_last_row = row_index == len(table.rows) - 1
+        for column_index, cell in enumerate(row.cells):
+            cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.TOP
+            set_cell_margins(
+                cell,
+                top_mm=0.5,
+                right_mm=1.5,
+                bottom_mm=0.5,
+                left_mm=1.5,
+            )
+            set_cell_horizontal_borders(
+                cell,
+                top=("8", "000000") if is_header else (
+                    ("4", "B7B7B7") if is_group_start else None
+                ),
+                bottom=("8", "000000") if is_header or is_last_row else None,
+            )
+            for paragraph in cell.paragraphs:
+                paragraph.paragraph_format.space_before = Pt(0)
+                paragraph.paragraph_format.left_indent = (
+                    Mm(2.5) if not is_header and column_index == 1 else None
+                )
+                paragraph.alignment = (
+                    WD_ALIGN_PARAGRAPH.RIGHT
+                    if column_index == 2
+                    else WD_ALIGN_PARAGRAPH.LEFT
+                )
+                if is_group_start and column_index == 0:
+                    for run in paragraph.runs:
+                        run.font.bold = True
+
+    for group_index, start_row in enumerate(group_starts):
+        end_row = group_boundaries[group_index + 1]
+        for row_index in range(start_row, end_row - 1):
+            for cell in table.rows[row_index].cells:
+                for paragraph in cell.paragraphs:
+                    paragraph.paragraph_format.keep_with_next = True
+
+
 def format_document(input_docx: Path, output_docx: Path) -> None:
     document = Document(input_docx)
 
@@ -87,6 +227,7 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
     for paragraph in document.paragraphs:
         paragraph_text = paragraph.text.strip()
         has_drawing = bool(paragraph._p.xpath(".//w:drawing"))
+        is_table1_footnote = paragraph_text.startswith(TABLE1_FOOTNOTE_PREFIX)
         if paragraph_text == "English Title":
             paragraph.paragraph_format.page_break_before = True
         elif paragraph_text in BACK_MATTER_SECTION_TITLES:
@@ -96,7 +237,13 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
         elif in_english_abstract and paragraph_text in BACK_MATTER_SECTION_TITLES:
             in_english_abstract = False
 
-        if has_drawing:
+        if is_table1_footnote:
+            paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
+            paragraph.paragraph_format.line_spacing = 1.0
+            paragraph.paragraph_format.space_before = Pt(3)
+            paragraph.paragraph_format.space_after = Pt(0)
+            paragraph.paragraph_format.keep_together = True
+        elif has_drawing:
             paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
             paragraph.paragraph_format.line_spacing = 1.0
         elif in_english_abstract and paragraph_text != "English Abstract":
@@ -107,7 +254,9 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
             paragraph.paragraph_format.line_spacing = Pt(21.5)
 
         for run in paragraph.runs:
-            if paragraph.style.name == "Title":
+            if is_table1_footnote:
+                set_run_font(run, Pt(9))
+            elif paragraph.style.name == "Title":
                 set_run_font(run, Pt(15))
             elif paragraph.style.name.startswith("Heading"):
                 set_run_font(run, Pt(12))
@@ -128,6 +277,8 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
                     paragraph.paragraph_format.space_after = Pt(0)
                     for run in paragraph.runs:
                         set_run_font(run, Pt(9))
+        if is_table1(table):
+            format_table1(table)
 
     output_docx.parent.mkdir(parents=True, exist_ok=True)
     document.save(output_docx)

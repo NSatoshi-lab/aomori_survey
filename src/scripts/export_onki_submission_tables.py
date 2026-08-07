@@ -7,8 +7,7 @@ import argparse
 from pathlib import Path
 
 import pandas as pd
-from openpyxl.styles import Alignment, Font
-from openpyxl.utils import get_column_letter
+from openpyxl.styles import Alignment, Border, Font, Side
 
 
 ITEM_LABELS = {
@@ -85,9 +84,14 @@ def format_ci(low: float, high: float) -> str:
 
 
 def build_table1(table1: pd.DataFrame) -> pd.DataFrame:
+    characteristics = table1["item"].map(ITEM_LABELS)
+    characteristics = characteristics.where(
+        table1["item"].ne(table1["item"].shift()),
+        "",
+    )
     output = pd.DataFrame(
         {
-            "Characteristic": table1["item"].map(ITEM_LABELS),
+            "Characteristic": characteristics,
             "Category": table1["category"].map(CATEGORY_LABELS),
             "n (%)": table1.apply(
                 lambda row: (
@@ -133,22 +137,82 @@ def style_workbook(output_xlsx: Path) -> None:
 
     workbook = load_workbook(output_xlsx)
     for sheet in workbook.worksheets:
+        data_start_row = 4
+        data_end_row = sheet.max_row - 2
+        footnote_row = sheet.max_row
+        thin_gray = Side(style="thin", color="B7B7B7")
+        medium_black = Side(style="medium", color="000000")
+
         sheet.freeze_panes = "A4"
         sheet.merge_cells("A1:C1")
         sheet["A1"] = "Table 1. Characteristics of respondents (n=147)"
-        sheet["A1"].font = Font(bold=True)
-        sheet["A1"].alignment = Alignment(wrap_text=True, vertical="center")
+        sheet["A1"].font = Font(name="Times New Roman", size=11, bold=True)
+        sheet["A1"].alignment = Alignment(
+            wrap_text=True,
+            vertical="center",
+        )
+        sheet.row_dimensions[1].height = 24
+
         for cell in sheet[3]:
-            cell.font = Font(bold=True)
-            cell.alignment = Alignment(wrap_text=True, vertical="center")
-        for row in sheet.iter_rows(min_row=4):
-            for cell in row:
-                cell.alignment = Alignment(wrap_text=True, vertical="top")
-        for column_index, column in enumerate(sheet.columns, start=1):
-            max_length = max(len(str(cell.value or "")) for cell in column)
-            sheet.column_dimensions[get_column_letter(column_index)].width = min(
-                max(max_length + 2, 12), 46
+            cell.font = Font(name="Times New Roman", size=10, bold=True)
+            cell.alignment = Alignment(
+                horizontal="right" if cell.column == 3 else "left",
+                wrap_text=True,
+                vertical="center",
             )
+            cell.border = Border(
+                top=medium_black,
+                bottom=medium_black,
+            )
+        sheet.row_dimensions[3].height = 22
+
+        for row_index in range(data_start_row, data_end_row + 1):
+            group_start = bool(sheet.cell(row=row_index, column=1).value)
+            for column_index in range(1, 4):
+                cell = sheet.cell(row=row_index, column=column_index)
+                cell.font = Font(
+                    name="Times New Roman",
+                    size=10,
+                    bold=group_start and column_index == 1,
+                )
+                cell.alignment = Alignment(
+                    horizontal="right" if column_index == 3 else "left",
+                    indent=1 if column_index == 2 else 0,
+                    wrap_text=True,
+                    vertical="top",
+                )
+                cell.border = Border(
+                    top=thin_gray if group_start else None,
+                    bottom=medium_black if row_index == data_end_row else None,
+                )
+            sheet.row_dimensions[row_index].height = 18
+
+        sheet.cell(row=footnote_row, column=1).font = Font(
+            name="Times New Roman",
+            size=9,
+        )
+        sheet.cell(row=footnote_row, column=1).alignment = Alignment(
+            wrap_text=True,
+            vertical="top",
+        )
+        sheet.row_dimensions[footnote_row].height = 34
+
+        sheet.column_dimensions["A"].width = 26
+        sheet.column_dimensions["B"].width = 40
+        sheet.column_dimensions["C"].width = 14
+        sheet.sheet_view.showGridLines = False
+        sheet.sheet_properties.pageSetUpPr.fitToPage = True
+        sheet.page_setup.orientation = sheet.ORIENTATION_PORTRAIT
+        sheet.page_setup.paperSize = sheet.PAPERSIZE_A4
+        sheet.page_setup.fitToWidth = 1
+        sheet.page_setup.fitToHeight = 1
+        sheet.page_margins.left = 0.5
+        sheet.page_margins.right = 0.5
+        sheet.page_margins.top = 0.5
+        sheet.page_margins.bottom = 0.5
+        sheet.print_options.horizontalCentered = True
+        sheet.print_area = f"A1:C{sheet.max_row}"
+        sheet.print_title_rows = "3:3"
     workbook.save(output_xlsx)
 
 

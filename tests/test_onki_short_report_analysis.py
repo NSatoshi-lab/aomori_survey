@@ -223,6 +223,29 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
             ["Characteristic", "Category", "n (%)"],
         )
         self.assertFalse(submission_table.isna().any().any())
+        self.assertEqual(
+            list(submission_table.loc[:3, "Characteristic"]),
+            ["Age", "", "", ""],
+        )
+        self.assertEqual(
+            list(
+                submission_table.loc[
+                    submission_table["Characteristic"].ne(""),
+                    "Characteristic",
+                ]
+            ),
+            [
+                "Age",
+                "Housing type",
+                "Building age",
+                "Tenure",
+                "Winter bathing frequency",
+                "Bathroom window",
+                "Bathroom heater-dryer",
+                "Central heating",
+                "Perceived coldness",
+            ],
+        )
 
     def test_japanese_submission_figure_is_rendered(self) -> None:
         reason_summary = build_reason_summary(self.valid)

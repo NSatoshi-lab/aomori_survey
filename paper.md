@@ -115,35 +115,35 @@ English keywords: bathroom heater-dryer; bathroom coldness; residential environm
 | Characteristic | Category | n (%) |
 | --- | --- | ---: |
 | Age | 18-49 years | 32 (21.8) |
-| Age | 50-59 years | 25 (17.0) |
-| Age | 60-69 years | 61 (41.5) |
-| Age | ≥70 years | 29 (19.7) |
+| | 50-59 years | 25 (17.0) |
+| | 60-69 years | 61 (41.5) |
+| | ≥70 years | 29 (19.7) |
 | Housing type | Detached house | 132 (89.8) |
-| Housing type | Apartment/condominium | 15 (10.2) |
+| | Apartment/condominium | 15 (10.2) |
 | Building age | &lt;30 years | 62 (42.2) |
-| Building age | ≥30 years | 77 (52.4) |
-| Building age | Unknown | 8 (5.4) |
+| | ≥30 years | 77 (52.4) |
+| | Unknown | 8 (5.4) |
 | Tenure | Owner-occupied | 130 (88.4) |
-| Tenure | Rented | 16 (10.9) |
-| Tenure | Missing | 1 (0.7) |
+| | Rented | 16 (10.9) |
+| | Missing | 1 (0.7) |
 | Winter bathing frequency | Daily | 94 (63.9) |
-| Winter bathing frequency | 4-6 times/week | 36 (24.5) |
-| Winter bathing frequency | 1-3 times/week | 10 (6.8) |
-| Winter bathing frequency | 1-3 times/month | 2 (1.4) |
-| Winter bathing frequency | Almost never | 5 (3.4) |
+| | 4-6 times/week | 36 (24.5) |
+| | 1-3 times/week | 10 (6.8) |
+| | 1-3 times/month | 2 (1.4) |
+| | Almost never | 5 (3.4) |
 | Bathroom window | Double window/double glazing | 111 (75.5) |
-| Bathroom window | Single glazing | 26 (17.7) |
-| Bathroom window | No window | 7 (4.8) |
-| Bathroom window | Unknown/missing | 3 (2.0) |
+| | Single glazing | 26 (17.7) |
+| | No window | 7 (4.8) |
+| | Unknown/missing | 3 (2.0) |
 | Bathroom heater-dryer | Installed and used | 35 (23.8) |
-| Bathroom heater-dryer | Installed but not used | 13 (8.8) |
-| Bathroom heater-dryer | Not installed | 99 (67.3) |
+| | Installed but not used | 13 (8.8) |
+| | Not installed | 99 (67.3) |
 | Central heating | Used 24 hours | 16 (10.9) |
-| Central heating | Used for limited hours | 12 (8.2) |
-| Central heating | Not used | 112 (76.2) |
-| Central heating | Missing | 7 (4.8) |
+| | Used for limited hours | 12 (8.2) |
+| | Not used | 112 (76.2) |
+| | Missing | 7 (4.8) |
 | Perceived coldness | Bathroom score 5-7 | 66 (44.9) |
-| Perceived coldness | Dressing-room score 5-7 | 77 (52.4) |
+| | Dressing-room score 5-7 | 77 (52.4) |
 
 Values are n (%), with all 147 respondents as the denominator. Coldness scores ranged from 1 (very warm) to 7 (very cold); scores 5-7 were classified as perceived coldness.
 
