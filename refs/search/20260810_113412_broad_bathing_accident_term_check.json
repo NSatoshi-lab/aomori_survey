@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-08-10T11:34:12+09:00",
+  "slug": "broad_bathing_accident_term_check",
+  "purpose": "短報冒頭の一般語『入浴事故』が許容できるか、Kiyoharaら2016の入浴関連院外心停止だけで引用対応が十分か、広い事故概念を直接支える追加文献が必要かを確認する。",
+  "constraints": [
+    "paper.mdおよびDOCXは変更しない。",
+    "短報の健康アウトカム非評価という限界記述と矛盾しない背景表現を選ぶ。"
+  ],
+  "zotero_bridge": {
+    "checked_at": "2026-08-10",
+    "result": "Zotero本体には応答したが、/codex/pingおよび/codex/importはHTTP 404であった。",
+    "fallback": "既存Zotero記録、J-STAGE、消費者庁公式資料、OpenAlexを手動照合した。"
+  },
+  "sources_and_queries": [
+    {
+      "database": "Consumer Affairs Agency",
+      "date": "2026-08-10",
+      "queries": [
+        "site:caa.go.jp 入浴中 事故 冬季 高齢者",
+        "site:caa.go.jp 冬季に多発する入浴中の事故"
+      ]
+    },
+    {
+      "database": "J-STAGE",
+      "date": "2026-08-10",
+      "queries": [
+        "入浴事故 冬季 予防 公衆衛生",
+        "アンケート調査による入浴事故対策"
+      ]
+    },
+    {
+      "database": "OpenAlex DOI lookup",
+      "date": "2026-08-10",
+      "queries": [
+        "10.11236/jph.63.2_68"
+      ]
+    }
+  ],
+  "screened_sources": [
+    {
+      "citation": "消費者庁. 冬季に多発する入浴中の事故に御注意ください！ 2018-11-21.",
+      "url": "https://www.caa.go.jp/policies/policy/consumer_safety/caution/caution_009/pdf/caution_009_181121_0001.pdf",
+      "key_points": [
+        "『入浴中の事故』という広い語を公式に使用している。",
+        "浴槽での不慮の溺死・溺水による死亡と、おぼれる事故による救急搬送を扱う。",
+        "11月-3月の冬季に多く発生し、事故予防が重要と明示している。",
+        "予防策として入浴前に脱衣所・浴室を暖めることを挙げている。"
+      ],
+      "decision": "『冬季に多発する入浴事故の防止』を直接支える第一の用語・予防根拠。"
+    },
+    {
+      "citation": "Kiyohara K, Nishiyama C, Hayashida S, et al. Characteristics and Outcomes of Bath-Related Out-of-Hospital Cardiac Arrest in Japan. Circ J. 2016;80(7):1564-1570.",
+      "doi": "10.1253/circj.CJ-16-0241",
+      "key_points": [
+        "入浴関連院外心停止の48.9%が12月-2月に発生した。",
+        "転帰が極めて不良で、予防策確立が必要と結論づけた。",
+        "導入部で公衆衛生上の重要課題と位置づけた。"
+      ],
+      "decision": "広い『入浴事故』全体の単独根拠には狭いが、重篤性と公衆衛生上の位置づけを補う学術的根拠。"
+    },
+    {
+      "citation": "松田友子, 松田徹, 菅原彰一, 他. アンケート調査による入浴事故対策事業の評価. 日本公衆衛生雑誌. 2016;63(2):68-74.",
+      "doi": "10.11236/jph.63.2_68",
+      "key_points": [
+        "『入浴事故』を用い、冬季・高齢者・住宅環境、脱衣所・浴室暖房の認知と実践を扱う質問紙研究である。",
+        "事故発生そのものではなく、庄内地域の啓発活動参加者における知識・実践を評価した。",
+        "OpenAlex cited_by_countは2026-08-10時点で1件であった。"
+      ],
+      "decision": "今回の調査との題材は近いが、冒頭の全国的な公衆衛生背景を支える主要引用には採用しない。"
+    },
+    {
+      "citation": "消費者庁. コラムVol.12 高齢者の事故―冬の入浴中の溺水や食物での窒息に注意―. 2024-12-19.",
+      "url": "https://www.caa.go.jp/policies/policy/consumer_safety/child/project_001/mail/20241219",
+      "key_points": [
+        "令和5年人口動態統計に基づき、冬場の入浴中の溺水事故と死亡を説明している。",
+        "脱衣所・浴室の寒暖差、浴室の事前暖房、事故防止を扱う。"
+      ],
+      "decision": "2018年資料の用語と予防方針が後続の公式情報でも維持されていることの確認に使用し、短報引用は既存Zotero記録のある2018年資料を優先する。"
+    }
+  ],
+  "assessment": {
+    "is_broad_term_acceptable": true,
+    "conditions": [
+      "冒頭を研究の背景・動機づけに限定し、今回の設備所見から事故や死亡への効果を推論しない。",
+      "方法・結果・結論で健康アウトカムを測定したと誤解させる表現を加えない。",
+      "限界の『入浴事故との関連は評価できない』を維持する。",
+      "Kiyoharaら2016だけでなく、広い『入浴中の事故』を直接扱う消費者庁2018を併記する。"
+    ],
+    "recommended_sentence": "本邦において、冬季に多発する入浴中の事故の防止は、公衆衛生上の重要な課題である。",
+    "recommended_citations": [
+      "消費者庁2018",
+      "Kiyohara et al. 2016"
+    ],
+    "reason": "消費者庁資料が広い事故概念、冬季集中、予防を直接支え、Kiyoharaらが重篤な一部である院外心停止の冬季集中・不良転帰と公衆衛生上の位置づけを補う。"
+  },
+  "provisional_numbering_if_adopted": {
+    "reference_1": "消費者庁 2018",
+    "reference_2": "Kiyohara et al. 2016",
+    "reference_3": "重臣ほか 2001（現行文献1）",
+    "reference_4": "野城 2026（現行文献2）",
+    "reference_5": "八塚ほか 2013（現行文献3）",
+    "reference_6": "大中ほか 2007（現行文献4）"
+  }
+}

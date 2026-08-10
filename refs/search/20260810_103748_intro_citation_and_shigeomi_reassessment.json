@@ -1,0 +1,155 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-08-10T10:37:48+09:00",
+  "slug": "intro_citation_and_shigeomi_reassessment",
+  "purpose": "現行paper.mdの冒頭文を支える文献を、主張との直接対応、入浴関連死研究の導入での使用、被引用数、掲載誌Impact Factorから再選定し、重臣ほか2001の本来の位置づけを考察に戻す案を検討する。",
+  "constraints": [
+    "paper.mdおよびDOCXは変更しない。",
+    "基盤repo（../入浴統計）は参照専用とする。",
+    "被引用数とImpact Factorは2026-08-10確認時点の値として扱う。"
+  ],
+  "zotero_bridge": {
+    "checked_at": "2026-08-10",
+    "result": "Zotero本体には応答したが、/codex/pingおよび/codex/importはHTTP 404であった。",
+    "fallback": "既存Zotero/BibTeX・repo内ログ、J-STAGE、OpenAlex、学会・出版社公式誌面を手動照合した。"
+  },
+  "sources_and_queries": [
+    {
+      "database": "current repository and read-only base repository",
+      "date": "2026-08-10",
+      "queries": [
+        "重臣|寒冷期|公衆衛生上|入浴関連死|浴室暖房|セントラル暖房",
+        "refs/search/20260608_112655_shigeomi_bath_death_followup.json",
+        "../入浴統計/refs.md and ../入浴統計/paper.md"
+      ]
+    },
+    {
+      "database": "J-STAGE",
+      "date": "2026-08-10",
+      "queries": [
+        "bath-related death Japan winter public health",
+        "Characteristics and Outcomes of Bath-Related Out-of-Hospital Cardiac Arrest in Japan",
+        "Sudden Death Phenomenon While Bathing in Japan Mortality Data",
+        "Characteristics of Sudden Bath-Related Death Investigated by Medical Examiners in Tokyo Japan"
+      ]
+    },
+    {
+      "database": "OpenAlex DOI lookup",
+      "date": "2026-08-10",
+      "queries": [
+        "10.1253/circj.CJ-16-0241",
+        "10.1253/circj.CJ-16-1066",
+        "10.2188/jea.JE20140068",
+        "10.1111/j.1532-5415.2007.01255.x",
+        "10.2169/internalmedicine.9156-17",
+        "10.1186/s40101-022-00278-0"
+      ],
+      "note": "cited_by_countを取得した。"
+    },
+    {
+      "database": "journal official sites",
+      "date": "2026-08-10",
+      "queries": [
+        "Circulation Journal Impact Factor 2025",
+        "Journal of Epidemiology Impact Factor 2025",
+        "Journal of the American Geriatrics Society Journal Impact Factor"
+      ]
+    }
+  ],
+  "shigeomi_assessment": {
+    "citation": "重臣宗伯, 佐藤ワカナ, 柴田繁啓, 越村裕美, 円山啓司, 吉岡尚文. 高齢者の入浴中心肺停止と地域性. 蘇生. 2001;20(2):145-148.",
+    "doi": "10.11414/jjreanimatology1983.20.145",
+    "confirmed_points": [
+      "入浴中心肺停止の発生率により秋田・青森群と非秋田・青森群を比較した。",
+      "秋田・青森群の発生率は非秋田・青森群より高く、発生ピークにも地域差がみられた。",
+      "外気温が10度を下回る時期から発生が増えること、脱衣場・浴室内温度の低さとの関係を考察し、寒冷期の脱衣場・浴室内暖房の必要性を指摘した。",
+      "浴室暖房乾燥機およびセントラル暖房の設置・使用状況は調査項目に含まれていない。"
+    ],
+    "recommended_discussion_sentence": "一方、青森県では、重臣らが入浴中心肺停止の多さと寒冷期の脱衣場・浴室内低温を報告しているものの、浴室周辺の寒さ・室間温度差を県単位で示した報告や、浴室暖房乾燥機・セントラル暖房の設置・使用実態を調べた報告は、今回確認した公開情報の範囲では見当たらなかった。",
+    "recommended_location": "考察の北海道・全館暖房による代替可能性の記述直後、本調査のセントラル暖房使用者の結果を解釈する記述の直前。",
+    "recommended_transition_to_current_study": "続く文の冒頭を『この情報不足を踏まえて実施した本調査では』とし、研究ギャップから今回の観察結果へ接続する。"
+  },
+  "intro_candidates": [
+    {
+      "rank": 1,
+      "citation": "Kiyohara K, Nishiyama C, Hayashida S, et al. Characteristics and Outcomes of Bath-Related Out-of-Hospital Cardiac Arrest in Japan. Circ J. 2016;80(7):1564-1570.",
+      "doi": "10.1253/circj.CJ-16-0241",
+      "direct_support": [
+        "入浴関連院外心停止の48.9%が12-2月に発生した。",
+        "神経学的予後良好の生存者は642人中1人で、転帰が極めて不良であった。",
+        "予防策確立の必要性を結論で明示した。",
+        "導入部で入浴中突然死を公衆衛生上の重要課題と位置づけた。"
+      ],
+      "citation_metrics": {
+        "jstage_cited_by": 22,
+        "openalex_cited_by_count": 22,
+        "checked_at": "2026-08-10"
+      },
+      "journal_metric": {
+        "journal": "Circulation Journal",
+        "impact_factor": 5.8,
+        "impact_factor_year": 2025,
+        "source": "Japanese Circulation Society official site"
+      },
+      "decision": "単独で現行文の季節性、予防必要性、公衆衛生上の位置づけを最も直接的に支えるため、第一候補。"
+    },
+    {
+      "rank": 2,
+      "citation": "Suzuki M, Shimbo T, Ikaga T, Hori S. Sudden Death Phenomenon While Bathing in Japan: Mortality Data. Circ J. 2017;81(8):1144-1149.",
+      "doi": "10.1253/circj.CJ-16-1066",
+      "direct_support": [
+        "10月から6か月の冬季における全国の入浴関連死を13,369人と推計した。",
+        "前報および2025年の全国W65研究の導入で、日本の入浴関連死の規模を支える中核文献として使用されている。",
+        "冬季のみの調査であり、季節間比較による寒冷期増加を単独で直接示す文献ではない。"
+      ],
+      "citation_metrics": {
+        "jstage_cited_by": 42,
+        "openalex_cited_by_count": 39,
+        "checked_at": "2026-08-10"
+      },
+      "journal_metric": {
+        "journal": "Circulation Journal",
+        "impact_factor": 5.8,
+        "impact_factor_year": 2025,
+        "source": "Japanese Circulation Society official site"
+      },
+      "decision": "全国負担の大きさを併せて強調する場合の第二引用候補。現行の短い総論文には必須ではない。"
+    },
+    {
+      "rank": 3,
+      "citation": "Suzuki H, Hikiji W, Tanifuji T, Abe N, Fukunaga T. Characteristics of Sudden Bath-Related Death Investigated by Medical Examiners in Tokyo, Japan. J Epidemiol. 2015;25(2):126-132.",
+      "doi": "10.2188/jea.JE20140068",
+      "direct_support": [
+        "3,289例の検案データで、高齢者および冬季に多いことを示した。",
+        "予防戦略が確立していないことと、冬季の高齢者への注意を述べた。",
+        "公衆衛生上の重要課題という表現の直接性はKiyoharaらより弱い。"
+      ],
+      "citation_metrics": {
+        "jstage_cited_by": 53,
+        "openalex_cited_by_count": 57,
+        "checked_at": "2026-08-10"
+      },
+      "journal_metric": {
+        "journal": "Journal of Epidemiology",
+        "impact_factor": 2.7,
+        "impact_factor_year": 2025,
+        "source": "Japan Epidemiological Association official site"
+      },
+      "decision": "候補中の被引用数は最大だが、主張との直接対応と現在の掲載誌指標を総合して補助候補。"
+    }
+  ],
+  "recommended_intro_strategy": {
+    "minimal": "Kiyoharaら2016を1報引用する。必要なら文言を『本邦では、入浴関連心肺停止は冬季に多く転帰も極めて不良であり、その予防は公衆衛生上の重要な課題である』と狭め、引用対象との対応を明瞭にする。",
+    "burden_emphasis": "Kiyoharaら2016とSuzukiら2017を併記し、冬季集中・不良転帰・予防必要性に全国死亡規模を加える。",
+    "preferred": "短報の引用効率と主張への直接対応を優先し、Kiyoharaら2016の単独引用を推奨する。",
+    "relationship_to_previous_report": "前報と短報で引用文献が異なること自体は問題ではない。前報の冒頭は広義の入浴関連死の全国負担とW65/W66を用いる根拠を提示する役割があり、Suzukiら2017、総説、公的資料を組み合わせていた。今回の短報の冒頭1文は、質問紙による住宅設備調査へ入るための簡潔な医学的動機づけであり、冬季集中、不良転帰、予防必要性、公衆衛生上の位置づけを同一報告内で示すKiyoharaら2016との対応がよい。",
+    "wording_caution": "現行の『入浴事故』はKiyoharaら2016の対象である入浴関連院外心停止より広い。Kiyoharaらを単独引用する場合は『入浴関連心肺停止』へ狭める。現行の広い表現を維持する場合は、広義の入浴関連死の全国負担を扱うSuzukiら2017等の併記を検討する。"
+  },
+  "numbering_if_adopted": {
+    "reference_1": "Kiyohara et al. 2016",
+    "reference_2": "重臣ほか 2001（現行文献1）",
+    "reference_3": "野城 2026（現行文献2）",
+    "reference_4": "八塚ほか 2013（現行文献3）",
+    "reference_5": "大中ほか 2007（現行文献4）"
+  }
+}
