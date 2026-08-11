@@ -19,6 +19,7 @@ LATIN_FONT = "Times New Roman"
 BACK_MATTER_SECTION_TITLES = ("Tables", "Figure Legends", "Figures")
 TABLE1_HEADERS = ("Characteristic", "Category", "n (%)")
 TABLE1_COLUMN_WIDTHS_MM = (45, 75, 30)
+TABLE1_TWO_PANEL_COLUMN_WIDTHS_MM = (22, 36, 17, 22, 36, 17)
 TABLE1_FOOTNOTE_PREFIX = "Values are n (%)"
 
 
@@ -143,29 +144,57 @@ def is_table1(table) -> bool:
     return tuple(cell.text.strip() for cell in table.rows[0].cells) == TABLE1_HEADERS
 
 
+def is_two_panel_table1(table) -> bool:
+    if not table.rows or len(table.rows[0].cells) != 2 * len(TABLE1_HEADERS):
+        return False
+    headers = tuple(cell.text.strip() for cell in table.rows[0].cells)
+    return headers == TABLE1_HEADERS + TABLE1_HEADERS
+
+
 def format_table1(table) -> None:
-    set_table_fixed_width(table, TABLE1_COLUMN_WIDTHS_MM)
+    is_two_panel = is_two_panel_table1(table)
+    column_widths = (
+        TABLE1_TWO_PANEL_COLUMN_WIDTHS_MM
+        if is_two_panel
+        else TABLE1_COLUMN_WIDTHS_MM
+    )
+    set_table_fixed_width(table, column_widths)
     set_table_borders_none(table)
 
-    group_starts = [
-        row_index
-        for row_index in range(1, len(table.rows))
-        if table.rows[row_index].cells[0].text.strip()
-    ]
-    group_boundaries = group_starts + [len(table.rows)]
+    panel_offsets = (0, len(TABLE1_HEADERS)) if is_two_panel else (0,)
+    group_starts_by_panel = {
+        panel_offset: [
+            row_index
+            for row_index in range(1, len(table.rows))
+            if table.rows[row_index].cells[panel_offset].text.strip()
+        ]
+        for panel_offset in panel_offsets
+    }
 
     for row_index, row in enumerate(table.rows):
         is_header = row_index == 0
-        is_group_start = row_index in group_starts
         is_last_row = row_index == len(table.rows) - 1
         for column_index, cell in enumerate(row.cells):
+            panel_offset = (
+                len(TABLE1_HEADERS)
+                if is_two_panel and column_index >= len(TABLE1_HEADERS)
+                else 0
+            )
+            panel_column_index = column_index - panel_offset
+            is_group_start = row_index in group_starts_by_panel[panel_offset]
+            if is_two_panel:
+                left_margin_mm = 1.5 if column_index == 3 else 0.5
+                right_margin_mm = 1.5 if column_index == 2 else 0.5
+            else:
+                left_margin_mm = 1.5
+                right_margin_mm = 1.5
             cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.TOP
             set_cell_margins(
                 cell,
                 top_mm=0.5,
-                right_mm=1.5,
+                right_mm=right_margin_mm,
                 bottom_mm=0.5,
-                left_mm=1.5,
+                left_mm=left_margin_mm,
             )
             set_cell_horizontal_borders(
                 cell,
@@ -177,23 +206,34 @@ def format_table1(table) -> None:
             for paragraph in cell.paragraphs:
                 paragraph.paragraph_format.space_before = Pt(0)
                 paragraph.paragraph_format.left_indent = (
-                    Mm(2.5) if not is_header and column_index == 1 else None
+                    None if is_two_panel else (
+                        Mm(2.5)
+                        if not is_header and panel_column_index == 1
+                        else None
+                    )
                 )
                 paragraph.alignment = (
                     WD_ALIGN_PARAGRAPH.RIGHT
-                    if column_index == 2
+                    if panel_column_index == 2
                     else WD_ALIGN_PARAGRAPH.LEFT
                 )
-                if is_group_start and column_index == 0:
+                if is_group_start and panel_column_index == 0:
                     for run in paragraph.runs:
                         run.font.bold = True
 
-    for group_index, start_row in enumerate(group_starts):
-        end_row = group_boundaries[group_index + 1]
-        for row_index in range(start_row, end_row - 1):
-            for cell in table.rows[row_index].cells:
-                for paragraph in cell.paragraphs:
-                    paragraph.paragraph_format.keep_with_next = True
+    for panel_offset in panel_offsets:
+        group_starts = group_starts_by_panel[panel_offset]
+        group_boundaries = group_starts + [len(table.rows)]
+        for group_index, start_row in enumerate(group_starts):
+            end_row = group_boundaries[group_index + 1]
+            for row_index in range(start_row, end_row - 1):
+                for column_index in range(
+                    panel_offset,
+                    panel_offset + len(TABLE1_HEADERS),
+                ):
+                    cell = table.rows[row_index].cells[column_index]
+                    for paragraph in cell.paragraphs:
+                        paragraph.paragraph_format.keep_with_next = True
 
 
 def format_document(input_docx: Path, output_docx: Path) -> None:
@@ -277,7 +317,7 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
                     paragraph.paragraph_format.space_after = Pt(0)
                     for run in paragraph.runs:
                         set_run_font(run, Pt(9))
-        if is_table1(table):
+        if is_table1(table) or is_two_panel_table1(table):
             format_table1(table)
 
     output_docx.parent.mkdir(parents=True, exist_ok=True)
