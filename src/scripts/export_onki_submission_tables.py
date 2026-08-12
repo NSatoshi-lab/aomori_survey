@@ -19,7 +19,11 @@ ITEM_LABELS = {
     "浴室窓": "Bathroom window",
     "浴室暖房乾燥機": "Bathroom heater-dryer",
     "セントラル暖房": "Central heating",
-    "寒さ体感": "Perceived coldness",
+    "その他暖房設備": (
+        "Other equipment used to heat the dressing room or bathroom"
+    ),
+    "浴室寒さ体感": "Perceived bathroom coldness",
+    "脱衣所寒さ体感": "Perceived dressing-room coldness",
 }
 
 CATEGORY_LABELS = {
@@ -44,14 +48,18 @@ CATEGORY_LABELS = {
     "単板ガラス": "Single glazing",
     "窓なし": "No window",
     "不明・無回答": "Unknown/missing",
-    "設置して使用": "Installed and used",
-    "設置しているが未使用": "Installed but not used",
+    "設置して使用": "Installed and used for heating",
+    "設置しているが未使用": "Installed but not used for heating",
     "未設置": "Not installed",
     "24時間使用": "Used 24 hours",
     "時間限定使用": "Used for limited hours",
     "不使用": "Not used",
-    "浴室寒さ5-7": "Bathroom score 5-7",
-    "脱衣所寒さ5-7": "Dressing-room score 5-7",
+    "ストーブ": "Stove",
+    "エアコン": "Air conditioner",
+    "セントラル暖房以外の床暖房": "Floor heating other than central heating",
+    "その他": "Other",
+    "使用なし": "None",
+    "5-7": "Score 5-7",
 }
 
 EQUIPMENT_LABELS = {
@@ -84,6 +92,14 @@ def format_ci(low: float, high: float) -> str:
 
 
 def build_table1(table1: pd.DataFrame) -> pd.DataFrame:
+    def format_value(row: pd.Series) -> str:
+        if row["item"] == "セントラル暖房" and row["category"] == "無回答":
+            return str(int(row["event_n"]))
+        return (
+            f"{int(row['event_n'])} "
+            f"({int(row['event_n']) / int(row['denominator']) * 100.0:.1f})"
+        )
+
     characteristics = table1["item"].map(ITEM_LABELS)
     characteristics = characteristics.where(
         table1["item"].ne(table1["item"].shift()),
@@ -93,13 +109,7 @@ def build_table1(table1: pd.DataFrame) -> pd.DataFrame:
         {
             "Characteristic": characteristics,
             "Category": table1["category"].map(CATEGORY_LABELS),
-            "n (%)": table1.apply(
-                lambda row: (
-                    f"{int(row['event_n'])} "
-                    f"({int(row['event_n']) / int(row['denominator']) * 100.0:.1f})"
-                ),
-                axis=1,
-            ),
+            "n (%)": table1.apply(format_value, axis=1),
         }
     )
     if output[["Characteristic", "Category"]].isna().any().any():
@@ -145,7 +155,10 @@ def style_workbook(output_xlsx: Path) -> None:
 
         sheet.freeze_panes = "A4"
         sheet.merge_cells("A1:C1")
-        sheet["A1"] = "Table 1. Characteristics of respondents (n=147)"
+        sheet["A1"] = (
+            "Table 1. Characteristics and heating equipment use in the "
+            "main analysis sample (n=147)"
+        )
         sheet["A1"].font = Font(name="Times New Roman", size=11, bold=True)
         sheet["A1"].alignment = Alignment(
             wrap_text=True,
@@ -185,7 +198,20 @@ def style_workbook(output_xlsx: Path) -> None:
                     top=thin_gray if group_start else None,
                     bottom=medium_black if row_index == data_end_row else None,
                 )
-            sheet.row_dimensions[row_index].height = 18
+            characteristic = sheet.cell(row=row_index, column=1).value
+            if (
+                characteristic
+                == "Other equipment used to heat the dressing room or bathroom"
+            ):
+                row_height = 38
+            elif characteristic in {
+                "Perceived bathroom coldness",
+                "Perceived dressing-room coldness",
+            }:
+                row_height = 30
+            else:
+                row_height = 18
+            sheet.row_dimensions[row_index].height = row_height
 
         sheet.cell(row=footnote_row, column=1).font = Font(
             name="Times New Roman",
@@ -195,7 +221,7 @@ def style_workbook(output_xlsx: Path) -> None:
             wrap_text=True,
             vertical="top",
         )
-        sheet.row_dimensions[footnote_row].height = 34
+        sheet.row_dimensions[footnote_row].height = 82
 
         sheet.column_dimensions["A"].width = 26
         sheet.column_dimensions["B"].width = 40
@@ -236,9 +262,16 @@ def main() -> None:
             row=footnote_row,
             column=1,
             value=(
-                "Values are n (%). Percentages use all 147 respondents as "
-                "the denominator. Coldness scores range from 1 (very warm) "
-                "to 7 (very cold); scores 5-7 indicate perceived coldness."
+                "Values are n (%). Percentages for central heating use were "
+                "calculated among 140 respondents with non-missing data; 7 "
+                "respondents with missing data are shown separately. Percentages "
+                "for all other characteristics use all 147 respondents as the "
+                "denominator. Other equipment used to heat the dressing room or "
+                "bathroom, excluding the bathroom heater-dryer and central "
+                "heating, was a multiple-response item; therefore, percentages "
+                "do not sum to 100%, and missing responses are shown separately. "
+                "Coldness scores range from 1 (very warm) to 7 (very cold); "
+                "only the score 5-7 group is shown for each coldness item."
             ),
         )
         worksheet.merge_cells(

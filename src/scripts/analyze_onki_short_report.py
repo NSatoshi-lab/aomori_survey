@@ -59,7 +59,7 @@ REASON_DEFINITIONS: list[tuple[str, str, Callable[[set[int]], bool]]] = [
     ("other_only", "その他のみ（理由8のみ）", lambda codes: codes == {8}),
     (
         "barrier_2_5",
-        "費用・住宅設置制約（理由2-5）",
+        "費用または住宅・設置上の制約（理由2-5）",
         lambda codes: bool(codes.intersection(range(2, 6))),
     ),
 ]
@@ -254,28 +254,61 @@ def build_table1(valid: pd.DataFrame) -> pd.DataFrame:
             ],
         ),
     ]
+    central_heating_denominator = int(
+        valid["q9_central_heating_use"].isin([1, 2, 3]).sum()
+    )
     for section, column, categories in mappings:
         for codes, label in categories:
             code_list = list(codes) if isinstance(codes, tuple) else [codes]
+            denominator = (
+                central_heating_denominator
+                if section == "セントラル暖房" and label != "無回答"
+                else total
+            )
             add_table1_row(
                 rows,
                 section,
                 label,
                 int(valid[column].isin(code_list).sum()),
-                total,
+                denominator,
             )
+
+    q10_code_sets = valid["q10_alt_heating_types"].apply(
+        lambda value: set(parse_reason_codes(value))
+    )
+    for code, label in [
+        (1, "ストーブ"),
+        (2, "エアコン"),
+        (3, "セントラル暖房以外の床暖房"),
+        (4, "その他"),
+        (5, "使用なし"),
+    ]:
+        add_table1_row(
+            rows,
+            "その他暖房設備",
+            label,
+            int(q10_code_sets.apply(lambda codes: code in codes).sum()),
+            total,
+        )
+    add_table1_row(
+        rows,
+        "その他暖房設備",
+        "無回答",
+        int(valid["q10_alt_heating_types"].eq("").sum()),
+        total,
+    )
 
     add_table1_row(
         rows,
-        "寒さ体感",
-        "浴室寒さ5-7",
+        "浴室寒さ体感",
+        "5-7",
         int(valid["bathroom_cold_5_7"].sum()),
         total,
     )
     add_table1_row(
         rows,
-        "寒さ体感",
-        "脱衣所寒さ5-7",
+        "脱衣所寒さ体感",
+        "5-7",
         int(valid["dressingroom_cold_5_7"].sum()),
         total,
     )
@@ -695,7 +728,7 @@ def render_reason_figure(
         }
         if english
         else {
-            "barrier_2_5": "費用・住宅設置制約（理由2-5）",
+            "barrier_2_5": "費用または住宅・設置上の制約（理由2-5）",
             "cost": "　内訳：費用系（理由2-3）",
             "housing_installation": "　内訳：住宅・設置制約系（理由4-5）",
             "no_need": "不要（理由1）",
@@ -913,8 +946,12 @@ def write_markdown_tables(
     t1 = table1.copy()
     t1["n (%)"] = t1.apply(
         lambda row: (
-            f"{row['event_n']} "
-            f"({format_one_decimal(row['event_n'] / row['denominator'] * 100.0)})"
+            str(row["event_n"])
+            if row["item"] == "セントラル暖房" and row["category"] == "無回答"
+            else (
+                f"{row['event_n']} "
+                f"({format_one_decimal(row['event_n'] / row['denominator'] * 100.0)})"
+            )
         ),
         axis=1,
     )
@@ -957,6 +994,7 @@ def validate_results(
     collection_summary: pd.DataFrame,
     flagged: pd.DataFrame,
     valid: pd.DataFrame,
+    table1: pd.DataFrame,
     reason_summary: pd.DataFrame,
     table2: pd.DataFrame,
 ) -> dict[str, int | float]:
@@ -989,9 +1027,35 @@ def validate_results(
     assert round(response_rate, 1) == 81.1
     assert len(flagged) == 154
     assert len(valid) == 147
+    central_table1 = table1[table1["item"].eq("セントラル暖房")]
+    expected_central_table1 = {
+        "24時間使用": (16, 140),
+        "時間限定使用": (12, 140),
+        "不使用": (112, 140),
+        "無回答": (7, 147),
+    }
+    for category, (expected_n, expected_denominator) in (
+        expected_central_table1.items()
+    ):
+        row = central_table1[central_table1["category"].eq(category)].iloc[0]
+        assert int(row["event_n"]) == expected_n
+        assert int(row["denominator"]) == expected_denominator
+    expected_coldness_table1 = {
+        "浴室寒さ体感": 66,
+        "脱衣所寒さ体感": 77,
+    }
+    for item, expected_n in expected_coldness_table1.items():
+        row = table1[
+            table1["item"].eq(item) & table1["category"].eq("5-7")
+        ].iloc[0]
+        assert int(row["event_n"]) == expected_n
+        assert int(row["denominator"]) == 147
     assert reason_target_n == 112
     assert int(flagged["q7_q8_inconsistency_flag"].sum()) == 4
     assert int(valid["q9_central_heating_use"].eq(99).sum()) == 7
+    assert reason_count("barrier", "全体") == 69
+    assert reason_count("no_need", "全体") == 31
+    assert reason_count("operation_failure", "全体") == 3
     assert reason_count("other", "全体") == 17
     assert reason_count("other_only", "全体") == 15
     assert reason_count("cost", "寒さ5-7") == 31
@@ -1000,6 +1064,53 @@ def validate_results(
     assert reason_count("housing_installation", "寒さ1-4") == 6
     assert reason_count("barrier_2_5", "寒さ5-7") == 51
     assert reason_count("barrier_2_5", "寒さ1-4") == 15
+    q10_code_sets = valid["q10_alt_heating_types"].apply(
+        lambda value: set(parse_reason_codes(value))
+    )
+    expected_q10_counts = {1: 63, 2: 15, 3: 2, 4: 4, 5: 61}
+    for code, expected_count in expected_q10_counts.items():
+        assert int(q10_code_sets.apply(lambda codes: code in codes).sum()) == (
+            expected_count
+        )
+    assert int(valid["q10_alt_heating_types"].eq("").sum()) == 8
+    reason8_with_text = valid[
+        valid["q7_bath_heater_status"].isin([2, 3])
+        & valid["q8_reason_codes"].apply(
+            lambda value: 8 in parse_reason_codes(value)
+        )
+        & valid["q8_other_text"].ne("")
+    ]
+    assert len(reason8_with_text) == 12
+    reason_target = valid[valid["q7_bath_heater_status"].isin([2, 3])]
+    reason_code_sets = reason_target["q8_reason_codes"].apply(
+        lambda value: set(parse_reason_codes(value))
+    )
+    expected_q8_counts = {
+        1: 31,
+        2: 25,
+        3: 22,
+        4: 19,
+        5: 8,
+        6: 2,
+        7: 1,
+        8: 17,
+    }
+    for code, expected_count in expected_q8_counts.items():
+        assert int(reason_code_sets.apply(lambda codes: code in codes).sum()) == (
+            expected_count
+        )
+    cold_high_reason_sets = reason_code_sets[
+        reason_target["bathroom_cold_group"].eq("寒さ5-7")
+    ]
+    cost_housing_overlap = cold_high_reason_sets.apply(
+        lambda codes: bool(codes.intersection({2, 3}))
+        and bool(codes.intersection({4, 5}))
+    )
+    assert int(cost_housing_overlap.sum()) == 1
+    no_need_and_barrier = reason_code_sets.apply(
+        lambda codes: 1 in codes and bool(codes.intersection(range(2, 8)))
+    )
+    assert int(no_need_and_barrier.sum()) == 3
     primary_high = reason_summary[
         reason_summary["reason_key"].eq("barrier_2_5")
         & reason_summary["bathroom_cold_group"].eq("寒さ5-7")
@@ -1014,6 +1125,10 @@ def validate_results(
     assert round(float(primary_low["ci95_hi_pct"]), 1) == 43.8
     assert set(central_rows["without_denominator"]) == {112}
     assert set(central_rows["with_denominator"]) == {28}
+    central_bath = central_rows[
+        central_rows["outcome"].eq("bathroom_cold_5_7")
+    ].iloc[0]
+    assert int(central_bath["with_event_n"]) == 2
     central_used = valid[valid["q9_central_heating_use"].isin([1, 2])]
     assert int(central_used["q7_bath_heater_status"].eq(1).sum()) == 19
 
@@ -1080,7 +1195,7 @@ def write_report(
         "## 主要結果",
         "",
         (
-            f"- 費用・住宅設置制約: {primary_all['event_n']}/"
+            f"- 費用または住宅・設置上の制約: {primary_all['event_n']}/"
             f"{primary_all['denominator']} ({primary_all['pct']:.2f}%)"
         ),
         (
@@ -1088,12 +1203,12 @@ def write_report(
             f"({no_need_all['pct']:.2f}%)"
         ),
         (
-            f"- 費用・住宅設置制約（寒さ5-7）: "
+            f"- 費用または住宅・設置上の制約（寒さ5-7）: "
             f"{primary_high['event_n']}/{primary_high['denominator']} "
             f"({primary_high['pct']:.2f}%)"
         ),
         (
-            f"- 費用・住宅設置制約（寒さ1-4）: "
+            f"- 費用または住宅・設置上の制約（寒さ1-4）: "
             f"{primary_low['event_n']}/{primary_low['denominator']} "
             f"({primary_low['pct']:.2f}%)"
         ),
@@ -1217,6 +1332,7 @@ def main() -> int:
         collection_summary,
         flagged,
         valid,
+        table1,
         reason_summary,
         table2,
     )
