@@ -14,7 +14,7 @@ Maintain manuscript Markdown (`paper.md`, `paper_en.md`) as the authoritative so
 1. Confirm the target file(s) (`paper.md`, `paper_en.md`) and scope.
 2. Review the relevant evidence runs and align with `docs/rules/statistical_reporting_policy.md`.
 3. Apply `docs/rules/markdown_generation_rules.md` for formatting.
-4. Write results with effect sizes and CIs; avoid causal language and p-value-only claims.
+4. Match reporting to the study purpose and analysis design. For analyses estimating group differences or associations, report effect sizes with uncertainty (generally 95% CIs). For descriptive analyses or brief reports without inferential statistics, report counts, denominators, and percentages as appropriate; do not add effect sizes, p-values, or 95% CIs solely to satisfy a blanket rule. Avoid causal language and p-value-only claims.
 5. If new references are needed, run `$zotero-cite` to search/import and log first.
 6. Update `refs.md` via `$literature-refs` when required and insert citekeys into Markdown.
 7. Generate docx with `src/scripts/build_paper_docx.ps1` and place submission-ready files in `deliverables/`.
