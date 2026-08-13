@@ -799,6 +799,12 @@ def render_reason_figure(
             labelsize=13.5,
             colors=MONO["black"],
         )
+        ax.set_xlabel(
+            "Respondents (%)" if english else "回答者割合（%）",
+            fontsize=15.0,
+            color=MONO["black"],
+            labelpad=10,
+        )
         if panel_index == 0:
             ax.set_yticks(y_positions)
             ax.set_yticklabels(
@@ -812,12 +818,6 @@ def render_reason_figure(
         for spine in ["top", "right", "left"]:
             ax.spines[spine].set_visible(False)
 
-    fig.supxlabel(
-        "Respondents (%)" if english else "回答者割合（%）",
-        fontsize=15.0,
-        color=MONO["black"],
-        y=0.04,
-    )
     fig.subplots_adjust(
         left=0.28,
         right=0.98,
