@@ -150,21 +150,25 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
 
     def test_central_heating_missing_values_are_excluded(self) -> None:
         self.assertEqual(
+            int(self.flagged["q9_central_heating_use"].eq(99).sum()),
+            9,
+        )
+        self.assertEqual(
             int(self.valid["q9_central_heating_use"].eq(99).sum()),
             7,
         )
-        table2 = build_table2(self.valid)
+        table2 = build_table2(self.flagged, self.valid)
         row = table2[
             table2["equipment_key"].eq("central_heating")
             & table2["outcome"].eq("bathroom_cold_5_7")
         ].iloc[0]
-        self.assertEqual(int(row["without_denominator"]), 112)
+        self.assertEqual(int(row["without_denominator"]), 117)
         self.assertEqual(int(row["with_denominator"]), 28)
-        self.assertEqual(int(row["without_event_n"]), 61)
+        self.assertEqual(int(row["without_event_n"]), 62)
         self.assertEqual(int(row["with_event_n"]), 2)
         self.assertEqual(
             int(row["without_denominator"]) + int(row["with_denominator"]),
-            140,
+            145,
         )
         self.assertEqual(
             list(table2.columns),
@@ -187,12 +191,12 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
         )
 
     def test_figure_summary_counts(self) -> None:
-        table1 = build_table1(self.valid)
+        table1 = build_table1(self.flagged, self.valid)
         self.assertEqual(
             int(
                 table1[
-                    table1["item"].eq("寒さ体感")
-                    & table1["category"].eq("浴室寒さ5-7")
+                    table1["item"].eq("浴室寒さ体感")
+                    & table1["category"].eq("5-7")
                 ]["event_n"].iloc[0]
             ),
             66,
@@ -211,7 +215,16 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
             ["毎日", "週4-6回", "週1-3回", "月1-3回", "ほとんど入浴しない"],
         )
         self.assertEqual(int(bathing_frequency["event_n"].sum()), 147)
-        self.assertTrue(table1["denominator"].eq(147).all())
+        central = table1[table1["item"].eq("セントラル暖房")]
+        self.assertEqual(
+            list(central["denominator"]),
+            [145, 145, 145, 154],
+        )
+        self.assertTrue(
+            table1[~table1["item"].eq("セントラル暖房")][
+                "denominator"
+            ].eq(147).all()
+        )
         self.assertIn(
             "不明・無回答",
             set(table1.loc[table1["item"].eq("浴室窓"), "category"]),
@@ -243,7 +256,9 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
                 "Bathroom window",
                 "Bathroom heater-dryer",
                 "Central heating",
-                "Perceived coldness",
+                "Other equipment used to heat the dressing room or bathroom",
+                "Perceived bathroom coldness",
+                "Perceived dressing-room coldness",
             ],
         )
 
@@ -261,7 +276,6 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
                     "barrier_2_5",
                     "cost",
                     "housing_installation",
-                    "barrier",
                     "no_need",
                 ],
             )

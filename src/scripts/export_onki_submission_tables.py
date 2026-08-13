@@ -157,7 +157,7 @@ def style_workbook(output_xlsx: Path) -> None:
         sheet.merge_cells("A1:C1")
         sheet["A1"] = (
             "Table 1. Characteristics and heating equipment use in the "
-            "main analysis sample (n=147)"
+            "analysis samples"
         )
         sheet["A1"].font = Font(name="Times New Roman", size=11, bold=True)
         sheet["A1"].alignment = Alignment(
@@ -263,10 +263,12 @@ def main() -> None:
             column=1,
             value=(
                 "Values are n (%). Percentages for central heating use were "
-                "calculated among 140 respondents with non-missing data; 7 "
-                "respondents with missing data are shown separately. Percentages "
-                "for all other characteristics use all 147 respondents as the "
-                "denominator. Other equipment used to heat the dressing room or "
+                "calculated among 145 respondents with non-missing data; 9 of "
+                "154 returned questionnaires had missing data and are shown "
+                "separately. Percentages "
+                "for all other characteristics use all 147 respondents in the "
+                "primary analysis as the denominator. Other equipment used to "
+                "heat the dressing room or "
                 "bathroom, excluding the bathroom heater-dryer and central "
                 "heating, was a multiple-response item; therefore, percentages "
                 "do not sum to 100%, and missing responses are shown separately. "

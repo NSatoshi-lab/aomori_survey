@@ -80,7 +80,7 @@ FIGURE_REASON_KEYS = [
 ]
 
 MONO = {
-    "black": "#111111",
+    "black": "#000000",
     "dark": "#3B3B3B",
     "medium_dark": "#666666",
     "medium": "#929292",
@@ -148,12 +148,15 @@ def prepare_analysis_set(input_csv: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     normalized = normalize_dataframe(raw)
     flagged = derive_validity_flags(normalized)
     labeled = add_label_columns(flagged)
-    valid = labeled[~labeled["invalid_main3"]].copy()
-
-    valid["bathroom_cold_5_7"] = valid["q11_bathroom_cold_7pt"].isin([5, 6, 7])
-    valid["dressingroom_cold_5_7"] = valid["q11_dressingroom_cold_7pt"].isin(
+    labeled["bathroom_cold_5_7"] = labeled["q11_bathroom_cold_7pt"].isin(
         [5, 6, 7]
     )
+    labeled["dressingroom_cold_5_7"] = labeled[
+        "q11_dressingroom_cold_7pt"
+    ].isin(
+        [5, 6, 7]
+    )
+    valid = labeled[~labeled["invalid_main3"]].copy()
     valid["bathroom_cold_group"] = valid["bathroom_cold_5_7"].map(
         {False: "寒さ1-4", True: "寒さ5-7"}
     )
@@ -162,7 +165,7 @@ def prepare_analysis_set(input_csv: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
         bins=[0, 3, 4, 5, 8],
         labels=["18-49歳", "50-59歳", "60-69歳", "70歳以上"],
     )
-    return flagged, valid
+    return labeled, valid
 
 
 def add_table1_row(
@@ -180,7 +183,7 @@ def add_table1_row(
     rows.append(row)
 
 
-def build_table1(valid: pd.DataFrame) -> pd.DataFrame:
+def build_table1(flagged: pd.DataFrame, valid: pd.DataFrame) -> pd.DataFrame:
     rows: list[dict[str, object]] = []
     total = len(valid)
 
@@ -243,35 +246,34 @@ def build_table1(valid: pd.DataFrame) -> pd.DataFrame:
                 (3, "未設置"),
             ],
         ),
-        (
-            "セントラル暖房",
-            "q9_central_heating_use",
-            [
-                (1, "24時間使用"),
-                (2, "時間限定使用"),
-                (3, "不使用"),
-                (99, "無回答"),
-            ],
-        ),
     ]
-    central_heating_denominator = int(
-        valid["q9_central_heating_use"].isin([1, 2, 3]).sum()
-    )
     for section, column, categories in mappings:
         for codes, label in categories:
             code_list = list(codes) if isinstance(codes, tuple) else [codes]
-            denominator = (
-                central_heating_denominator
-                if section == "セントラル暖房" and label != "無回答"
-                else total
-            )
             add_table1_row(
                 rows,
                 section,
                 label,
                 int(valid[column].isin(code_list).sum()),
-                denominator,
+                total,
             )
+
+    central_heating_denominator = int(
+        flagged["q9_central_heating_use"].isin([1, 2, 3]).sum()
+    )
+    for code, label in [
+        (1, "24時間使用"),
+        (2, "時間限定使用"),
+        (3, "不使用"),
+        (99, "無回答"),
+    ]:
+        add_table1_row(
+            rows,
+            "セントラル暖房",
+            label,
+            int(flagged["q9_central_heating_use"].eq(code).sum()),
+            central_heating_denominator if code != 99 else len(flagged),
+        )
 
     q10_code_sets = valid["q10_alt_heating_types"].apply(
         lambda value: set(parse_reason_codes(value))
@@ -344,6 +346,7 @@ def build_reason_summary(valid: pd.DataFrame) -> pd.DataFrame:
 
 
 def equipment_groups(
+    flagged: pd.DataFrame,
     valid: pd.DataFrame,
 ) -> list[tuple[str, str, pd.DataFrame, pd.Series]]:
     return [
@@ -362,22 +365,22 @@ def equipment_groups(
         (
             "central_heating",
             "セントラル暖房使用",
-            valid[valid["q9_central_heating_use"].isin([1, 2, 3])].copy(),
-            valid.loc[
-                valid["q9_central_heating_use"].isin([1, 2, 3]),
+            flagged[flagged["q9_central_heating_use"].isin([1, 2, 3])].copy(),
+            flagged.loc[
+                flagged["q9_central_heating_use"].isin([1, 2, 3]),
                 "q9_central_heating_use",
             ].isin([1, 2]),
         ),
     ]
 
 
-def build_table2(valid: pd.DataFrame) -> pd.DataFrame:
+def build_table2(flagged: pd.DataFrame, valid: pd.DataFrame) -> pd.DataFrame:
     rows: list[dict[str, object]] = []
     outcomes = [
         ("bathroom_cold_5_7", "浴室寒さ5-7"),
         ("dressingroom_cold_5_7", "脱衣所寒さ5-7"),
     ]
-    for key, label, target, has_equipment in equipment_groups(valid):
+    for key, label, target, has_equipment in equipment_groups(flagged, valid):
         has_equipment = has_equipment.reindex(target.index)
         for outcome, outcome_label in outcomes:
             available = target["q11_bathroom_cold_7pt"].isin(range(1, 8))
@@ -773,7 +776,7 @@ def render_reason_figure(
                 f"({format_one_decimal(displayed_pct)}%)",
                 ha="left",
                 va="center",
-                fontsize=14.0,
+                fontsize=15.0,
                 color=MONO["black"],
             )
 
@@ -785,17 +788,23 @@ def render_reason_figure(
                 if english
                 else f"浴室寒さ{group.removeprefix('寒さ')}（n={group_n}）"
             ),
-            fontsize=14.5,
+            fontsize=15.5,
             fontweight="bold",
+            color=MONO["black"],
         )
         ax.grid(axis="x", color=MONO["light"], linewidth=0.8)
         ax.set_axisbelow(True)
-        ax.tick_params(axis="x", labelsize=12.5)
+        ax.tick_params(
+            axis="x",
+            labelsize=13.5,
+            colors=MONO["black"],
+        )
         if panel_index == 0:
             ax.set_yticks(y_positions)
             ax.set_yticklabels(
                 [labels[key] for key in FIGURE_REASON_KEYS],
-                fontsize=14.0,
+                fontsize=15.0,
+                color=MONO["black"],
             )
             ax.invert_yaxis()
         else:
@@ -803,24 +812,16 @@ def render_reason_figure(
         for spine in ["top", "right", "left"]:
             ax.spines[spine].set_visible(False)
 
-    fig.suptitle(
-        (
-            "Reasons for non-installation or non-use of a bathroom heater-dryer"
-            if english
-            else "浴室暖房乾燥機の未設置・未使用理由"
-        ),
-        fontsize=17.0,
-        fontweight="bold",
-    )
     fig.supxlabel(
         "Respondents (%)" if english else "回答者割合（%）",
-        fontsize=14.0,
+        fontsize=15.0,
+        color=MONO["black"],
         y=0.04,
     )
     fig.subplots_adjust(
         left=0.28,
         right=0.98,
-        top=0.78,
+        top=0.90,
         bottom=0.16,
         wspace=0.18,
     )
@@ -1029,10 +1030,10 @@ def validate_results(
     assert len(valid) == 147
     central_table1 = table1[table1["item"].eq("セントラル暖房")]
     expected_central_table1 = {
-        "24時間使用": (16, 140),
-        "時間限定使用": (12, 140),
-        "不使用": (112, 140),
-        "無回答": (7, 147),
+        "24時間使用": (16, 145),
+        "時間限定使用": (12, 145),
+        "不使用": (117, 145),
+        "無回答": (9, 154),
     }
     for category, (expected_n, expected_denominator) in (
         expected_central_table1.items()
@@ -1052,7 +1053,7 @@ def validate_results(
         assert int(row["denominator"]) == 147
     assert reason_target_n == 112
     assert int(flagged["q7_q8_inconsistency_flag"].sum()) == 4
-    assert int(valid["q9_central_heating_use"].eq(99).sum()) == 7
+    assert int(flagged["q9_central_heating_use"].eq(99).sum()) == 9
     assert reason_count("barrier", "全体") == 69
     assert reason_count("no_need", "全体") == 31
     assert reason_count("operation_failure", "全体") == 3
@@ -1123,13 +1124,13 @@ def validate_results(
     assert round(float(primary_high["ci95_hi_pct"]), 1) == 89.8
     assert round(float(primary_low["ci95_lo_pct"]), 1) == 19.1
     assert round(float(primary_low["ci95_hi_pct"]), 1) == 43.8
-    assert set(central_rows["without_denominator"]) == {112}
+    assert set(central_rows["without_denominator"]) == {117}
     assert set(central_rows["with_denominator"]) == {28}
     central_bath = central_rows[
         central_rows["outcome"].eq("bathroom_cold_5_7")
     ].iloc[0]
     assert int(central_bath["with_event_n"]) == 2
-    central_used = valid[valid["q9_central_heating_use"].isin([1, 2])]
+    central_used = flagged[flagged["q9_central_heating_use"].isin([1, 2])]
     assert int(central_used["q7_bath_heater_status"].eq(1).sum()) == 19
 
     return {
@@ -1144,7 +1145,7 @@ def validate_results(
             flagged["q7_q8_inconsistency_flag"].sum()
         ),
         "central_heating_missing_n": int(
-            valid["q9_central_heating_use"].eq(99).sum()
+            flagged["q9_central_heating_use"].eq(99).sum()
         ),
     }
 
@@ -1285,9 +1286,9 @@ def main() -> int:
 
     collection_summary = pd.read_csv(collection_path, dtype=str)
     flagged, valid = prepare_analysis_set(input_csv)
-    table1 = build_table1(valid)
+    table1 = build_table1(flagged, valid)
     reason_summary = build_reason_summary(valid)
-    table2 = build_table2(valid)
+    table2 = build_table2(flagged, valid)
 
     figure_paths = render_all_figures(
         reason_summary,
