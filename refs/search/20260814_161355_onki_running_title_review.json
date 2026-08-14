@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-08-14T16:13:55+09:00",
+  "slug": "onki_running_title_review",
+  "purpose": "日本温泉気候物理医学会雑誌のランニングタイトル制限を確認し、確定した和文題名と現行抄録に基づいて候補を評価する。",
+  "manuscript_changed": false,
+  "zotero_bridge": {
+    "checked_at": "2026-08-14",
+    "result": "Zotero本体には応答したが、/codex/pingおよび/codex/importはHTTP 404であった。",
+    "fallback": "日本温泉気候物理医学会公式サイトの現行投稿規定を直接確認した。"
+  },
+  "official_sources": [
+    {
+      "source": "日本温泉気候物理医学会『雑誌投稿規定』",
+      "revision": "2026-08-05",
+      "url": "https://www.onki.jp/wp/wp-content/uploads/85ec6e771266b5060ce709533c88013e-2.pdf",
+      "finding": "和文投稿規定は論文題目、著者情報、抄録、キーワード等の構成を定めているが、ランニングタイトルの提出要件や字数上限を明記していない。"
+    },
+    {
+      "source": "日本温泉気候物理医学会『INSTRUCTIONS TO AUTHORS』",
+      "release": "2026-08",
+      "url": "https://www.onki.jp/wp/wp-content/uploads/48b30fcc4fe66bafceaa08c21ecdfca2.pdf",
+      "finding": "Original ArticlesのTitle Pageについて、空白を含め40 characters以内のshort running titleを求めている。"
+    },
+    {
+      "source": "日本温泉気候物理医学会『学会誌について』",
+      "url": "https://www.onki.jp/magazine/about",
+      "finding": "上記の和文投稿規定と英文投稿規定への現行公式リンクを確認した。"
+    }
+  ],
+  "interpretation": {
+    "japanese_rule": "和文短報に対する明示的なランニングタイトル字数上限は確認できない。",
+    "conservative_rule": "英文規定の上限を準用し、空白を含め40字以内とする。",
+    "unit": "語数ではなく文字数。候補に空白はなく、全角文字・記号を各1字として数えた。",
+    "caution": "英文規定の40 charactersはOriginal Articles欄の規定であるため、和文短報への直接適用が公式に明記されているわけではない。"
+  },
+  "source_manuscript": {
+    "full_japanese_title": "青森県五所川原市における浴室暖房乾燥機の未設置・未使用理由と浴室の温冷感",
+    "full_title_characters": 36,
+    "current_running_title": "五所川原市における浴室暖房の障壁",
+    "current_running_title_characters": 16,
+    "abstract_primary_focus": "浴室暖房乾燥機を設置していない者、または設置しているが暖房として使用していない者が挙げた理由を、冬季の浴室の温冷感に対応する群別に記述する。",
+    "abstract_secondary_focus": "セントラル暖房の使用状況および浴室暖房乾燥機との併用状況を記述する。"
+  },
+  "candidate_titles": [
+    {
+      "rank": 1,
+      "title": "浴室暖房乾燥機の未設置・未使用理由と浴室の温冷感",
+      "characters": 24,
+      "assessment": "推奨",
+      "reason": "確定題名から地理的修飾だけを省き、主要目的の機器、二つの非使用状態、理由、温冷感をすべて保持する。"
+    },
+    {
+      "rank": 2,
+      "title": "五所川原市の浴室暖房乾燥機の未設置・未使用理由と浴室の温冷感",
+      "characters": 30,
+      "assessment": "地域性を残す代替案",
+      "reason": "主要概念に加えて調査地も保持する。40字以内だが、第一案より6字長い。"
+    },
+    {
+      "rank": 3,
+      "title": "浴室暖房乾燥機の未設置・未使用理由と温冷感",
+      "characters": 21,
+      "assessment": "簡潔案",
+      "reason": "短いが、温冷感が浴室についての評価であることが題名単独ではやや不明瞭になる。"
+    },
+    {
+      "rank": 4,
+      "title": "浴室暖房乾燥機の未設置・未使用理由",
+      "characters": 17,
+      "assessment": "最短案",
+      "reason": "主要な理由解析は表すが、温冷感別に記述した研究の特徴を失う。"
+    }
+  ],
+  "current_running_title_assessment": {
+    "decision": "変更を推奨",
+    "reasons": [
+      "『浴室暖房』では対象機器である浴室暖房乾燥機が明示されない。",
+      "『障壁』は本文の探索的集約分類を想起させ、確定題名の『未設置・未使用理由』より解釈的である。",
+      "浴室の温冷感という主要な層別軸が含まれない。"
+    ]
+  },
+  "recommendation": "浴室暖房乾燥機の未設置・未使用理由と浴室の温冷感"
+}
