@@ -615,7 +615,7 @@ def render_figure1_profile(
         ),
         [MONO["dark"], MONO["medium"], MONO["very_light"]],
         ["", "///", "xx"],
-        "Bathroom heater-dryer" if english else "浴室暖房乾燥機",
+        "Bathroom heating dryer" if english else "浴室暖房乾燥機",
         language=language,
     )
 
@@ -848,7 +848,7 @@ def render_heating_figure(
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 4.4))
     fig.suptitle(
         (
-            "Central heating and concurrent bathroom heater-dryer use"
+            "Central heating and concurrent bathroom heating dryer use"
             if english
             else "セントラル暖房の使用と浴室暖房乾燥機との併用"
         ),
@@ -878,7 +878,7 @@ def render_heating_figure(
         [concurrent, not_concurrent],
         (
             [
-                "Also used a bathroom heater-dryer",
+                "Also used a bathroom heating dryer",
                 "Did not use or install one",
             ]
             if english

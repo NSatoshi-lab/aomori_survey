@@ -254,7 +254,7 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
                 "Tenure",
                 "Winter bathing frequency",
                 "Bathroom window",
-                "Bathroom heater-dryer",
+                "Bathroom heating dryer",
                 "Central heating",
                 "Other equipment used to heat the dressing room or bathroom",
                 "Perceived bathroom coldness",

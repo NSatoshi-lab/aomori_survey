@@ -17,7 +17,7 @@ ITEM_LABELS = {
     "所有形態": "Tenure",
     "入浴頻度": "Winter bathing frequency",
     "浴室窓": "Bathroom window",
-    "浴室暖房乾燥機": "Bathroom heater-dryer",
+    "浴室暖房乾燥機": "Bathroom heating dryer",
     "セントラル暖房": "Central heating",
     "その他暖房設備": (
         "Other equipment used to heat the dressing room or bathroom"
@@ -63,8 +63,8 @@ CATEGORY_LABELS = {
 }
 
 EQUIPMENT_LABELS = {
-    "浴室暖房乾燥機使用": "Bathroom heater-dryer use",
-    "浴室暖房乾燥機設置": "Bathroom heater-dryer installation",
+    "浴室暖房乾燥機使用": "Bathroom heating dryer use",
+    "浴室暖房乾燥機設置": "Bathroom heating dryer installation",
     "セントラル暖房使用": "Central heating use",
 }
 
@@ -269,7 +269,7 @@ def main() -> None:
                 "for all other characteristics use all 147 respondents in the "
                 "primary analysis as the denominator. Other equipment used to "
                 "heat the dressing room or "
-                "bathroom, excluding the bathroom heater-dryer and central "
+                "bathroom, excluding the bathroom heating dryer and central "
                 "heating, was a multiple-response item; therefore, percentages "
                 "do not sum to 100%, and missing responses are shown separately. "
                 "Coldness scores range from 1 (very warm) to 7 (very cold); "
