@@ -251,8 +251,8 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
                 "Age",
                 "Housing type",
                 "Building age",
-                "Tenure",
-                "Winter bathing frequency",
+                "Housing tenure",
+                "Frequency of bathing at home in winter",
                 "Bathroom window",
                 "Bathroom heating dryer",
                 "Central heating",
@@ -260,6 +260,24 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
                 "Perceived bathroom coldness",
                 "Perceived dressing-room coldness",
             ],
+        )
+        self.assertEqual(
+            submission_table.loc[
+                submission_table["Characteristic"].eq("Central heating")
+                & submission_table["Category"].eq(
+                    "Used 24 h/day (continuous)"
+                ),
+                "n (%)",
+            ].iloc[0],
+            "16 (11.0)",
+        )
+        self.assertIn(
+            "Space heater (stove)",
+            set(submission_table["Category"]),
+        )
+        self.assertIn(
+            "Coldness score 5-7",
+            set(submission_table["Category"]),
         )
 
     def test_japanese_submission_figure_is_rendered(self) -> None:

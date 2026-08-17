@@ -784,7 +784,8 @@ def render_reason_figure(
         ax.set_xticks([0, 25, 50, 75, 100])
         ax.set_title(
             (
-                f"Bathroom coldness {group.removeprefix('寒さ')} (n={group_n})"
+                f"Bathroom coldness score {group.removeprefix('寒さ')}\n"
+                f"(n = {group_n})"
                 if english
                 else f"浴室寒さ{group.removeprefix('寒さ')}（n={group_n}）"
             ),

@@ -102,21 +102,21 @@ Table 1では、年齢を18-49歳、50-59歳、60-69歳、70歳以上、築年�
 
 ## English Title
 
-Reasons for Non-installation or Non-use of Bathroom Heating Dryers and Perceived Bathroom Coldness in Goshogawara City, Aomori Prefecture
+Reasons for Non-installation or Non-use of Bathroom Heating Dryers and Perceived Thermal Sensation in the Bathroom in Goshogawara City, Aomori Prefecture
 
 - Authors: [Enter author names in Roman letters]
 - Affiliations: [Enter affiliations in English]
-- Corresponding author: [Enter name, affiliation, postal address, telephone number, and email address]
+- Corresponding author: [Enter name, affiliation, postal address, and email address]
 
 ## English Abstract
 
-Objective: Using a convenience sample obtained from a questionnaire survey conducted in Goshogawara City, Aomori Prefecture, the primary objective of this study was to describe, by perceived winter bathroom coldness, the reasons reported by respondents who had not installed a bathroom heating dryer or who had installed one but did not use it for heating (hereafter, non-users). Secondarily, we described central heating use and concurrent use of bathroom heating dryers. Methods: We conducted an anonymous cross-sectional questionnaire survey in Goshogawara City from March 11 to April 30, 2026. Of 190 questionnaires distributed, 154 were returned. The primary analysis included 147 respondents after excluding three with missing information on bathroom heating dryer installation and use and four non-users with missing reasons for non-use; of these, 112 non-users were included in the analysis of reasons. The central heating analysis included 145 of the 154 respondents who answered that item. Perceived bathroom coldness in winter (during the coldest period in January-February) was assessed on a 7-point scale ranging from 1 (very warm) to 7 (very cold) and was categorized a priori into scores of 1-4 and 5-7. For the multiple-response reasons for non-installation or non-use, respondents selecting any of the following were grouped post hoc and exploratorily as having "cost-related or housing/installation-related constraints": concern about electricity costs, high installation costs, difficulty installing the equipment because of the housing structure, or inability to undertake construction work in rental housing. Counts and percentages were described. Results: Of the 112 non-users included in the analysis of reasons, 62 had bathroom coldness scores of 5-7 and 50 had scores of 1-4. Cost-related or housing/installation-related constraints were selected by 51/62 respondents (82.3%) in the score 5-7 group and 15/50 (30.0%) in the score 1-4 group. Central heating was used by 28/145 respondents (19.3%), of whom 19/28 (67.9%) also used a bathroom heating dryer for heating. Conclusions: In this convenience sample from Goshogawara City, some non-users of bathroom heating dryers who perceived their bathrooms as cold reported cost-related or housing/installation-related constraints as reasons for non-installation or non-use. When considering measures to address bathroom coldness in cold regions, understanding not only the need for equipment but also the specific constraints that impede its installation or use and the heating configuration of the home remains an issue for future investigation.
+Objective: We used a convenience sample from a questionnaire survey in Goshogawara City, Aomori Prefecture, primarily to describe reasons reported by respondents who had not installed a bathroom heating dryer or had installed one but did not use it for heating (hereafter, non-users), stratified by perceived bathroom coldness in winter. Secondarily, we described central heating use and its concurrent use with a bathroom heating dryer. Methods: We conducted an anonymous cross-sectional questionnaire survey in Goshogawara City from March 11 to April 30, 2026. Of 190 distributed questionnaires, 154 were returned. We excluded three respondents with missing data on bathroom heating dryer installation and use and four non-users who did not report a reason for non-use, leaving 147 respondents for the primary analysis; 112 non-users were included in the analysis of reasons. Central heating analyses included 145 of 154 respondents with non-missing data on that item. Perceived thermal sensation in the bathroom during the coldest winter period (January-February) was rated on a 7-point scale from 1 (very warm) to 7 (very cold). Ratings were classified a priori into bathroom coldness score groups of 1-4 and 5-7. Reasons for non-installation or non-use were collected as multiple responses. After data collection, we created an exploratory post hoc category, "cost-related or housing/installation-related constraints," for respondents selecting at least one of four reasons: concern about electricity costs, high installation cost, difficulty of installation because of housing structure, or inability to undertake construction work in rented housing. Counts and percentages are reported. Results: Among 112 non-users, 62 were in the bathroom coldness score 5-7 group and 50 were in the bathroom coldness score 1-4 group. Cost-related or housing/installation-related constraints were selected by 51/62 respondents (82.3%) in the bathroom coldness score 5-7 group and by 15/50 (30.0%) in the bathroom coldness score 1-4 group. Central heating was used by 28/145 respondents (19.3%), of whom 19 (67.9%) also used a bathroom heating dryer for heating. Conclusions: In this convenience sample from Goshogawara City, some non-users of bathroom heating dryers who perceived their bathrooms as cold reported cost-related or housing/installation-related constraints as reasons for non-installation or non-use. Future investigations of measures to address bathroom coldness in cold regions should examine three issues: the need for such equipment, the specific constraints that impede its installation or use, and the heating configuration of the home.
 
 English keywords: bathroom heating dryer; central heating; cross-sectional study; cold region; Aomori Prefecture
 
 ## Tables
 
-### Table 1. Characteristics and heating equipment use in the analysis samples
+### Table 1. Characteristics and use of heating equipment in the primary analysis sample (n = 147)
 
 | Characteristic | Category | n (%) | Characteristic | Category | n (%) |
 | --- | --- | ---: | --- | --- | ---: |
@@ -127,26 +127,26 @@ English keywords: bathroom heating dryer; central heating; cross-sectional study
 | Housing type | Detached house | 132 (89.8) | Bathroom heating dryer | Installed and used for heating | 35 (23.8) |
 | | Apartment/condominium | 15 (10.2) | | Installed but not used for heating | 13 (8.8) |
 | Building age | &lt;30 years | 62 (42.2) | | Not installed | 99 (67.3) |
-| | ≥30 years | 77 (52.4) | Central heating | Used 24 hours | 16 (11.0) |
+| | ≥30 years | 77 (52.4) | Central heating | Used 24 h/day (continuous) | 16 (11.0) |
 | | Unknown | 8 (5.4) | | Used for limited hours | 12 (8.3) |
-| Tenure | Owner-occupied | 130 (88.4) | | Not used | 117 (80.7) |
+| Housing tenure | Owner-occupied | 130 (88.4) | | Not used | 117 (80.7) |
 | | Rented | 16 (10.9) | | Missing | 9 |
-| | Missing | 1 (0.7) | Other equipment used to heat the dressing room or bathroom | Stove | 63 (42.9) |
-| Winter bathing frequency | Daily | 94 (63.9) | | Air conditioner | 15 (10.2) |
-| | 4-6 times/week | 36 (24.5) | | Floor heating other than central heating | 2 (1.4) |
+| | Missing | 1 (0.7) | Other equipment used to heat the dressing room or bathroom | Space heater (stove) | 63 (42.9) |
+| Frequency of bathing at home in winter | Daily | 94 (63.9) | | Air conditioner | 15 (10.2) |
+| | 4-6 times/week | 36 (24.5) | | Floor heating not part of the central heating system | 2 (1.4) |
 | | 1-3 times/week | 10 (6.8) | | Other | 4 (2.7) |
 | | 1-3 times/month | 2 (1.4) | | None | 61 (41.5) |
 | | Almost never | 5 (3.4) | | Missing | 8 (5.4) |
-| | | | Perceived bathroom coldness | Score 5-7 | 66 (44.9) |
-| | | | Perceived dressing-room coldness | Score 5-7 | 77 (52.4) |
+| | | | Perceived bathroom coldness | Coldness score 5-7 | 66 (44.9) |
+| | | | Perceived dressing-room coldness | Coldness score 5-7 | 77 (52.4) |
 
-Values are n (%). Percentages for central heating use were calculated among 145 respondents with non-missing data; 9 of 154 returned questionnaires had missing data and are shown separately. Percentages for all other characteristics use all 147 respondents in the primary analysis as the denominator. Other equipment used to heat the dressing room or bathroom, excluding the bathroom heating dryer and central heating, was a multiple-response item; therefore, percentages do not sum to 100%, and missing responses are shown separately. Coldness scores ranged from 1 (very warm) to 7 (very cold); only the score 5-7 group is shown for each coldness item.
+Values are n (%). For central heating use, 145 of the 154 returned questionnaires had non-missing data; the nine missing responses are shown separately. Percentages for all other characteristics were calculated with all 147 respondents in the primary analysis as the denominator. Use of other equipment to heat the dressing room or bathroom, excluding the bathroom heating dryer and central heating, was assessed with a multiple-response item; therefore, percentages do not sum to 100%, and missing responses are shown separately. Perceived thermal sensation in the bathroom and dressing room was rated on a 7-point scale from 1 (very warm) to 7 (very cold); for each room, only the derived coldness score 5-7 group is shown.
 
 ## Figure Legends
 
-### Figure 1. Reasons for non-installation or non-use of a bathroom heating dryer by perceived bathroom coldness
+### Fig. 1. Reasons for non-installation or non-use of a bathroom heating dryer, by perceived bathroom coldness
 
-The analysis includes 112 respondents who had not installed or did not use a bathroom heating dryer. The left and right panels show the coldness 1-4 group (n=50) and the coldness 5-7 group (n=62), respectively, using the same scale and bar style. Reasons were collected as multiple responses; therefore, percentages do not sum to 100%. “No need” (reason 1) indicates “already warm enough; therefore, no bathroom heating dryer is needed.” Cost-related or housing/installation-related constraints comprise reasons 2-5; cost-related reasons comprise reasons 2-3; and housing/installation-related reasons comprise reasons 4-5. Cost-related and housing/installation-related categories were not mutually exclusive; therefore, their counts should not be summed to obtain the combined category. Bars show the observed n/N (%) within each group. Confidence intervals are not shown; between-group differences and p values were not calculated.
+The analysis included 112 respondents who had not installed a bathroom heating dryer or who had installed one but did not use it for heating. The left and right panels show the bathroom coldness score 1-4 group (n = 50) and the bathroom coldness score 5-7 group (n = 62), respectively; both panels use the same axis scale and bar style. Reasons were collected as multiple responses; therefore, percentages do not sum to 100%. "No need" (reason 1) corresponds to the response option "The bathroom is already warm enough, so a bathroom heating dryer is not needed." Cost-related or housing/installation-related constraints comprise reasons 2-5 (electricity costs, installation cost, housing structure, and inability to carry out construction work in rented housing); cost-related reasons comprise reasons 2 and 3; and housing/installation-related reasons comprise reasons 4 and 5. The cost-related and housing/installation-related categories were not mutually exclusive; therefore, their counts should not be summed to obtain the count for the combined category. Bars show the observed n/N (%) within each group. Confidence intervals are not shown, and no statistical tests of between-group differences were performed.
 
 ## Figures
 

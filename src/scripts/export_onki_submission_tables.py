@@ -14,8 +14,8 @@ ITEM_LABELS = {
     "年齢": "Age",
     "住宅種別": "Housing type",
     "築年帯": "Building age",
-    "所有形態": "Tenure",
-    "入浴頻度": "Winter bathing frequency",
+    "所有形態": "Housing tenure",
+    "入浴頻度": "Frequency of bathing at home in winter",
     "浴室窓": "Bathroom window",
     "浴室暖房乾燥機": "Bathroom heating dryer",
     "セントラル暖房": "Central heating",
@@ -51,15 +51,17 @@ CATEGORY_LABELS = {
     "設置して使用": "Installed and used for heating",
     "設置しているが未使用": "Installed but not used for heating",
     "未設置": "Not installed",
-    "24時間使用": "Used 24 hours",
+    "24時間使用": "Used 24 h/day (continuous)",
     "時間限定使用": "Used for limited hours",
     "不使用": "Not used",
-    "ストーブ": "Stove",
+    "ストーブ": "Space heater (stove)",
     "エアコン": "Air conditioner",
-    "セントラル暖房以外の床暖房": "Floor heating other than central heating",
+    "セントラル暖房以外の床暖房": (
+        "Floor heating not part of the central heating system"
+    ),
     "その他": "Other",
     "使用なし": "None",
-    "5-7": "Score 5-7",
+    "5-7": "Coldness score 5-7",
 }
 
 EQUIPMENT_LABELS = {
@@ -156,8 +158,8 @@ def style_workbook(output_xlsx: Path) -> None:
         sheet.freeze_panes = "A4"
         sheet.merge_cells("A1:C1")
         sheet["A1"] = (
-            "Table 1. Characteristics and heating equipment use in the "
-            "analysis samples"
+            "Table 1. Characteristics and use of heating equipment in the "
+            "primary analysis sample (n = 147)"
         )
         sheet["A1"].font = Font(name="Times New Roman", size=11, bold=True)
         sheet["A1"].alignment = Alignment(
@@ -204,6 +206,8 @@ def style_workbook(output_xlsx: Path) -> None:
                 == "Other equipment used to heat the dressing room or bathroom"
             ):
                 row_height = 38
+            elif characteristic == "Frequency of bathing at home in winter":
+                row_height = 42
             elif characteristic in {
                 "Perceived bathroom coldness",
                 "Perceived dressing-room coldness",
@@ -262,18 +266,18 @@ def main() -> None:
             row=footnote_row,
             column=1,
             value=(
-                "Values are n (%). Percentages for central heating use were "
-                "calculated among 145 respondents with non-missing data; 9 of "
-                "154 returned questionnaires had missing data and are shown "
-                "separately. Percentages "
-                "for all other characteristics use all 147 respondents in the "
-                "primary analysis as the denominator. Other equipment used to "
-                "heat the dressing room or "
-                "bathroom, excluding the bathroom heating dryer and central "
-                "heating, was a multiple-response item; therefore, percentages "
-                "do not sum to 100%, and missing responses are shown separately. "
-                "Coldness scores range from 1 (very warm) to 7 (very cold); "
-                "only the score 5-7 group is shown for each coldness item."
+                "Values are n (%). For central heating use, 145 of the 154 "
+                "returned questionnaires had non-missing data; the nine missing "
+                "responses are shown separately. Percentages for all other "
+                "characteristics were calculated with all 147 respondents in "
+                "the primary analysis as the denominator. Use of other equipment "
+                "to heat the dressing room or bathroom, excluding the bathroom "
+                "heating dryer and central heating, was assessed with a "
+                "multiple-response item; therefore, percentages do not sum to "
+                "100%, and missing responses are shown separately. Perceived "
+                "thermal sensation in the bathroom and dressing room was rated "
+                "on a 7-point scale from 1 (very warm) to 7 (very cold); for each "
+                "room, only the derived coldness score 5-7 group is shown."
             ),
         )
         worksheet.merge_cells(
