@@ -12,7 +12,7 @@
 | R-1 | 採用 | 両群の解析値を再確認すると、費用系と住宅・設置制約系の重複は1-4群、5-7群とも各1人であり、現行の算術記述自体は正しかった。ただし、カテゴリが非排他的であることだけから不一致を必然視しないよう、`can exceed`を用いた一般的な説明へ変更した。 |
 | R-2 | 採用 | 7件法の回答を解析上`bathroom coldness scores`と呼ぶことをMethods内で明示し、別変数との誤読を避けた。 |
 | R-3 | 採用 | Table 1脚注で、浴室・脱衣所のthermal-sensation ratingsを対応するcoldness scoresとして扱ったことを明記した。実質的な数値変換を示唆する`derived`は使用しなかった。 |
-| R-4 | 採用 | `Of the 154 respondents, central heating use was analyzed for 145 with non-missing data.`とし、145人と154人の関係および`that item`の指示先の曖昧性を解消した。 |
+| R-4 | 採用後に再調整 | 当初は`Of the 154 respondents, central heating use was analyzed for 145 with non-missing data.`とした。その後のN-1を踏まえ、最終的に能動文でデータと回答者の関係を明示した。 |
 | R-5 | 採用 | セントラル暖房の欠測9人は割合なしの別行、その他暖房設備の欠測8人は147人を分母とする割合付き別行であることを個別に明記した。 |
 | R-6 | 採用 | `both`を追加し、「具体的制約」と「住宅の暖房構成」が並列対象であることを明示した。`remains a matter for future investigation`は維持し、和文より勧告を強めていない。 |
 | R-7 | 採用 | 同一選択肢の訳を`inability to undertake construction work in rented housing`に統一した。英語Figure 1の図中にはこの文章表現がないため画像変更は不要だった。 |
@@ -20,6 +20,7 @@
 | R-9 | 採用 | Fig. 1 legendで`N`を対応する浴室寒さスコア群の回答者数と定義した。 |
 | R-10 | 不採用 | 本稿は和文投稿である。2026年8月5日改訂の和文投稿規定10（8）が和文論文の英文抄録に求めるのは、英文題目、著者ローマ字名、英文所属、Abstract、Keywords、Corresponding Authorであり、英語の論文種別とrunning titleは含まれない。論文種別は投稿依頼文に記載する。英文原稿向け投稿規定のshort running title要件は本稿へ適用しなかった。 |
 | R-11 | 不採用 | キーワードの単数形`cold region`は一般的な見出し語として維持した。 |
+| N-1 | 採用 | `We analyzed non-missing data on central heating use from 145 of the 154 respondents.`とした。主語、分析対象、データ提供者の関係を明確化し、Table 1脚注の`non-missing data`とも用語を一致させた。語数は変わらない。 |
 
 ## R-1の解析値確認
 
@@ -36,7 +37,7 @@ Fig. 1の表示値から、費用系と住宅・設置制約系の重複人数�
 
 ### English Abstract Methods
 
-> Of the 154 respondents, central heating use was analyzed for 145 with non-missing data. Perceived thermal sensation in the bathroom during the coldest winter period (January-February) was rated on a 7-point scale from 1 (very warm) to 7 (very cold). These ratings (hereafter, bathroom coldness scores) were classified a priori into groups of 1-4 and 5-7.
+> We analyzed non-missing data on central heating use from 145 of the 154 respondents. Perceived thermal sensation in the bathroom during the coldest winter period (January-February) was rated on a 7-point scale from 1 (very warm) to 7 (very cold). These ratings (hereafter, bathroom coldness scores) were classified a priori into groups of 1-4 and 5-7.
 
 ### English Abstract Conclusions
 
