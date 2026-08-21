@@ -30,6 +30,11 @@ TABLE1_COLUMN_WIDTHS_MM = (45, 75, 30)
 TABLE1_TWO_PANEL_COLUMN_WIDTHS_MM = (22, 36, 17, 22, 36, 17)
 TABLE1_FOOTNOTE_PREFIX = "Values are presented as n (%)"
 ENGLISH_NUMERIC_RANGE = re.compile(r"(?<=\d)-(?=\d)")
+ENGLISH_SUMMARY_FIELDS = (
+    "Authors: ",
+    "Affiliations: ",
+    "Corresponding author: ",
+)
 
 
 def apply_english_range_typography(text: str) -> str:
@@ -81,6 +86,118 @@ def get_or_add_child(parent, tag_name: str):
         child = OxmlElement(tag_name)
         parent.append(child)
     return child
+
+
+def remove_paragraph(paragraph) -> None:
+    paragraph._element.getparent().remove(paragraph._element)
+
+
+def clear_list_formatting(paragraph) -> None:
+    properties = paragraph._p.get_or_add_pPr()
+    numbering = properties.find(qn("w:numPr"))
+    if numbering is not None:
+        properties.remove(numbering)
+
+
+def set_paragraph_text(paragraph, text: str) -> None:
+    for child in list(paragraph._p):
+        if child.tag != qn("w:pPr"):
+            paragraph._p.remove(child)
+    paragraph.add_run(text)
+
+
+def move_after(paragraph, anchor) -> None:
+    anchor._p.addnext(paragraph._p)
+
+
+def add_page_number(section) -> None:
+    section.footer_distance = Mm(12.7)
+    footer = section.footer
+    paragraph = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    for child in list(paragraph._p):
+        if child.tag != qn("w:pPr"):
+            paragraph._p.remove(child)
+
+    run = paragraph.add_run()
+    begin = OxmlElement("w:fldChar")
+    begin.set(qn("w:fldCharType"), "begin")
+    instruction = OxmlElement("w:instrText")
+    instruction.set(qn("xml:space"), "preserve")
+    instruction.text = " PAGE "
+    separate = OxmlElement("w:fldChar")
+    separate.set(qn("w:fldCharType"), "separate")
+    result = OxmlElement("w:t")
+    result.text = "1"
+    end = OxmlElement("w:fldChar")
+    end.set(qn("w:fldCharType"), "end")
+    for element in (begin, instruction, separate, result, end):
+        run._r.append(element)
+    set_run_font(run, Pt(10.5))
+
+
+def add_line_numbering(section) -> None:
+    line_numbering = get_or_add_child(section._sectPr, "w:lnNumType")
+    line_numbering.set(qn("w:countBy"), "1")
+
+
+def prepare_english_summary(document) -> str | None:
+    paragraphs = document.paragraphs
+    heading = next(
+        (paragraph for paragraph in paragraphs if paragraph.text.strip() == "English Title"),
+        None,
+    )
+    if heading is None:
+        return None
+
+    index = paragraphs.index(heading)
+    if index + 1 >= len(paragraphs):
+        return None
+    title_paragraph = paragraphs[index + 1]
+    title = title_paragraph.text.strip()
+    set_paragraph_text(heading, title)
+    remove_paragraph(title_paragraph)
+
+    paragraphs = document.paragraphs
+    authors = next(
+        paragraph
+        for paragraph in paragraphs
+        if paragraph.text.strip().startswith(ENGLISH_SUMMARY_FIELDS[0])
+    )
+    affiliations = next(
+        paragraph
+        for paragraph in paragraphs
+        if paragraph.text.strip().startswith(ENGLISH_SUMMARY_FIELDS[1])
+    )
+    corresponding = next(
+        paragraph
+        for paragraph in paragraphs
+        if paragraph.text.strip().startswith(ENGLISH_SUMMARY_FIELDS[2])
+    )
+    abstract_heading = next(
+        paragraph
+        for paragraph in paragraphs
+        if paragraph.text.strip() == "English Abstract"
+    )
+    keywords = next(
+        paragraph
+        for paragraph in paragraphs
+        if paragraph.text.strip().startswith("Keywords:")
+    )
+
+    for paragraph, prefix in (
+        (authors, ENGLISH_SUMMARY_FIELDS[0]),
+        (affiliations, ENGLISH_SUMMARY_FIELDS[1]),
+        (corresponding, ENGLISH_SUMMARY_FIELDS[2]),
+    ):
+        clear_list_formatting(paragraph)
+        set_paragraph_text(paragraph, paragraph.text.strip().removeprefix(prefix))
+
+    set_paragraph_text(abstract_heading, "Abstract")
+    move_after(affiliations, keywords)
+    move_after(corresponding, affiliations)
+
+    return title
 
 
 def set_table_fixed_width(table, widths_mm: tuple[int, ...]) -> None:
@@ -253,6 +370,7 @@ def format_table1(table) -> None:
 
 def format_document(input_docx: Path, output_docx: Path) -> None:
     document = Document(input_docx)
+    english_title = prepare_english_summary(document)
 
     for section in document.sections:
         section.page_width = Mm(210)
@@ -261,6 +379,8 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
         section.bottom_margin = Mm(25)
         section.left_margin = Mm(30)
         section.right_margin = Mm(30)
+        add_page_number(section)
+        add_line_numbering(section)
 
     styles = document.styles
     set_style_font(styles["Normal"], Pt(12))
@@ -284,17 +404,55 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
         paragraph_text = paragraph.text.strip()
         has_drawing = bool(paragraph._p.xpath(".//w:drawing"))
         is_table1_footnote = paragraph_text.startswith(TABLE1_FOOTNOTE_PREFIX)
-        if paragraph_text == "English Title":
+        is_english_summary_title = bool(
+            english_title and paragraph_text == english_title
+        )
+        is_english_summary_author = paragraph_text.startswith("Satoshi NOSHIRO")
+        is_english_summary_affiliation = paragraph_text.startswith(
+            "1) Aozora Clinic Kawagoe"
+        )
+        is_english_summary_corresponding = paragraph_text.startswith(
+            "*Corresponding author"
+        )
+        is_english_summary_metadata = any(
+            (
+                is_english_summary_title,
+                is_english_summary_author,
+                is_english_summary_affiliation,
+                is_english_summary_corresponding,
+            )
+        )
+        if paragraph_text in ("和文抄録", "I はじめに"):
+            paragraph.paragraph_format.page_break_before = True
+        if is_english_summary_title:
             in_english_section = True
             paragraph.paragraph_format.page_break_before = True
         elif paragraph_text in BACK_MATTER_SECTION_TITLES:
             paragraph.paragraph_format.page_break_before = True
-        if paragraph_text == "English Abstract":
+        if paragraph_text == "Abstract":
             in_english_abstract = True
         elif in_english_abstract and paragraph_text in BACK_MATTER_SECTION_TITLES:
             in_english_abstract = False
 
-        if is_table1_footnote:
+        if is_english_summary_title:
+            paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
+            paragraph.paragraph_format.line_spacing = 1.0
+            paragraph.paragraph_format.space_before = Pt(0)
+            paragraph.paragraph_format.space_after = Pt(12)
+            paragraph.paragraph_format.keep_with_next = True
+        elif is_english_summary_author:
+            paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
+            paragraph.paragraph_format.line_spacing = 1.0
+            paragraph.paragraph_format.space_before = Pt(0)
+            paragraph.paragraph_format.space_after = Pt(12)
+            paragraph.paragraph_format.keep_with_next = True
+        elif is_english_summary_affiliation or is_english_summary_corresponding:
+            paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
+            paragraph.paragraph_format.line_spacing = 1.0
+            paragraph.paragraph_format.space_before = Pt(3)
+            paragraph.paragraph_format.space_after = Pt(0)
+            paragraph.paragraph_format.keep_together = True
+        elif is_table1_footnote:
             paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
             paragraph.paragraph_format.line_spacing = 1.0
             paragraph.paragraph_format.space_before = Pt(3)
@@ -308,7 +466,7 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
             ]
             paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.AT_LEAST
             paragraph.paragraph_format.line_spacing = Pt(max(drawing_heights))
-        elif in_english_abstract and paragraph_text != "English Abstract":
+        elif in_english_abstract and paragraph_text != "Abstract":
             paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.DOUBLE
             paragraph.paragraph_format.line_spacing = 2.0
         elif paragraph.style.name == "Normal":
@@ -316,11 +474,18 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
             paragraph.paragraph_format.line_spacing = Pt(21.5)
 
         for run in paragraph.runs:
-            if in_english_section:
+            if in_english_section and not (
+                is_english_summary_affiliation
+                or is_english_summary_corresponding
+            ):
                 rendered_text = apply_english_range_typography(run.text)
                 if rendered_text != run.text:
                     run.text = rendered_text
-            if is_table1_footnote:
+            if is_english_summary_affiliation or is_english_summary_corresponding:
+                set_run_font(run, Pt(10))
+            elif is_english_summary_metadata:
+                set_run_font(run, Pt(12))
+            elif is_table1_footnote:
                 set_run_font(run, Pt(9))
             elif paragraph.style.name == "Title":
                 set_run_font(run, Pt(15))
