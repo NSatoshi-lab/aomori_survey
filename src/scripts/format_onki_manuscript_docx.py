@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 from pathlib import Path
 
 from docx import Document
@@ -16,11 +17,25 @@ from docx.shared import Mm, Pt
 
 BODY_FONT = "Yu Mincho"
 LATIN_FONT = "Times New Roman"
-BACK_MATTER_SECTION_TITLES = ("Tables", "Figure Legends", "Figures")
+BACK_MATTER_SECTION_TITLES = (
+    "Table",
+    "Tables",
+    "Figure Legend",
+    "Figure Legends",
+    "Figure",
+    "Figures",
+)
 TABLE1_HEADERS = ("Characteristic", "Category", "n (%)")
 TABLE1_COLUMN_WIDTHS_MM = (45, 75, 30)
 TABLE1_TWO_PANEL_COLUMN_WIDTHS_MM = (22, 36, 17, 22, 36, 17)
-TABLE1_FOOTNOTE_PREFIX = "Values are n (%)"
+TABLE1_FOOTNOTE_PREFIX = "Values are presented as n (%)"
+ENGLISH_NUMERIC_RANGE = re.compile(r"(?<=\d)-(?=\d)")
+
+
+def apply_english_range_typography(text: str) -> str:
+    """Use en dashes for ranges in rendered English submission content."""
+    text = text.replace("January-February", "January–February")
+    return ENGLISH_NUMERIC_RANGE.sub("–", text)
 
 
 def parse_args() -> argparse.Namespace:
@@ -264,11 +279,13 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
             set_style_font(styles[style_name], size)
 
     in_english_abstract = False
+    in_english_section = False
     for paragraph in document.paragraphs:
         paragraph_text = paragraph.text.strip()
         has_drawing = bool(paragraph._p.xpath(".//w:drawing"))
         is_table1_footnote = paragraph_text.startswith(TABLE1_FOOTNOTE_PREFIX)
         if paragraph_text == "English Title":
+            in_english_section = True
             paragraph.paragraph_format.page_break_before = True
         elif paragraph_text in BACK_MATTER_SECTION_TITLES:
             paragraph.paragraph_format.page_break_before = True
@@ -284,8 +301,13 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
             paragraph.paragraph_format.space_after = Pt(0)
             paragraph.paragraph_format.keep_together = True
         elif has_drawing:
-            paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
-            paragraph.paragraph_format.line_spacing = 1.0
+            drawing_heights = [
+                int(extent.get("cy")) / 12700
+                for extent in paragraph._p.xpath(".//wp:extent")
+                if extent.get("cy")
+            ]
+            paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.AT_LEAST
+            paragraph.paragraph_format.line_spacing = Pt(max(drawing_heights))
         elif in_english_abstract and paragraph_text != "English Abstract":
             paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.DOUBLE
             paragraph.paragraph_format.line_spacing = 2.0
@@ -294,6 +316,10 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
             paragraph.paragraph_format.line_spacing = Pt(21.5)
 
         for run in paragraph.runs:
+            if in_english_section:
+                rendered_text = apply_english_range_typography(run.text)
+                if rendered_text != run.text:
+                    run.text = rendered_text
             if is_table1_footnote:
                 set_run_font(run, Pt(9))
             elif paragraph.style.name == "Title":
@@ -316,6 +342,9 @@ def format_document(input_docx: Path, output_docx: Path) -> None:
                     )
                     paragraph.paragraph_format.space_after = Pt(0)
                     for run in paragraph.runs:
+                        rendered_text = apply_english_range_typography(run.text)
+                        if rendered_text != run.text:
+                            run.text = rendered_text
                         set_run_font(run, Pt(9))
         if is_table1(table) or is_two_panel_table1(table):
             format_table1(table)

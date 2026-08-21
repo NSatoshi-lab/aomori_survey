@@ -276,9 +276,11 @@ class OnkiShortReportAnalysisTests(unittest.TestCase):
             set(submission_table["Category"]),
         )
         self.assertIn(
-            "Coldness score 5-7",
+            "Coldness score 5–7",
             set(submission_table["Category"]),
         )
+        self.assertIn("18–49 years", set(submission_table["Category"]))
+        self.assertIn("4–6 times/week", set(submission_table["Category"]))
 
     def test_japanese_submission_figure_is_rendered(self) -> None:
         reason_summary = build_reason_summary(self.valid)

@@ -724,9 +724,9 @@ def render_reason_figure(
     english = language == "en"
     labels = (
         {
-            "barrier_2_5": "Cost/housing constraints (2-5)",
-            "cost": "  Cost (2-3)",
-            "housing_installation": "  Housing/installation (4-5)",
+            "barrier_2_5": "Cost/housing constraints (2–5)",
+            "cost": "  Cost (2–3)",
+            "housing_installation": "  Housing/installation (4–5)",
             "no_need": "No need (1)",
         }
         if english
@@ -784,7 +784,8 @@ def render_reason_figure(
         ax.set_xticks([0, 25, 50, 75, 100])
         ax.set_title(
             (
-                f"Bathroom coldness score {group.removeprefix('寒さ')}\n"
+                f"Bathroom coldness score "
+                f"{group.removeprefix('寒さ').replace('-', '–')}\n"
                 f"(n = {group_n})"
                 if english
                 else f"浴室寒さ{group.removeprefix('寒さ')}（n={group_n}）"

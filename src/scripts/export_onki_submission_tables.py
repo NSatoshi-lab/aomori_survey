@@ -27,9 +27,9 @@ ITEM_LABELS = {
 }
 
 CATEGORY_LABELS = {
-    "18-49歳": "18-49 years",
-    "50-59歳": "50-59 years",
-    "60-69歳": "60-69 years",
+    "18-49歳": "18–49 years",
+    "50-59歳": "50–59 years",
+    "60-69歳": "60–69 years",
     "70歳以上": "≥70 years",
     "一戸建て": "Detached house",
     "集合住宅": "Apartment/condominium",
@@ -40,9 +40,9 @@ CATEGORY_LABELS = {
     "賃貸": "Rented",
     "無回答": "Missing",
     "毎日": "Daily",
-    "週4-6回": "4-6 times/week",
-    "週1-3回": "1-3 times/week",
-    "月1-3回": "1-3 times/month",
+    "週4-6回": "4–6 times/week",
+    "週1-3回": "1–3 times/week",
+    "月1-3回": "1–3 times/month",
     "ほとんど入浴しない": "Almost never",
     "二重サッシ・複層ガラス": "Double window/double glazing",
     "単板ガラス": "Single glazing",
@@ -61,7 +61,7 @@ CATEGORY_LABELS = {
     ),
     "その他": "Other",
     "使用なし": "None",
-    "5-7": "Coldness score 5-7",
+    "5-7": "Coldness score 5–7",
 }
 
 EQUIPMENT_LABELS = {
@@ -266,21 +266,21 @@ def main() -> None:
             row=footnote_row,
             column=1,
             value=(
-                "Values are n (%). For central heating use, 145 of the 154 "
-                "returned questionnaires had non-missing data; the nine missing "
+                "Values are presented as n (%). For central-heating use, 145 "
+                "of the 154 returned questionnaires had no missing data; the 9 missing "
                 "responses are shown in a separate row without a percentage. "
-                "Percentages for all other characteristics were calculated with "
-                "all 147 respondents in the primary analysis as the denominator. "
-                "Use of other equipment to heat the dressing room or bathroom, "
+                "Percentages for all other characteristics were calculated using "
+                "the 147 respondents in the primary analysis as the denominator. "
+                "The use of other equipment to heat the dressing room or bathroom, "
                 "excluding the bathroom heating dryer and central heating, was "
-                "assessed with a multiple-response item; therefore, percentages "
-                "do not sum to 100%. The eight missing responses to this item are "
+                "assessed using a multiple-response item; therefore, the percentages "
+                "do not sum to 100%. The 8 missing responses for this item are "
                 "shown in a separate row, with the percentage calculated using "
                 "the 147 respondents as the denominator. For the bathroom and "
                 "dressing room, perceived thermal sensation was rated on a "
-                "7-point scale from 1 (very warm) to 7 (very cold), and the "
+                "7-point scale, from 1 (very warm) to 7 (very cold): the "
                 "ratings were treated as the respective coldness scores; only "
-                "the coldness score 5-7 group is shown for each room."
+                "the coldness score 5–7 group is shown for each room."
             ),
         )
         worksheet.merge_cells(
